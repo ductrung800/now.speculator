@@ -297,138 +297,40 @@
 }
 
 
-/* ---------- UNIFIED PAGE HEADER / THEME ---------- */
 :root{
-  --page-bg:#f7f9fc;
-  --page-panel:#ffffff;
-  --page-panel-2:#f3f6fa;
-  --page-text:#122033;
-  --page-muted:#66758a;
-  --page-line:#dbe3ec;
-  --page-accent:#14b8a6;
-  --page-accent-2:#0f766e;
-  --page-shadow:0 1px 2px rgba(15,23,42,.05);
+  --sb-bg:#f8f8f6;--sb-card:#fff;--sb-card2:#f5f6f2;--sb-line:#e1e0d9;
+  --sb-text:#0b0b0b;--sb-muted:#52514e;--sb-dim:#898781;
 }
 html[data-theme="dark"]{
-  --page-bg:#07111d;
-  --page-panel:#0d1826;
-  --page-panel-2:#101d2d;
-  --page-text:#e7eef7;
-  --page-muted:#92a3b8;
-  --page-line:#22344a;
-  --page-accent:#2dd4bf;
-  --page-accent-2:#14b8a6;
-  --page-shadow:none;
+  --sb-bg:#07111d;--sb-card:#0d1826;--sb-card2:#101d2d;--sb-line:#25364b;
+  --sb-text:#e8eef7;--sb-muted:#9aabc0;--sb-dim:#7f91a7;
 }
-html[data-theme="dark"] body{background:var(--page-bg)!important;color:var(--page-text)!important}
-html[data-theme="dark"] .panel,
-html[data-theme="dark"] .card,
-html[data-theme="dark"] .benchmark-module,
-html[data-theme="dark"] .command-strip,
-html[data-theme="dark"] .time-machine,
-html[data-theme="dark"] details.detail-panel,
+body{background:var(--sb-bg)!important;color:var(--sb-text)!important}
+.stockbee-head h1{color:var(--sb-text)!important}
+.subtitle,.panel-label,.control-group-label,.note,.legend,.institutional-subtitle,.metric-label,.metric-sub,.commentary,.asof{color:var(--sb-muted)!important}
+.panel,.status-bar,.benchmark-module,.institutional-card,.danger-panel,.market-summary-panel,.command-strip,.time-machine,.metric,.institutional-inline{
+  background:var(--sb-card)!important;border-color:var(--sb-line)!important;color:var(--sb-text)!important
+}
+.controls,.benchmark-subchart,.danger-attached,.command-bottom{border-color:var(--sb-line)!important}
+button,input,select,.btn-toggle button,#refreshBtn{
+  background:var(--sb-card2)!important;color:var(--sb-text)!important;border-color:var(--sb-line)!important
+}
+.btn-toggle button.active{background:#2a78d6!important;color:#fff!important}
+.theme-switch{display:flex;border:1px solid var(--sb-line);border-radius:8px;overflow:hidden;background:var(--sb-card)}
+.theme-switch button{border:0;background:transparent!important;color:var(--sb-muted)!important;padding:8px 10px;font:800 10px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;cursor:pointer}
+.theme-switch button.active{background:#18b89f!important;color:#06231f!important}
 html[data-theme="dark"] .status-bar,
-html[data-theme="dark"] .market-summary-panel,
-html[data-theme="dark"] .institutional-panel,
-html[data-theme="dark"] .institutional-inline,
-html[data-theme="dark"] .danger-panel,
-html[data-theme="dark"] .metric,
-html[data-theme="dark"] .institutional-card,
-html[data-theme="dark"] .nasi-metric,
-html[data-theme="dark"] .osc-insight{
-  background:var(--page-panel)!important;
-  border-color:var(--page-line)!important;
-  color:var(--page-text)!important;
-}
-html[data-theme="dark"] .benchmark-subchart,
-html[data-theme="dark"] .danger-attached,
-html[data-theme="dark"] .command-bottom,
-html[data-theme="dark"] .detail-content,
-html[data-theme="dark"] .research-controls{
-  background:var(--page-panel-2)!important;
-  border-color:var(--page-line)!important;
-}
-html[data-theme="dark"] .subtitle,
-html[data-theme="dark"] .subline,
-html[data-theme="dark"] .panel-label,
-html[data-theme="dark"] .metric-label,
-html[data-theme="dark"] .metric-sub,
-html[data-theme="dark"] .note,
-html[data-theme="dark"] .asof,
-html[data-theme="dark"] .command-label,
-html[data-theme="dark"] .command-sub,
-html[data-theme="dark"] .command-asof,
-html[data-theme="dark"] .institutional-subtitle,
-html[data-theme="dark"] .engine-source,
-html[data-theme="dark"] .breadth-read,
-html[data-theme="dark"] .benchmark-kicker,
-html[data-theme="dark"] .card-sub{
-  color:var(--page-muted)!important;
-}
-html[data-theme="dark"] h1,
-html[data-theme="dark"] h2,
-html[data-theme="dark"] h3,
-html[data-theme="dark"] .command-title,
-html[data-theme="dark"] .benchmark-title,
-html[data-theme="dark"] .institutional-title,
-html[data-theme="dark"] .metric-value,
-html[data-theme="dark"] .command-value,
-html[data-theme="dark"] .commentary p{
-  color:var(--page-text)!important;
-}
-html[data-theme="dark"] input,
-html[data-theme="dark"] select,
-html[data-theme="dark"] button{
-  background:var(--page-panel-2);
-  color:var(--page-text);
-  border-color:var(--page-line);
-}
-.app-tabs,.topnav{display:none!important}
-.now-page-theme-toggle{
-  position:fixed;
-  top:14px;
-  right:16px;
-  z-index:9997;
-  display:flex;
-  gap:6px;
-  align-items:center;
-  padding:4px;
-  border:1px solid var(--page-line);
-  border-radius:9px;
-  background:var(--page-panel);
-  box-shadow:var(--page-shadow);
-}
-.now-theme-btn{
-  border:0;
-  border-radius:6px;
-  padding:6px 10px;
-  font:800 9px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-  letter-spacing:.05em;
-  cursor:pointer;
-  color:var(--page-muted);
-  background:transparent;
-}
-.now-theme-btn.active{
-  background:var(--page-accent);
-  color:#06241f;
-}
-html[data-theme="dark"] .now-theme-btn.active{color:#03211c}
-@media(max-width:720px){
-  .now-page-theme-toggle{top:8px;right:8px}
-  .now-theme-btn{padding:6px 8px}
-}
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .benchmark-module,
+html[data-theme="dark"] .market-summary-panel{box-shadow:none}
 
 </style>
 </head>
 <body>
-
-<div class="now-page-theme-toggle" aria-label="Stockbee Market Monitor theme">
-  <button class="now-theme-btn" id="nowThemeLight" type="button">Light</button>
-  <button class="now-theme-btn" id="nowThemeDark" type="button">Dark</button>
-</div>
-
   <div class="wrap">
-<header class="top" style="display: block; border-bottom: 2px solid #e1e0d9; padding-bottom: 14px; margin-bottom: 18px;">
+
+  <!-- ================= APP TABS ================= -->
+<header class="top stockbee-head" style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:2px solid #e1e0d9;padding-bottom:14px;margin-bottom:18px;">
   <div class="brand-eyebrow" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .18em; color: #1baf7a; text-transform: uppercase;">Stockbee Engine</div>
   <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin-top: 2px; color: #0b0b0b;">Stockbee Market Monitor</h1>
   <div class="subline" style="color: #52514e; font-size: 12.5px; margin-top: 4px; font-family: 'JetBrains Mono', monospace;">SPY, QQQ, T2108 and Stockbee ratios · NASI, McClellan and breadth signals exclusively from the FMP Nasdaq Breadth Engine</div>
@@ -2234,34 +2136,22 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<script id="nowUnifiedTheme">
+<script id="stockTheme">
 (function(){
   const KEY='now.dashboard.theme';
-  const root=document.documentElement;
-  function preferred(){
-    try{
-      const saved=localStorage.getItem(KEY);
-      if(saved==='light'||saved==='dark') return saved;
-    }catch(_){}
-    return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
-  }
   function apply(theme){
     theme=theme==='dark'?'dark':'light';
-    root.dataset.theme=theme;
+    document.documentElement.dataset.theme=theme;
     try{localStorage.setItem(KEY,theme)}catch(_){}
-    const light=document.getElementById('nowThemeLight');
-    const dark=document.getElementById('nowThemeDark');
-    if(light) light.classList.toggle('active',theme==='light');
-    if(dark) dark.classList.toggle('active',theme==='dark');
-    window.dispatchEvent(new CustomEvent('now-theme-change',{detail:{theme}}));
+    document.getElementById('stockLightBtn')?.classList.toggle('active',theme==='light');
+    document.getElementById('stockDarkBtn')?.classList.toggle('active',theme==='dark');
   }
-  window.NOW_THEME={apply,current:()=>root.dataset.theme||preferred()};
   document.addEventListener('DOMContentLoaded',()=>{
-    const light=document.getElementById('nowThemeLight');
-    const dark=document.getElementById('nowThemeDark');
-    if(light) light.addEventListener('click',()=>apply('light'));
-    if(dark) dark.addEventListener('click',()=>apply('dark'));
-    apply(preferred());
+    let theme='light';
+    try{theme=localStorage.getItem(KEY)||((matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light')}catch(_){}
+    document.getElementById('stockLightBtn')?.addEventListener('click',()=>apply('light'));
+    document.getElementById('stockDarkBtn')?.addEventListener('click',()=>apply('dark'));
+    apply(theme);
   });
 })();
 </script>
