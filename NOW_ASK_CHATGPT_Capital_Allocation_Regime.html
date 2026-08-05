@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capital Allocation Regime</title>
+  <meta name="description" content="Institutional macro backdrop and equity factor leadership dashboard." />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #08101b;
+      --bg-2: #0d1624;
+      --panel: #101b2b;
+      --panel-2: #142136;
+      --panel-3: #0c1522;
+      --border: #253652;
+      --border-soft: #1b2a42;
+      --text: #e7edf7;
+      --muted: #8fa0b9;
+      --muted-2: #6f819c;
+      --accent: #62a7ff;
+      --purple: #8c7bff;
+      --green: #20d49a;
+      --green-soft: rgba(32, 212, 154, .13);
+      --red: #ff5c78;
+      --red-soft: rgba(255, 92, 120, .13);
+      --amber: #f2b84b;
+      --amber-soft: rgba(242, 184, 75, .13);
+      --cyan: #28c8db;
+      --shadow: 0 12px 30px rgba(0,0,0,.23);
+      --radius: 12px;
+      --gap: 10px;
+      --font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    html[data-theme="light"] {
+      --bg: #eef3f9;
+      --bg-2: #e5ecf5;
+      --panel: #ffffff;
+      --panel-2: #f7f9fc;
+      --panel-3: #f0f4f9;
+      --border: #ccd7e5;
+      --border-soft: #dce4ef;
+      --text: #132139;
+      --muted: #5d6e87;
+      --muted-2: #7c8ba0;
+      --accent: #1265d5;
+      --purple: #6253d9;
+      --green: #008d6a;
+      --green-soft: rgba(0, 141, 106, .10);
+      --red: #d83353;
+      --red-soft: rgba(216, 51, 83, .10);
+      --amber: #b77900;
+      --amber-soft: rgba(183, 121, 0, .11);
+      --cyan: #037f95;
+      --shadow: 0 10px 24px rgba(44,63,90,.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--bg-2), var(--bg));
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      min-height: 100vh;
+    }
+    button, input, select { font: inherit; }
+    .app { width: 100%; padding: 8px 10px 24px; }
+    .topbar {
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10,18,31,.92);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 10px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 4px;
+      z-index: 30;
+      backdrop-filter: blur(12px);
+    }
+    html[data-theme="light"] .topbar { background: rgba(255,255,255,.92); }
+    .brand { display:flex; align-items:center; gap:9px; min-width:max-content; }
+    .brand-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      display:grid; place-items:center; font-weight:800;
+      background: linear-gradient(135deg, var(--accent), var(--purple)); color:white;
+      box-shadow: 0 0 24px rgba(98,167,255,.25);
+    }
+    .brand-title { font-weight: 800; letter-spacing: .5px; font-size: 12px; }
+    .brand-sub { color: var(--muted); font-size: 10px; margin-top:1px; }
+    .nav { display:flex; align-items:center; gap:4px; overflow-x:auto; scrollbar-width:none; flex:1; }
+    .nav::-webkit-scrollbar { display:none; }
+    .nav a {
+      text-decoration:none; color:var(--muted); white-space:nowrap;
+      padding:7px 9px; border-radius:7px; border:1px solid transparent;
+      font-size:11px; font-weight:650;
+    }
+    .nav a:hover { color:var(--text); background:var(--panel-2); }
+    .nav a.active { color:white; background:linear-gradient(135deg,#285caa,#5545b8); border-color:#6d80d8; }
+    .top-actions { display:flex; gap:6px; margin-left:auto; }
+    .btn {
+      border:1px solid var(--border); color:var(--text); background:var(--panel-2);
+      padding:7px 10px; border-radius:8px; cursor:pointer; font-weight:700; font-size:11px;
+    }
+    .btn:hover { border-color:var(--accent); }
+    .btn.primary { background:linear-gradient(135deg,#2264ba,#584bbf); color:white; border-color:#6680db; }
+    .btn.ghost { background:transparent; }
+    .btn.small { padding:5px 8px; font-size:10px; }
+    .status-dot { width:7px; height:7px; border-radius:99px; background:var(--amber); display:inline-block; margin-right:5px; }
+    .status-dot.ok { background:var(--green); box-shadow:0 0 10px var(--green); }
+    .status-dot.bad { background:var(--red); }
+
+    .page-head { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; padding:14px 3px 8px; }
+    h1 { margin:0; font-size:20px; letter-spacing:.2px; }
+    .subtitle { color:var(--muted); margin-top:4px; font-size:11px; }
+    .updated { color:var(--muted); font-size:10px; text-align:right; }
+
+    .grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:var(--gap); }
+    .card {
+      background:linear-gradient(180deg,var(--panel),var(--panel-3));
+      border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
+      min-width:0; overflow:hidden;
+    }
+    .card-head {
+      min-height:34px; padding:8px 10px; border-bottom:1px solid var(--border-soft);
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      background:linear-gradient(90deg,rgba(98,167,255,.08),transparent 45%);
+    }
+    .card-title { font-size:11px; font-weight:850; letter-spacing:.55px; text-transform:uppercase; }
+    .card-sub { font-size:9px; color:var(--muted); margin-top:2px; text-transform:none; letter-spacing:0; font-weight:500; }
+    .card-body { padding:10px; }
+    .span-12 { grid-column:span 12; }
+    .span-8 { grid-column:span 8; }
+    .span-7 { grid-column:span 7; }
+    .span-6 { grid-column:span 6; }
+    .span-5 { grid-column:span 5; }
+    .span-4 { grid-column:span 4; }
+    .span-3 { grid-column:span 3; }
+
+    .banner { position:relative; overflow:hidden; }
+    .banner::after {
+      content:""; position:absolute; inset:auto -120px -180px auto; width:360px; height:360px; border-radius:50%;
+      background:radial-gradient(circle,rgba(98,167,255,.2),transparent 68%); pointer-events:none;
+    }
+    .banner-body { padding:14px 16px 13px; display:grid; grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr); gap:16px; align-items:center; }
+    .regime-kicker { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; }
+    .regime-title { font-size:21px; line-height:1.18; margin:6px 0; font-weight:900; letter-spacing:.1px; }
+    .regime-title.positive { color:var(--green); }
+    .regime-title.negative { color:var(--red); }
+    .regime-title.mixed { color:var(--amber); }
+    .regime-narrative { color:var(--muted); font-size:12px; line-height:1.55; max-width:1000px; }
+    .banner-stats { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    .banner-stat { background:rgba(255,255,255,.025); border:1px solid var(--border-soft); border-radius:9px; padding:8px; }
+    .banner-stat .label { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.5px; }
+    .banner-stat .value { font-size:13px; font-weight:850; margin-top:4px; }
+
+    .decision-strip { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:var(--gap); margin-top:var(--gap); }
+    .metric-card { padding:9px 10px; min-height:78px; }
+    .metric-label { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.65px; font-weight:750; }
+    .metric-value { font-size:17px; font-weight:900; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .metric-note { font-size:10px; color:var(--muted); margin-top:5px; }
+    .score-row { display:flex; align-items:center; gap:7px; }
+    .score-bar { height:4px; background:var(--border-soft); border-radius:99px; overflow:hidden; flex:1; }
+    .score-fill { height:100%; background:linear-gradient(90deg,var(--red),var(--amber),var(--green)); width:50%; }
+
+    .chart-wrap { height:355px; position:relative; }
+    .mini-chart-wrap { height:190px; position:relative; }
+    canvas { width:100% !important; height:100% !important; }
+    .empty-state { display:grid; place-items:center; height:100%; min-height:160px; color:var(--muted); text-align:center; padding:22px; }
+    .empty-state strong { color:var(--text); display:block; margin-bottom:5px; }
+
+    .evidence-list { display:grid; gap:5px; }
+    .evidence-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; padding:6px 7px; border:1px solid var(--border-soft); border-radius:7px; background:rgba(255,255,255,.018); }
+    .evidence-label { color:var(--muted); font-size:10px; }
+    .evidence-value { font-weight:800; font-size:10px; }
+    .tag { display:inline-flex; align-items:center; gap:4px; padding:3px 6px; border-radius:5px; font-size:9px; font-weight:850; border:1px solid transparent; }
+    .tag.positive { color:var(--green); background:var(--green-soft); border-color:rgba(32,212,154,.25); }
+    .tag.negative { color:var(--red); background:var(--red-soft); border-color:rgba(255,92,120,.25); }
+    .tag.mixed { color:var(--amber); background:var(--amber-soft); border-color:rgba(242,184,75,.25); }
+    .tag.neutral { color:var(--muted); background:rgba(143,160,185,.10); border-color:var(--border-soft); }
+
+    .horizon-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-top:8px; }
+    .horizon { padding:7px; border:1px solid var(--border-soft); border-radius:8px; }
+    .horizon .name { color:var(--muted); font-size:9px; text-transform:uppercase; }
+    .horizon .state { font-weight:850; margin-top:4px; font-size:10px; }
+
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; font-size:10px; }
+    th, td { padding:7px 7px; border-bottom:1px solid var(--border-soft); text-align:right; white-space:nowrap; }
+    th:first-child, td:first-child { text-align:left; position:sticky; left:0; background:var(--panel); z-index:1; }
+    th { color:var(--muted); font-size:8px; letter-spacing:.5px; text-transform:uppercase; font-weight:850; }
+    td { font-variant-numeric:tabular-nums; }
+    tr:hover td { background:rgba(98,167,255,.045); }
+    .factor-name { display:flex; align-items:center; gap:7px; font-weight:800; }
+    .factor-dot { width:7px; height:7px; border-radius:2px; background:var(--muted); }
+    .positive-text { color:var(--green); }
+    .negative-text { color:var(--red); }
+    .mixed-text { color:var(--amber); }
+
+    .factor-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--gap); }
+    .factor-chart-card .card-head { cursor:pointer; }
+    .chart-value { display:flex; align-items:baseline; gap:7px; }
+    .chart-value strong { font-size:13px; }
+    .chart-meta { font-size:9px; color:var(--muted); }
+
+    .synthesis { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--gap); }
+    .synth-block { border:1px solid var(--border-soft); border-radius:9px; padding:10px; background:rgba(255,255,255,.018); }
+    .synth-title { font-weight:850; font-size:10px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+    .synth-text { color:var(--muted); font-size:10px; line-height:1.5; }
+    .playbook-list { display:grid; gap:5px; }
+    .playbook-item { display:flex; gap:7px; color:var(--muted); font-size:10px; line-height:1.4; }
+    .playbook-item::before { content:"•"; color:var(--accent); font-weight:900; }
+
+    .timeline-toolbar { display:grid; grid-template-columns:1fr 150px auto; gap:8px; align-items:center; }
+    input[type="range"] { width:100%; accent-color:var(--accent); }
+    input[type="date"], input[type="url"], select {
+      width:100%; color:var(--text); background:var(--panel-2); border:1px solid var(--border); border-radius:7px; padding:7px 8px;
+    }
+    .timeline-readout { margin-top:8px; display:flex; justify-content:space-between; color:var(--muted); font-size:9px; }
+    .transition-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; margin-top:10px; }
+    .transition-stat { border:1px solid var(--border-soft); border-radius:8px; padding:8px; }
+    .transition-stat .label { color:var(--muted); font-size:8px; text-transform:uppercase; }
+    .transition-stat .value { margin-top:4px; font-size:11px; font-weight:850; }
+
+    .modal-backdrop { position:fixed; inset:0; display:none; place-items:center; background:rgba(2,6,12,.7); z-index:100; padding:20px; }
+    .modal-backdrop.open { display:grid; }
+    .modal { width:min(600px,100%); background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 30px 80px rgba(0,0,0,.45); overflow:hidden; }
+    .modal-head { padding:12px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); }
+    .modal-body { padding:14px; display:grid; gap:12px; }
+    .field label { display:block; color:var(--muted); font-size:10px; font-weight:750; margin-bottom:5px; }
+    .help { color:var(--muted); font-size:9px; line-height:1.5; margin-top:5px; }
+    .modal-actions { display:flex; justify-content:flex-end; gap:7px; padding:12px 14px; border-top:1px solid var(--border); }
+    .toast { position:fixed; right:16px; bottom:16px; z-index:120; display:none; max-width:360px; padding:10px 12px; border-radius:9px; border:1px solid var(--border); background:var(--panel); box-shadow:var(--shadow); font-size:10px; }
+    .toast.show { display:block; }
+    .loading-overlay { position:fixed; inset:0; z-index:110; display:none; place-items:center; background:rgba(3,8,15,.55); backdrop-filter:blur(3px); }
+    .loading-overlay.open { display:grid; }
+    .loader { width:46px; height:46px; border-radius:50%; border:4px solid var(--border); border-top-color:var(--accent); animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    @media (max-width:1200px) {
+      .decision-strip { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .factor-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .banner-body { grid-template-columns:1fr; }
+      .span-7,.span-5 { grid-column:span 12; }
+    }
+    @media (max-width:760px) {
+      .app { padding:6px; }
+      .topbar { position:relative; top:0; flex-wrap:wrap; }
+      .nav { order:3; width:100%; }
+      .decision-strip { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .factor-grid,.synthesis { grid-template-columns:1fr; }
+      .span-8,.span-6,.span-4,.span-3 { grid-column:span 12; }
+      .timeline-toolbar { grid-template-columns:1fr; }
+      .transition-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .page-head { align-items:flex-start; flex-direction:column; }
+    }
+  
+.now-ai-chat-note{
+  margin:0 0 10px;
+  padding:9px 11px;
+  border:1px solid rgba(16,185,129,.28);
+  border-radius:8px;
+  background:rgba(16,185,129,.08);
+  color:inherit;
+  font:700 10px/1.45 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+
+</style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div><div class="brand-title">NOW DASHBOARD</div><div class="brand-sub">Institutional Market Intelligence</div></div>
+      </div>
+      <nav class="nav">
+ 
+    <a href="index.html">Market Dashboard</a>
+    <a href="stockbee_market_monitor_live.html">Stockbee Monitor</a>
+    <a href="nasi_institutional_command_center.html" >NASI Command Center</a>
+    <a class="active" href= "#">Capital Allocation </a>
+    <a href="MarketCommandCenter.html">Market Command Center</a>
+    <a href="Institutional_PM_Updated.html">Institutional Update</a>
+    <a href="Market_Breadth_Institutional_Command.html">Breadth Institutional</a>
+    <a href="market_breadth.html">Market Breadth</a>
+    <a href="rs_radar.html" >RS Radar</a
+    <a href="sata_watchlist_dashboard.html">Stages</a>
+    <a href="PowerList.html">Power List</a>
+    <a href="liquid_leaders.html">Liquid Leaders</a>
+    <a href="group_momentum.html">Group Momentum</a>
+    <a href="PriceStructure.html">Price Structure</a>
+    <a href="StageAnalysis.html">Stage Analysis</a>
+    <a href="tv_watchlist.html">TradingView Watchlist</a>
+    <a href="PortfolioManagement.html">Portfolio Management</a>
+    <a href="PortfolioRisk.html" >Portfolio Risk</a>
+    <a href="Playbook.html">Playbook</a>
+     <a href="MarketRegime.html">Market Regime</a>
+  
+      </nav>
+      <div class="top-actions">
+        <button id="refreshBtn" class="btn primary"><span id="dataDot" class="status-dot"></span>Refresh</button>
+        <button id="settingsBtn" class="btn">Settings</button>
+      </div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Capital Allocation Regime</h1>
+        <div class="subtitle">Macro Backdrop · Cross-Asset Preference · Equity Factor Leadership · Nasdaq internals sourced only from the FMP Nasdaq Breadth Engine</div>
+      </div>
+      <div class="updated"><div id="updatedText">Data source not connected</div><div id="asOfText">Latest completed EOD</div></div>
+    </div>
+
+    <main>
+      <section class="card banner span-12">
+        <div class="banner-body">
+          <div>
+            <div class="regime-kicker"><span id="bannerDot" class="status-dot"></span><span id="bannerKicker">Awaiting live FMP data</span></div>
+            <div id="regimeTitle" class="regime-title mixed">Connect the secure Apps Script data endpoint</div>
+            <div id="regimeNarrative" class="regime-narrative">This page intentionally contains no mock market readings. Open Settings, paste the deployed Google Apps Script Web App URL, and load live end-of-day data from your FMP Starter plan.</div>
+          </div>
+          <div class="banner-stats">
+            <div class="banner-stat"><div class="label">Portfolio posture</div><div id="portfolioPosture" class="value">—</div></div>
+            <div class="banner-stat"><div class="label">Exposure ceiling</div><div id="exposureCeiling" class="value">—</div></div>
+            <div class="banner-stat"><div class="label">Preferred style</div><div id="preferredStyle" class="value">—</div></div>
+            <div class="banner-stat"><div class="label">Primary risk</div><div id="primaryRisk" class="value">—</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="decision-strip">
+        <div class="card metric-card"><div class="metric-label">Macro regime</div><div id="macroRegime" class="metric-value">—</div><div id="macroRegimeNote" class="metric-note">SPX / Gold</div></div>
+        <div class="card metric-card"><div class="metric-label">Factor regime</div><div id="factorRegime" class="metric-value">—</div><div id="factorRegimeNote" class="metric-note">Style leadership</div></div>
+        <div class="card metric-card"><div class="metric-label">Leadership breadth</div><div id="leadershipBreadth" class="metric-value">—</div><div class="score-row"><div class="score-bar"><div id="breadthFill" class="score-fill"></div></div><span id="breadthPct" class="metric-note">—</span></div></div>
+        <div class="card metric-card"><div class="metric-label">Macro score</div><div id="macroScore" class="metric-value">—</div><div class="metric-note">Range −10 to +10</div></div>
+        <div class="card metric-card"><div class="metric-label">Factor score</div><div id="factorScore" class="metric-value">—</div><div class="metric-note">Range −10 to +10</div></div>
+        <div class="card metric-card"><div class="metric-label">Transition risk</div><div id="transitionRisk" class="metric-value">—</div><div id="transitionRiskNote" class="metric-note">Regime stability</div></div>
+      </section>
+
+      <section class="grid" style="margin-top:var(--gap)">
+        <article class="card span-7">
+          <div class="card-head">
+            <div><div class="card-title">SPX / Gold Ratio</div><div class="card-sub">Productive assets versus monetary defence · 20 EMA / 50 SMA / 200 SMA</div></div>
+            <div class="chart-value"><strong id="macroRatioValue">—</strong><span id="macroRatioChange" class="chart-meta">—</span><button class="btn small ghost" data-tv="SP:SPX/TVC:GOLD">Open chart ↗</button></div>
+          </div>
+          <div class="card-body"><div id="macroChartWrap" class="chart-wrap"><div class="empty-state"><div><strong>No live series loaded</strong>Configure the Apps Script Web App URL in Settings.</div></div><canvas id="macroChart" hidden></canvas></div></div>
+        </article>
+
+        <article class="card span-5">
+          <div class="card-head"><div><div class="card-title">Macro Evidence Stack</div><div class="card-sub">Structure, direction and cross-asset confirmation</div></div></div>
+          <div class="card-body">
+            <div id="macroEvidence" class="evidence-list">
+              <div class="evidence-row"><span class="evidence-label">Ratio versus 20 EMA</span><span class="tag neutral">—</span></div>
+              <div class="evidence-row"><span class="evidence-label">Ratio versus 50 SMA</span><span class="tag neutral">—</span></div>
+              <div class="evidence-row"><span class="evidence-label">Ratio versus 200 SMA</span><span class="tag neutral">—</span></div>
+              <div class="evidence-row"><span class="evidence-label">50 SMA versus 200 SMA</span><span class="tag neutral">—</span></div>
+              <div class="evidence-row"><span class="evidence-label">20-session relative momentum</span><span class="tag neutral">—</span></div>
+              <div class="evidence-row"><span class="evidence-label">Credit confirmation · HYG/IEF</span><span class="tag neutral">—</span></div>
+            </div>
+            <div id="horizonGrid" class="horizon-grid">
+              <div class="horizon"><div class="name">Tactical</div><div class="state">—</div></div>
+              <div class="horizon"><div class="name">Intermediate</div><div class="state">—</div></div>
+              <div class="horizon"><div class="name">Structural</div><div class="state">—</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card span-12">
+          <div class="card-head">
+            <div><div class="card-title">Equity Factor Leadership Map</div><div class="card-sub">Relative performance versus SPY · daily move separated from persistent leadership</div></div>
+            <div id="factorParticipationTag" class="tag neutral">Awaiting data</div>
+          </div>
+          <div class="card-body table-wrap">
+            <table>
+              <thead><tr><th>Factor</th><th>Proxy</th><th>1D</th><th>5D</th><th>20D</th><th>63D</th><th>vs 20MA</th><th>vs 50MA</th><th>Trend</th><th>Status</th></tr></thead>
+              <tbody id="factorTableBody"><tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">No mock readings. Connect live FMP data to populate the matrix.</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card span-12">
+          <div class="card-head"><div><div class="card-title">Primary Factor Relative-Strength Charts</div><div class="card-sub">Click any chart header to open the ratio in TradingView</div></div></div>
+          <div class="card-body"><div id="primaryFactorGrid" class="factor-grid"></div></div>
+        </article>
+
+        <article class="card span-12">
+          <div class="card-head"><div><div class="card-title">Participation, Size and Speculative Appetite</div><div class="card-sub">Is leadership broadening beyond the headline growth complex?</div></div></div>
+          <div class="card-body"><div id="secondaryFactorGrid" class="factor-grid"></div></div>
+        </article>
+
+        <article class="card span-12">
+          <div class="card-head"><div><div class="card-title">Macro × Factor × Micro Alignment</div><div class="card-sub">Institutional synthesis translated into swing-trading behaviour</div></div></div>
+          <div class="card-body synthesis">
+            <div class="synth-block"><div class="synth-title">Regime synthesis</div><div id="regimeSynthesis" class="synth-text">Awaiting live data.</div></div>
+            <div class="synth-block"><div class="synth-title">Portfolio manager playbook</div><div id="playbook" class="playbook-list"><div class="playbook-item">Connect live data to generate the active playbook.</div></div></div>
+            <div class="synth-block"><div class="synth-title">Risks and invalidation</div><div id="riskList" class="playbook-list"><div class="playbook-item">The dashboard will identify the evidence that would invalidate the current regime.</div></div></div>
+          </div>
+        </article>
+
+        <article class="card span-12">
+          <div class="card-head"><div><div class="card-title">Regime History & Time Machine</div><div class="card-sub">Reconstruct every panel using information available on the selected historical date</div></div><button id="latestBtn" class="btn small">Latest</button></div>
+          <div class="card-body">
+            <div class="timeline-toolbar">
+              <input id="timeSlider" type="range" min="0" max="0" value="0" disabled />
+              <input id="dateInput" type="date" disabled />
+              <button id="prevDayBtn" class="btn small" disabled>← Prior session</button>
+            </div>
+            <div class="timeline-readout"><span id="timelineStart">—</span><strong id="timelineCurrent">No data</strong><span id="timelineEnd">—</span></div>
+            <div class="transition-grid">
+              <div class="transition-stat"><div class="label">Selected date</div><div id="selectedDateStat" class="value">—</div></div>
+              <div class="transition-stat"><div class="label">Regime age</div><div id="regimeAgeStat" class="value">—</div></div>
+              <div class="transition-stat"><div class="label">Previous transition</div><div id="previousTransitionStat" class="value">—</div></div>
+              <div class="transition-stat"><div class="label">Days above 200D</div><div id="daysAbove200Stat" class="value">—</div></div>
+              <div class="transition-stat"><div class="label">Data completeness</div><div id="completenessStat" class="value">—</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="settingsModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-head"><strong>Capital Allocation Settings</strong><button id="closeSettingsBtn" class="btn small ghost">✕</button></div>
+      <div class="modal-body">
+        <div class="field"><label for="apiUrlInput">Google Apps Script Web App URL</label><input id="apiUrlInput" type="url" placeholder="https://script.google.com/macros/s/.../exec" /><div class="help">Your FMP key remains private in Script Properties under <b>FMP_API_KEY</b>. This public HTML stores only the Web App URL in this browser.</div></div>
+        <div class="field"><label for="themeSelect">Theme</label><select id="themeSelect"><option value="auto">Auto</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
+        <div class="field"><label for="lookbackSelect">Historical window</label><select id="lookbackSelect"><option value="420">420 calendar days</option><option value="540" selected>540 calendar days</option><option value="730">730 calendar days</option></select><div class="help">At least 200 trading sessions are required for the structural regime model and Time Machine.</div></div>
+      </div>
+      <div class="modal-actions"><button id="testConnectionBtn" class="btn">Test endpoint</button><button id="saveSettingsBtn" class="btn primary">Save & Load</button></div>
+    </div>
+  </div>
+  <div id="loadingOverlay" class="loading-overlay"><div><div class="loader"></div><div style="margin-top:10px;color:white;font-weight:700">Loading live FMP series…</div></div></div>
+  <div id="toast" class="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+  const STORAGE = { apiUrl:'now.capital.apiUrl', theme:'now.capital.theme', lookback:'now.capital.lookback' };
+  const SERIES = {
+    SPX: { symbol:'^GSPC', label:'S&P 500 Index' },
+    GOLD: { symbol:'GCUSD', label:'Gold Spot' },
+    SPY: { symbol:'SPY', label:'S&P 500 ETF' },
+    QQQ: { symbol:'QQQ', label:'Growth' },
+    SPMO: { symbol:'SPMO', label:'Momentum' },
+    VLUE: { symbol:'VLUE', label:'Value' },
+    VYM: { symbol:'VYM', label:'High Dividend' },
+    OEF: { symbol:'OEF', label:'Large-Cap' },
+    MDY: { symbol:'MDY', label:'Mid-Cap' },
+    IWM: { symbol:'IWM', label:'Small-Cap' },
+    RSP: { symbol:'RSP', label:'Equal Weight' },
+    IPO: { symbol:'IPO', label:'IPOs' },
+    HYG: { symbol:'HYG', label:'High Yield Credit' },
+    IEF: { symbol:'IEF', label:'Treasuries' }
+  };
+  const FACTORS = [
+    { key:'QQQ', name:'Growth', proxy:'QQQ/SPY', tv:'NASDAQ:QQQ/AMEX:SPY', group:'primary' },
+    { key:'SPMO', name:'Momentum', proxy:'SPMO/SPY', tv:'AMEX:SPMO/AMEX:SPY', group:'primary' },
+    { key:'VLUE', name:'Value', proxy:'VLUE/SPY', tv:'AMEX:VLUE/AMEX:SPY', group:'primary' },
+    { key:'VYM', name:'High Dividend', proxy:'VYM/SPY', tv:'AMEX:VYM/AMEX:SPY', group:'primary' },
+    { key:'OEF', name:'Large-Cap', proxy:'OEF/SPY', tv:'AMEX:OEF/AMEX:SPY', group:'secondary' },
+    { key:'MDY', name:'Mid-Cap', proxy:'MDY/SPY', tv:'AMEX:MDY/AMEX:SPY', group:'secondary' },
+    { key:'IWM', name:'Small-Cap', proxy:'IWM/SPY', tv:'AMEX:IWM/AMEX:SPY', group:'secondary' },
+    { key:'RSP', name:'Equal Weight', proxy:'RSP/SPY', tv:'AMEX:RSP/AMEX:SPY', group:'secondary' },
+    { key:'IPO', name:'IPOs', proxy:'IPO/SPY', tv:'AMEX:IPO/AMEX:SPY', group:'secondary' }
+  ];
+  const state = { raw:null, ratios:{}, factorMetrics:{}, macro:null, selectedIndex:0, charts:new Map(), dates:[], latestIndex:0, dataErrors:[] };
+  const $ = id => document.getElementById(id);
+  const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
+  const fmt = (n,d=2) => Number.isFinite(n) ? n.toFixed(d) : '—';
+  const fmtPct = (n,d=2) => Number.isFinite(n) ? `${n>=0?'+':''}${n.toFixed(d)}%` : '—';
+  const signClass = n => !Number.isFinite(n) ? '' : n>0 ? 'positive-text' : n<0 ? 'negative-text' : '';
+  const esc = s => String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+  function applyTheme(pref) {
+    const resolved = pref === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light':'dark') : pref;
+    document.documentElement.dataset.theme = resolved;
+    localStorage.setItem(STORAGE.theme,pref);
+    setTimeout(()=>rebuildAllCharts(),0);
+  }
+  function toast(msg, kind='') { const el=$('toast'); el.textContent=msg; el.style.borderColor=kind==='bad'?'var(--red)':kind==='ok'?'var(--green)':'var(--border)'; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),4200); }
+  function loading(on) { $('loadingOverlay').classList.toggle('open',on); }
+  function isoDate(d) { return d.toISOString().slice(0,10); }
+  function daysAgo(n) { const d=new Date(); d.setDate(d.getDate()-n); return isoDate(d); }
+  function normalizeUrl(url) { return String(url||'').trim().replace(/\?.*$/,''); }
+
+  function jsonp(base, params={}, timeout=45000) {
+    return new Promise((resolve,reject)=>{
+      const cb='__capAllocCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+      const script=document.createElement('script');
+      const timer=setTimeout(()=>cleanup(new Error('Data endpoint timed out.')),timeout);
+      function cleanup(err,data){ clearTimeout(timer); delete window[cb]; script.remove(); err?reject(err):resolve(data); }
+      window[cb]=data=>cleanup(null,data);
+      script.onerror=()=>cleanup(new Error('Unable to reach the Apps Script Web App.'));
+      const q=new URLSearchParams({...params,callback:cb,_ts:Date.now()});
+      script.src=`${normalizeUrl(base)}?${q.toString()}`;
+      document.head.appendChild(script);
+    });
+  }
+
+  function normalizeSeries(rows) {
+    const arr = Array.isArray(rows) ? rows : [];
+    return arr.map(r=>({date:String(r.date||'').slice(0,10), close:Number(r.close ?? r.price), volume:Number(r.volume||0)}))
+      .filter(r=>r.date && Number.isFinite(r.close) && r.close>0)
+      .sort((a,b)=>a.date.localeCompare(b.date));
+  }
+  function ratioSeries(a,b) {
+    const bm=new Map(b.map(x=>[x.date,x.close]));
+    return a.filter(x=>bm.has(x.date)).map(x=>({date:x.date,close:x.close/bm.get(x.date)}));
+  }
+  function sma(series, period) {
+    const out=Array(series.length).fill(null); let sum=0;
+    for(let i=0;i<series.length;i++){ sum+=series[i].close; if(i>=period) sum-=series[i-period].close; if(i>=period-1) out[i]=sum/period; }
+    return out;
+  }
+  function ema(series, period) {
+    const out=Array(series.length).fill(null); if(!series.length) return out; const k=2/(period+1); let prev=series[0].close; out[0]=prev;
+    for(let i=1;i<series.length;i++){ prev=series[i].close*k+prev*(1-k); out[i]=prev; }
+    return out;
+  }
+  function pctChange(series, idx, back) {
+    if(idx<back || !series[idx] || !series[idx-back]) return null;
+    return (series[idx].close/series[idx-back].close-1)*100;
+  }
+  function slope(arr, idx, back=10) {
+    if(idx<back || !Number.isFinite(arr[idx]) || !Number.isFinite(arr[idx-back])) return null;
+    return arr[idx]-arr[idx-back];
+  }
+  function latestIndexOnOrBefore(series,date) {
+    let lo=0,hi=series.length-1,ans=-1;
+    while(lo<=hi){ const m=(lo+hi)>>1; if(series[m].date<=date){ans=m;lo=m+1;}else hi=m-1; }
+    return ans;
+  }
+  function tagHtml(text, tone='neutral') { return `<span class="tag ${tone}">${esc(text)}</span>`; }
+  function toneFromNumber(n, threshold=.001) { return !Number.isFinite(n)?'neutral':n>threshold?'positive':n<-threshold?'negative':'mixed'; }
+
+  function classifyFactor(series, idx) {
+    const ma20=sma(series,20), ma50=sma(series,50), p=series[idx]?.close;
+    if(!Number.isFinite(p)) return {status:'Unavailable',tone:'neutral',signal:0,ma20:null,ma50:null,trend:'—'};
+    const above20=Number.isFinite(ma20[idx]) && p>ma20[idx], above50=Number.isFinite(ma50[idx]) && p>ma50[idx];
+    const s20=slope(ma20,idx,5), s50=slope(ma50,idx,10), r20=pctChange(series,idx,20);
+    let status='Neutral',tone='mixed',signal=0;
+    if(above20&&above50&&s20>0&&s50>0&&r20>0){status='Leading';tone='positive';signal=1;}
+    else if(above20&&s20>0&&(!above50||s50<=0)){status='Improving';tone='positive';signal=.5;}
+    else if(!above20&&above50&&(s20<0||r20<0)){status='Weakening';tone='mixed';signal=-.5;}
+    else if(!above20&&!above50&&s20<0&&s50<0&&r20<0){status='Lagging';tone='negative';signal=-1;}
+    const trend = s20>0&&s50>0?'Rising':s20<0&&s50<0?'Falling':'Mixed';
+    return {status,tone,signal,ma20:ma20[idx],ma50:ma50[idx],above20,above50,s20,s50,trend};
+  }
+
+  function computeAt(masterIdx) {
+    const macroSeries=state.ratios.MACRO;
+    const date=macroSeries[masterIdx].date;
+    const idx=masterIdx;
+    const ma20=ema(macroSeries,20), ma50=sma(macroSeries,50), ma200=sma(macroSeries,200);
+    const p=macroSeries[idx].close;
+    const r1=pctChange(macroSeries,idx,1), r20=pctChange(macroSeries,idx,20), r63=pctChange(macroSeries,idx,63);
+    const s50=slope(ma50,idx,10), s200=slope(ma200,idx,20);
+    const above20=Number.isFinite(ma20[idx])&&p>ma20[idx], above50=Number.isFinite(ma50[idx])&&p>ma50[idx], above200=Number.isFinite(ma200[idx])&&p>ma200[idx];
+    const golden=Number.isFinite(ma50[idx])&&Number.isFinite(ma200[idx])&&ma50[idx]>ma200[idx];
+    const credit=state.ratios.CREDIT; const cidx=latestIndexOnOrBefore(credit,date); const c50=sma(credit,50); const creditPositive=cidx>=0&&Number.isFinite(c50[cidx])&&credit[cidx].close>c50[cidx]&&slope(c50,cidx,10)>0;
+    let macroScore=0;
+    macroScore += above200?2:-2; macroScore += above50?1:-1; macroScore += golden?2:-2; macroScore += s50>0?1:-1; macroScore += r20>0?1:-1; macroScore += r63>0?1:-1; macroScore += creditPositive?2:-2;
+    macroScore=clamp(macroScore,-10,10);
+    const macroRegime = macroScore>=8?'Strong Paper-Asset':macroScore>=5?'Paper-Asset':macroScore>=2?'Constructive / Contested':macroScore>=-1?'Transitional':macroScore>=-4?'Defensive Pressure':macroScore>=-7?'Defensive-Asset':'Strong Defensive';
+
+    const factorMetrics={};
+    for(const f of FACTORS){ const series=state.ratios[f.key]; const fi=latestIndexOnOrBefore(series,date); if(fi<0) continue; const c=classifyFactor(series,fi); factorMetrics[f.key]={...c,index:fi,date:series[fi].date,value:series[fi].close,r1:pctChange(series,fi,1),r5:pctChange(series,fi,5),r20:pctChange(series,fi,20),r63:pctChange(series,fi,63)}; }
+    const sig=k=>factorMetrics[k]?.signal||0;
+    let factorScore = 2*sig('QQQ') + 2*sig('SPMO') + sig('IPO') + sig('IWM') + sig('MDY') + 2*sig('RSP') - sig('VYM');
+    factorScore=Math.round(clamp(factorScore,-10,10));
+    const factorRegime=factorScore>=7?'Broad Offensive':factorScore>=3?'Offensive':factorScore>=0?'Selective / Mixed':factorScore>=-3?'Defensive Rotation':'Broad Risk-Off';
+    const participationKeys=['QQQ','SPMO','OEF','MDY','IWM','RSP','IPO'];
+    const available=participationKeys.filter(k=>factorMetrics[k]);
+    const breadth=available.length?Math.round(available.reduce((s,k)=>s+(factorMetrics[k].signal+1)/2,0)/available.length*100):0;
+    const participation=breadth>=72?'Broad Offensive':breadth>=52?'Selective Offensive':breadth>=35?'Concentrated Leadership':breadth>=20?'Defensive Rotation':'Broad Risk-Off';
+
+    let combined='Transitional';
+    if(macroScore>=5&&factorScore>=3&&breadth>=60) combined='Broad Risk-On';
+    else if(macroScore>=2&&factorScore>=2) combined=breadth<55?'Selective Risk-On':'Risk-On';
+    else if(macroScore>=2&&factorScore<2) combined='Macro Constructive / Equity Rotation';
+    else if(macroScore<0&&factorScore>=2) combined='Countertrend Offensive Rally';
+    else if(macroScore<=-4&&factorScore<=-2) combined='Defensive Alignment';
+    else combined='Contested / Transitional';
+
+    const transitionRisk = Math.abs(p/ma200[idx]-1)<.02 || Math.abs(macroScore)<=2 ? 'High' : (Math.sign(r20)!==Math.sign(r63)||breadth<45 ? 'Moderate':'Low');
+    const tactical=r20>1?'Strengthening':r20<-1?'Weakening':'Neutral';
+    const intermediate=above50&&s50>0?'Constructive':!above50&&s50<0?'Defensive':'Mixed';
+    const structural=above200&&golden?'Paper assets favoured':!above200&&!golden?'Defensive assets favoured':'Transitioning';
+
+    return {date,idx,p,r1,r20,r63,ma20:ma20[idx],ma50:ma50[idx],ma200:ma200[idx],ma20Arr:ma20,ma50Arr:ma50,ma200Arr:ma200,above20,above50,above200,golden,s50,s200,creditPositive,macroScore,macroRegime,factorMetrics,factorScore,factorRegime,breadth,participation,combined,transitionRisk,tactical,intermediate,structural};
+  }
+
+  function buildNarrative(m) {
+    const macroSentence = m.macroScore>=5 ? 'Paper assets remain structurally favoured over gold.' : m.macroScore<=-4 ? 'Defensive assets hold the stronger structural allocation signal.' : 'The cross-asset allocation backdrop is contested.';
+    const style = m.factorMetrics.QQQ?.signal>0 && m.factorMetrics.SPMO?.signal>0 ? 'Growth and momentum are leading' : m.factorMetrics.VYM?.signal>0 ? 'Dividend and defensive equity factors are leading' : 'Equity style leadership is mixed';
+    const breadth = m.breadth<45 ? 'participation is narrow' : m.breadth>=65 ? 'participation is broad' : 'participation is selective';
+    const tactical = m.r20<0 ? 'Short-term SPX/Gold momentum is weakening' : 'Short-term SPX/Gold momentum is constructive';
+    return `${macroSentence} ${style}, while ${breadth}. ${tactical}. Use this page as the exposure and setup-selection backdrop; Market Pulse and breadth should still control actual deployment timing.`;
+  }
+  function deriveGuidance(m) {
+    if(m.combined==='Broad Risk-On') return {posture:'Offensive',exposure:'85–100%',style:'Broad leaders',risk:'Extension / complacency',play:['Prioritise high-RS breakouts and first pullbacks.','Allow normal position size when Market Pulse and breadth confirm.','Hold winners through orderly consolidations.'],risks:['SPX/Gold loses its 50-day trend.','RSP/SPY and small-cap participation roll over.','Credit confirmation HYG/IEF turns down.']};
+    if(m.combined==='Selective Risk-On'||m.combined==='Risk-On') return {posture:'Selective offensive',exposure:'65–85%',style:'Growth / momentum',risk:'Leadership concentration',play:['Concentrate on liquid high-RS leaders and quality IPOs.','Require institutional volume outside the strongest groups.','Use smaller initial size in secondary names.'],risks:['Growth and momentum ratios fall below both 20D and 50D.','Equal-weight and small-cap relative strength deteriorate further.','Macro score falls into the transitional range.']};
+    if(m.combined==='Macro Constructive / Equity Rotation') return {posture:'Selective / cautious',exposure:'45–70%',style:'Only confirmed groups',risk:'Internal rotation',play:['Prefer pullbacks over extended breakouts.','Demand stronger breadth and group confirmation before adding.','Take profits faster in lower-quality setups.'],risks:['SPX/Gold breaks below 200D.','Defensive factors lead while credit weakens.','Market Pulse remains bearish despite macro support.']};
+    if(m.combined==='Countertrend Offensive Rally') return {posture:'Tactical',exposure:'30–55%',style:'Fast leaders only',risk:'Countertrend failure',play:['Treat strength as tactical rather than a new structural bull phase.','Shorten holding periods and avoid broad watchlist expansion.','Add only after macro confirmation improves.'],risks:['Offensive factors reverse before SPX/Gold confirms.','Credit remains defensive.','Rally breadth fails to broaden.']};
+    if(m.combined==='Defensive Alignment') return {posture:'Defensive',exposure:'0–30%',style:'Cash / defensives',risk:'Capital preservation',play:['Keep long exposure minimal unless a setup has exceptional asymmetry.','Use smaller positions and faster exits.','Wait for improving factor and breadth evidence before re-risking.'],risks:['A rapid upside regime transition can create underexposure.','Watch for SPX/Gold reclaiming 50D and improving credit.','Broad factor improvement would invalidate the defensive stance.']};
+    return {posture:'Contested',exposure:'30–60%',style:'A-quality only',risk:'Whipsaw / failed breakouts',play:['Reduce trade frequency and demand clean confirmation.','Keep risk per trade below normal.','Let Market Pulse determine whether the upper exposure ceiling is used.'],risks:['Conflicting horizons increase whipsaw risk.','One-day factor moves may not persist.','A decisive SPX/Gold 200D break can reset the regime.']};
+  }
+
+  function renderEvidence(m) {
+    const rows=[
+      ['Ratio versus 20 EMA',m.above20?'Above':'Below',m.above20?'positive':'negative'],
+      ['Ratio versus 50 SMA',m.above50?'Above':'Below',m.above50?'positive':'negative'],
+      ['Ratio versus 200 SMA',m.above200?'Above':'Below',m.above200?'positive':'negative'],
+      ['50 SMA versus 200 SMA',m.golden?'Golden structure':'Defensive structure',m.golden?'positive':'negative'],
+      ['20-session relative momentum',fmtPct(m.r20),toneFromNumber(m.r20,.2)],
+      ['Credit confirmation · HYG/IEF',m.creditPositive?'Confirming':'Not confirming',m.creditPositive?'positive':'negative']
+    ];
+    $('macroEvidence').innerHTML=rows.map(r=>`<div class="evidence-row"><span class="evidence-label">${esc(r[0])}</span>${tagHtml(r[1],r[2])}</div>`).join('');
+    $('horizonGrid').innerHTML=`<div class="horizon"><div class="name">Tactical · 20D</div><div class="state ${m.tactical==='Weakening'?'negative-text':m.tactical==='Strengthening'?'positive-text':'mixed-text'}">${m.tactical}</div></div><div class="horizon"><div class="name">Intermediate · 50D</div><div class="state">${m.intermediate}</div></div><div class="horizon"><div class="name">Structural · 200D</div><div class="state">${m.structural}</div></div>`;
+  }
+
+  function renderFactorTable(m) {
+    $('factorTableBody').innerHTML=FACTORS.map(f=>{
+      const x=m.factorMetrics[f.key]; if(!x) return `<tr><td><div class="factor-name"><span class="factor-dot"></span>${f.name}</div></td><td>${f.proxy}</td><td colspan="8">Unavailable</td></tr>`;
+      return `<tr><td><div class="factor-name"><span class="factor-dot" style="background:${x.tone==='positive'?'var(--green)':x.tone==='negative'?'var(--red)':'var(--amber)'}"></span>${f.name}</div></td><td>${f.proxy}</td><td class="${signClass(x.r1)}">${fmtPct(x.r1)}</td><td class="${signClass(x.r5)}">${fmtPct(x.r5)}</td><td class="${signClass(x.r20)}">${fmtPct(x.r20)}</td><td class="${signClass(x.r63)}">${fmtPct(x.r63)}</td><td>${x.above20?'Above':'Below'}</td><td>${x.above50?'Above':'Below'}</td><td>${x.trend}</td><td>${tagHtml(x.status,x.tone)}</td></tr>`;
+    }).join('');
+    $('factorParticipationTag').className=`tag ${m.breadth>=55?'positive':m.breadth<35?'negative':'mixed'}`;
+    $('factorParticipationTag').textContent=`${m.participation} · ${m.breadth}/100`;
+  }
+
+  function chartColors() { const css=getComputedStyle(document.documentElement); return {text:css.getPropertyValue('--muted').trim(),grid:css.getPropertyValue('--border-soft').trim(),line:css.getPropertyValue('--accent').trim(),ma20:css.getPropertyValue('--cyan').trim(),ma50:css.getPropertyValue('--amber').trim(),ma200:css.getPropertyValue('--purple').trim()}; }
+  function makeChart(id,labels,datasets,mini=false) {
+    const c=chartColors(); const el=$(id); if(!el) return;
+    if(state.charts.has(id)) state.charts.get(id).destroy(); el.hidden=false;
+    const chart=new Chart(el,{type:'line',data:{labels,datasets:datasets.map((d,i)=>({label:d.label,data:d.data,borderColor:d.color||[c.line,c.ma20,c.ma50,c.ma200][i],borderWidth:d.width||1.4,pointRadius:0,tension:.08,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:!mini,labels:{color:c.text,boxWidth:10,boxHeight:2,font:{size:9}}},tooltip:{displayColors:false,callbacks:{label:ctx=>`${ctx.dataset.label}: ${Number(ctx.parsed.y).toFixed(4)}`}}},scales:{x:{ticks:{color:c.text,maxTicksLimit:mini?5:9,font:{size:8}},grid:{display:false}},y:{position:'right',ticks:{color:c.text,font:{size:8},callback:v=>Number(v).toFixed(3)},grid:{color:c.grid}}}}});
+    state.charts.set(id,chart);
+  }
+  function renderMacroChart(m) {
+    const s=state.ratios.MACRO; const start=Math.max(0,m.idx-270); const labels=s.slice(start,m.idx+1).map(x=>x.date);
+    const data=s.slice(start,m.idx+1).map(x=>x.close);
+    const ma20=m.ma20Arr.slice(start,m.idx+1), ma50=m.ma50Arr.slice(start,m.idx+1), ma200=m.ma200Arr.slice(start,m.idx+1);
+    $('macroChartWrap').querySelector('.empty-state')?.remove();
+    makeChart('macroChart',labels,[{label:'SPX/Gold',data,width:1.8},{label:'20 EMA',data:ma20},{label:'50 SMA',data:ma50},{label:'200 SMA',data:ma200}],false);
+  }
+  function renderFactorCharts(m) {
+    for(const group of ['primary','secondary']) {
+      const container=$(group==='primary'?'primaryFactorGrid':'secondaryFactorGrid');
+      const subset=FACTORS.filter(f=>f.group===group);
+      container.innerHTML=subset.map((f,i)=>`<article class="card factor-chart-card"><div class="card-head" data-tv="${f.tv}"><div><div class="card-title">${f.name} · ${f.proxy}</div><div class="card-sub">Relative trend versus SPY</div></div><div class="chart-value"><strong id="fv-${f.key}">—</strong><span id="fm-${f.key}" class="chart-meta">—</span></div></div><div class="card-body"><div class="mini-chart-wrap"><canvas id="fc-${f.key}"></canvas></div></div></article>`).join('');
+      subset.forEach(f=>{
+        const s=state.ratios[f.key], x=m.factorMetrics[f.key]; if(!s||!x) return;
+        const end=x.index, start=Math.max(0,end-125), ma50=sma(s,50);
+        makeChart(`fc-${f.key}`,s.slice(start,end+1).map(v=>v.date),[{label:f.proxy,data:s.slice(start,end+1).map(v=>v.close),width:1.5},{label:'50 SMA',data:ma50.slice(start,end+1)}],true);
+        $(`fv-${f.key}`).textContent=fmt(x.value,4); $(`fm-${f.key}`).textContent=`${fmtPct(x.r1)} · ${x.status}`; $(`fm-${f.key}`).className=`chart-meta ${signClass(x.r1)}`;
+      });
+    }
+    document.querySelectorAll('[data-tv]').forEach(el=>el.onclick=()=>window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(el.dataset.tv)}`,'_blank','noopener'));
+  }
+
+  function regimeHistory(selectedIdx) {
+    const classifications=[];
+    for(let i=199;i<=selectedIdx;i++){ const c=computeAt(i); classifications.push({i,date:c.date,label:c.combined,above200:c.above200}); }
+    const current=classifications.at(-1); let age=0,prev=null,daysAbove=0;
+    if(current){ for(let i=classifications.length-1;i>=0;i--){ if(classifications[i].label===current.label) age++; else {prev=classifications[i];break;} } for(let i=classifications.length-1;i>=0&&classifications[i].above200;i--) daysAbove++; }
+    return {age,prev,daysAbove};
+  }
+
+  function renderAt(idx) {
+    if(!state.ratios.MACRO?.length) return;
+    state.selectedIndex=clamp(idx,Math.min(199,state.ratios.MACRO.length-1),state.ratios.MACRO.length-1);
+    const m=computeAt(state.selectedIndex); state.macro=m;
+    const guide=deriveGuidance(m); const historical=state.selectedIndex<state.latestIndex;
+    $('bannerKicker').textContent=`${historical?'Time Machine':'Live EOD'} · ${m.date} · ${m.combined}`;
+    $('regimeTitle').textContent=`${m.combined} · ${m.participation}`;
+    $('regimeTitle').className=`regime-title ${m.macroScore>=3?'positive':m.macroScore<=-3?'negative':'mixed'}`;
+    $('bannerDot').className=`status-dot ${m.macroScore>=3?'ok':m.macroScore<=-3?'bad':''}`;
+    $('regimeNarrative').textContent=buildNarrative(m);
+    $('portfolioPosture').textContent=guide.posture; $('exposureCeiling').textContent=guide.exposure; $('preferredStyle').textContent=guide.style; $('primaryRisk').textContent=guide.risk;
+    $('macroRegime').textContent=m.macroRegime; $('macroRegimeNote').textContent=`SPX/Gold ${fmt(m.p,3)} · ${fmtPct(m.r20)} 20D`;
+    $('factorRegime').textContent=m.factorRegime; $('factorRegimeNote').textContent=m.participation;
+    $('leadershipBreadth').textContent=m.participation; $('breadthPct').textContent=`${m.breadth}/100`; $('breadthFill').style.width=`${m.breadth}%`;
+    $('macroScore').textContent=`${m.macroScore>0?'+':''}${m.macroScore}`; $('factorScore').textContent=`${m.factorScore>0?'+':''}${m.factorScore}`;
+    $('transitionRisk').textContent=m.transitionRisk; $('transitionRiskNote').textContent=m.transitionRisk==='High'?'Near a regime boundary':'Structural signal currently stable';
+    $('macroRatioValue').textContent=fmt(m.p,4); $('macroRatioChange').textContent=fmtPct(m.r1); $('macroRatioChange').className=`chart-meta ${signClass(m.r1)}`;
+    $('regimeSynthesis').textContent=`Macro: ${m.macroRegime}. Style: ${m.factorRegime}. Participation: ${m.participation} (${m.breadth}/100). Tactical SPX/Gold condition: ${m.tactical}. Portfolio implication: ${guide.posture} with an exposure ceiling of ${guide.exposure}, subject to confirmation from the canonical FMP Nasdaq Breadth Engine and market participation.`;
+    $('playbook').innerHTML=guide.play.map(x=>`<div class="playbook-item">${esc(x)}</div>`).join(''); $('riskList').innerHTML=guide.risks.map(x=>`<div class="playbook-item">${esc(x)}</div>`).join('');
+    renderEvidence(m); renderFactorTable(m); renderMacroChart(m); renderFactorCharts(m);
+    const hist=regimeHistory(state.selectedIndex);
+    $('selectedDateStat').textContent=m.date; $('regimeAgeStat').textContent=`${hist.age} sessions`; $('previousTransitionStat').textContent=hist.prev?`${hist.prev.date} · ${hist.prev.label}`:'Not in loaded window'; $('daysAbove200Stat').textContent=`${hist.daysAbove} sessions`;
+    const available=Object.values(state.raw.series||{}).filter(x=>Array.isArray(x)&&x.length).length; $('completenessStat').textContent=`${available}/${Object.keys(SERIES).length} series`;
+    $('timeSlider').value=state.selectedIndex; $('dateInput').value=m.date; $('timelineCurrent').textContent=`${m.date} · ${m.combined}`; $('prevDayBtn').disabled=state.selectedIndex<=199;
+    $('asOfText').textContent=historical?'Historical reconstruction':'Latest completed EOD';
+  }
+
+  function buildRatios(raw) {
+    const get=k=>normalizeSeries(raw.series?.[SERIES[k].symbol]||raw.series?.[k]||[]);
+    const spy=get('SPY'); state.ratios={};
+    state.ratios.MACRO=ratioSeries(get('SPX'),get('GOLD'));
+    state.ratios.CREDIT=ratioSeries(get('HYG'),get('IEF'));
+    FACTORS.forEach(f=>state.ratios[f.key]=ratioSeries(get(f.key),spy));
+    if(state.ratios.MACRO.length<200) throw new Error(`Only ${state.ratios.MACRO.length} common SPX/Gold sessions were returned; at least 200 are required.`);
+    state.latestIndex=state.ratios.MACRO.length-1; state.dates=state.ratios.MACRO.map(x=>x.date);
+  }
+
+  async function loadData() {
+    const api=localStorage.getItem(STORAGE.apiUrl); if(!api){ $('settingsModal').classList.add('open'); return; }
+    loading(true);
+    try {
+      const lookback=Number(localStorage.getItem(STORAGE.lookback)||540); const from=daysAgo(lookback), to=isoDate(new Date());
+      const data=await jsonp(api,{action:'dashboard',from,to});
+      if(!data?.ok) throw new Error(data?.error||'The data endpoint returned an error.');
+      state.raw=data; state.dataErrors=data.errors||[]; buildRatios(data);
+      $('timeSlider').min=Math.min(199,state.latestIndex); $('timeSlider').max=state.latestIndex; $('timeSlider').disabled=false;
+      $('dateInput').min=state.dates[Math.min(199,state.latestIndex)]; $('dateInput').max=state.dates[state.latestIndex]; $('dateInput').disabled=false;
+      $('prevDayBtn').disabled=false; $('timelineStart').textContent=state.dates[Math.min(199,state.latestIndex)]; $('timelineEnd').textContent=state.dates[state.latestIndex];
+      $('updatedText').textContent=`FMP via Apps Script · loaded ${new Date(data.generatedAt||Date.now()).toLocaleString()}`; $('dataDot').className='status-dot ok';
+      renderAt(state.latestIndex);
+      if(state.dataErrors.length) toast(`Loaded with ${state.dataErrors.length} unavailable series.`, 'bad'); else toast('Capital Allocation Regime updated.', 'ok');
+    } catch(err) { console.error(err); $('dataDot').className='status-dot bad'; toast(err.message||String(err),'bad'); $('settingsModal').classList.add('open'); }
+    finally { loading(false); }
+  }
+
+  function rebuildAllCharts(){ if(state.ratios.MACRO?.length) renderAt(state.selectedIndex); }
+  function bind() {
+    $('settingsBtn').onclick=()=>{ $('apiUrlInput').value=localStorage.getItem(STORAGE.apiUrl)||''; $('themeSelect').value=localStorage.getItem(STORAGE.theme)||'auto'; $('lookbackSelect').value=localStorage.getItem(STORAGE.lookback)||'540'; $('settingsModal').classList.add('open'); };
+    $('closeSettingsBtn').onclick=()=>$('settingsModal').classList.remove('open');
+    $('settingsModal').onclick=e=>{ if(e.target===$('settingsModal')) $('settingsModal').classList.remove('open'); };
+    $('saveSettingsBtn').onclick=()=>{ const url=normalizeUrl($('apiUrlInput').value); if(!url) return toast('Paste the deployed Apps Script Web App URL.','bad'); localStorage.setItem(STORAGE.apiUrl,url); localStorage.setItem(STORAGE.lookback,$('lookbackSelect').value); applyTheme($('themeSelect').value); $('settingsModal').classList.remove('open'); loadData(); };
+    $('testConnectionBtn').onclick=async()=>{ const url=normalizeUrl($('apiUrlInput').value); if(!url) return toast('Paste the Web App URL first.','bad'); loading(true); try{const x=await jsonp(url,{action:'health'}); if(!x?.ok) throw new Error(x?.error||'Health check failed'); toast(`Endpoint connected · FMP key ${x.fmpKeyConfigured?'configured':'missing'}`,x.fmpKeyConfigured?'ok':'bad');}catch(e){toast(e.message,'bad');}finally{loading(false);} };
+    $('refreshBtn').onclick=loadData;
+    $('latestBtn').onclick=()=>renderAt(state.latestIndex);
+    $('timeSlider').oninput=e=>renderAt(Number(e.target.value));
+    $('dateInput').onchange=e=>{ const i=latestIndexOnOrBefore(state.ratios.MACRO,e.target.value); if(i>=199) renderAt(i); };
+    $('prevDayBtn').onclick=()=>renderAt(state.selectedIndex-1);
+    document.querySelectorAll('[data-tv]').forEach(el=>el.onclick=()=>window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(el.dataset.tv)}`,'_blank','noopener'));
+    matchMedia('(prefers-color-scheme: light)').addEventListener?.('change',()=>{if((localStorage.getItem(STORAGE.theme)||'auto')==='auto')applyTheme('auto');});
+  }
+  function init(){ const theme=localStorage.getItem(STORAGE.theme)||'auto'; applyTheme(theme); $('themeSelect').value=theme; bind(); if(localStorage.getItem(STORAGE.apiUrl)) loadData(); else $('settingsModal').classList.add('open'); }
+  init();
+})();
+</script>
+
+
+<style id="now-ai-brief-style">
+#nowAiBriefDock{position:fixed;right:16px;bottom:16px;z-index:99997;display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:520px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.now-ai-btn{border:1px solid rgba(120,140,165,.45);background:#0f766e;color:#fff;border-radius:8px;padding:9px 12px;font:800 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.now-ai-btn.secondary{background:#173b63}.now-ai-btn.ghost{background:#fff;color:#17324f}.now-ai-btn:hover{filter:brightness(1.08)}
+#nowAiBriefModal{position:fixed;inset:0;z-index:99999;background:rgba(4,10,18,.72);display:none;align-items:center;justify-content:center;padding:20px}
+#nowAiBriefModal.open{display:flex}.now-ai-box{width:min(1180px,96vw);height:min(820px,92vh);background:#fff;color:#132238;border-radius:12px;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;box-shadow:0 25px 90px rgba(0,0,0,.45)}
+.now-ai-head{padding:12px 14px;border-bottom:1px solid #d8e1eb;display:flex;justify-content:space-between;align-items:center;gap:12px}.now-ai-head b{font:900 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.now-ai-head span{font:11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#65758a}
+#nowAiBriefText{width:100%;height:100%;resize:none;border:0;outline:0;padding:16px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#17283d;background:#f8fafc;white-space:pre-wrap}
+.now-ai-actions{padding:10px 14px;border-top:1px solid #d8e1eb;display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:700px){#nowAiBriefDock{left:10px;right:10px;bottom:10px}.now-ai-btn{flex:1}.now-ai-box{width:100%;height:94vh}}
+</style>
+
+
+<script id="now-ai-brief-module">
+(()=>{
+'use strict';
+const PAGE_NAME="Capital Allocation Regime";
+const MASTER_PROMPT="You are the Chief Investment Officer and Global Asset Allocation Strategist at an institutional hedge fund. Analyze the complete Capital Allocation Regime dashboard as a macro allocation and equity-style decision system. Determine whether productive assets or defensive monetary assets are favored; evaluate SPX/Gold structure, tactical/intermediate/structural horizons, credit confirmation, factor leadership, participation breadth, size appetite, speculative appetite, transition risk and regime durability. Translate the evidence into an explicit swing-trading risk budget. Finish with: CAPITAL ALLOCATION REGIME; MACRO REGIME; FACTOR REGIME; CROSS-ASSET CONFIRMATION; CREDIT CONDITION; PARTICIPATION QUALITY; PREFERRED STYLE; PREFERRED MARKET CAP; SPECULATIVE APPETITE; TRANSITION RISK; PORTFOLIO POSTURE; EXPOSURE CEILING; RISK PER TRADE; WHAT TO OWN; WHAT TO AVOID; UPGRADE TRIGGERS; DOWNGRADE TRIGGERS; CONVICTION 0-100; MACRO RISK 0-100; TODAY'S GRADE.";
+const $=id=>document.getElementById(id);
+const clean=s=>String(s??'').replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+function visibleState(){
+ const inputs=[...document.querySelectorAll('input,select,textarea')].map(el=>{const name=el.getAttribute('aria-label')||el.name||el.id||el.placeholder||el.tagName;const value=el.type==='checkbox'||el.type==='radio'?String(el.checked):el.value;return value?`${name}: ${value}`:''}).filter(Boolean);
+ return inputs.join('\n');
+}
+function chartState(){
+ const out=[];
+ try{
+  if(window.Chart&&Chart.instances){
+   const instances=Chart.instances instanceof Map?[...Chart.instances.values()]:Object.values(Chart.instances||{});
+   instances.forEach((ch,i)=>{
+    if(!ch?.data)return;
+    const title=ch.options?.plugins?.title?.text||ch.canvas?.getAttribute('aria-label')||ch.canvas?.id||`Chart ${i+1}`;
+    const labels=Array.isArray(ch.data.labels)?ch.data.labels:[];
+    const end=Math.max(0,labels.length-12);
+    const ds=(ch.data.datasets||[]).map(d=>{const vals=(d.data||[]).slice(end).map(v=>Array.isArray(v)?v.join('/'):(v&&typeof v==='object'?(v.y??v.c??JSON.stringify(v)):v));return `${d.label||'Series'}: ${vals.join(', ')}`}).join(' | ');
+    out.push(`${title}\nDates: ${labels.slice(end).join(', ')}\n${ds}`);
+   });
+  }
+ }catch(e){out.push(`Chart extraction warning: ${e.message}`)}
+ return out.join('\n\n');
+}
+function sectionText(){
+ const clone=document.body.cloneNode(true);
+ clone.querySelectorAll('script,style,noscript,iframe,canvas,#nowAiBriefDock,#nowAiBriefModal').forEach(n=>n.remove());
+ clone.querySelectorAll('[hidden]').forEach(n=>n.removeAttribute('hidden'));
+ clone.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.setAttribute('aria-hidden','false'));
+ return clean(clone.textContent);
+}
+function sourceFreshness(){
+ const candidates=[...document.querySelectorAll('[id*="date" i],[id*="asof" i],[id*="updated" i],[class*="status" i],[class*="asof" i]')].slice(0,80).map(n=>clean(n.textContent)).filter(Boolean);
+ return [...new Set(candidates)].slice(0,30).join(' | ');
+}
+function buildBrief(){
+ const now=new Date();
+ return `${MASTER_PROMPT}
+
+==================================================
+SOURCE PACKAGE
+==================================================
+Page: ${PAGE_NAME}
+Captured: ${now.toLocaleString()}
+URL: ${location.href}
+Freshness/Status: ${sourceFreshness()||'Not explicitly detected'}
+
+IMPORTANT READING RULES
+- Use only evidence contained in this source package.
+- Treat stale, missing, unavailable or conflicting fields explicitly.
+- Hidden internal workspaces and inactive tabs are included in the DOM extraction.
+- Canvas chart datasets are appended when Chart.js exposes them.
+- Do not invent values that are absent.
+
+==================================================
+PAGE DATA — ALL DOM WORKSPACES
+==================================================
+${sectionText()}
+
+==================================================
+ACTIVE CONTROLS / FILTERS
+==================================================
+${visibleState()||'No active form controls detected.'}
+
+==================================================
+CHART DATA — RECENT OBSERVATIONS
+==================================================
+${chartState()||'No readable Chart.js datasets detected. Interpret chart-related claims only from the textual dashboard evidence.'}`;
+}
+async function copyText(text){try{await navigator.clipboard.writeText(text)}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}}
+function preview(){const text=buildBrief();$('nowAiBriefText').value=text;$('nowAiBriefMeta').textContent=`${text.length.toLocaleString()} characters captured`;$('nowAiBriefModal').classList.add('open')}
+function download(){const text=buildBrief();const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`NOW_AI_Brief_${PAGE_NAME.replace(/[^a-z0-9]+/gi,'_')}_${new Date().toISOString().slice(0,10)}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+async function askChatGPT(){
+  const brief=buildBrief();
+  // Open immediately inside the click event so Safari/Chrome do not block it.
+  const chatWindow=window.open('https://chatgpt.com/','_blank');
+  const button=$('nowAiAsk');
+  const old=button?button.textContent:'Ask ChatGPT';
+  try{
+    await copyText(brief);
+    if(button){
+      button.textContent='Copied — paste in ChatGPT';
+      setTimeout(()=>button.textContent=old,3200);
+    }
+    // Browsers do not provide a supported way for a public webpage to insert
+    // text directly into the ChatGPT composer. The complete brief is therefore
+    // placed on the clipboard for one Cmd+V / Ctrl+V paste.
+    if(!chatWindow){
+      alert('The AI brief was copied. Your browser blocked the new tab—open chatgpt.com, paste with Cmd+V or Ctrl+V, then press Send.');
+    }
+  }catch(error){
+    if(button)button.textContent='Copy failed';
+    alert('Could not copy the AI brief. Use Preview AI Brief, then select and copy the text manually.');
+    setTimeout(()=>{if(button)button.textContent=old},2500);
+  }
+}
+
+function mount(){
+ const dock=document.createElement('div');dock.id='nowAiBriefDock';dock.innerHTML='<button class="now-ai-btn" id="nowAiAsk">Ask ChatGPT</button><button class="now-ai-btn secondary" id="nowAiCopy">Copy AI Brief</button><button class="now-ai-btn secondary" id="nowAiPreview">Preview AI Brief</button><button class="now-ai-btn ghost" id="nowAiDownload">Download AI Brief</button>';document.body.appendChild(dock);
+ const modal=document.createElement('div');modal.id='nowAiBriefModal';modal.innerHTML='<div class="now-ai-box"><div class="now-ai-head"><div><b>NOW AI Brief Preview</b><br><span id="nowAiBriefMeta">—</span></div><button class="now-ai-btn ghost" id="nowAiClose">Close</button></div><div class="now-ai-chat-note">Ask ChatGPT copies the complete live brief, opens ChatGPT, then you paste with Cmd+V (Mac) or Ctrl+V (Windows) and press Send.</div><textarea id="nowAiBriefText" spellcheck="false"></textarea><div class="now-ai-actions"><button class="now-ai-btn secondary" id="nowAiModalCopy">Copy</button><button class="now-ai-btn" id="nowAiModalDownload">Download</button></div></div>';document.body.appendChild(modal);
+ $('nowAiAsk').onclick=askChatGPT;$('nowAiCopy').onclick=async()=>{const b=$('nowAiCopy');const old=b.textContent;await copyText(buildBrief());b.textContent='Copied ✓';setTimeout(()=>b.textContent=old,1600)};$('nowAiPreview').onclick=preview;$('nowAiDownload').onclick=download;$('nowAiClose').onclick=()=>modal.classList.remove('open');$('nowAiModalCopy').onclick=async()=>copyText($('nowAiBriefText').value);$('nowAiModalDownload').onclick=download;modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
+
+</body>
+</html>
