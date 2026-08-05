@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NASDAQ Institutional Breadth Laboratory · FMP Canonical</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root{--bg:#f7f8f6;--card:#fff;--line:#dedfd8;--text:#101214;--muted:#6f736e;--green:#11996e;--red:#d74747;--amber:#b97700;--blue:#2f6fde;--teal:#0f766e;--purple:#6d52c7;--mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:10px 12px 48px;overflow-x:hidden}.wrap{width:100%;max-width:none;margin:0}.app-tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:0;flex-wrap:nowrap;overflow-x:auto}.app-tabs a{padding:10px 18px;text-decoration:none;color:#777;font-size:11.5px;font-weight:600;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;transition:all .15s;font-family:var(--mono)}.app-tabs a.active{background:#fff;color:var(--teal);border-color:var(--line);border-bottom-color:#fff;margin-bottom:-1px}.app-tabs a:hover:not(.active){color:#0b0b0b;background:rgba(0,0,0,.03)}.head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:2px solid var(--line);padding-bottom:14px;margin-bottom:14px}.eyebrow{font:700 10px var(--mono);letter-spacing:.16em;color:var(--teal);text-transform:uppercase}.head h1{font-size:27px;margin:2px 0 4px;letter-spacing:-.03em}.sub{font:12px var(--mono);color:var(--muted)}.status{font:11px var(--mono);padding:8px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;min-width:260px}.status.ok{color:#087c55}.status.warn{color:#8a5a00}.status.err{color:#a52322}.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin-bottom:14px}.decision{border-left:5px solid var(--amber)}.decision.bull{border-left-color:var(--green)}.decision.bear{border-left-color:var(--red)}.decision-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.decision-title{font-size:22px;font-weight:850;letter-spacing:-.025em}.pill{display:inline-flex;padding:5px 9px;border-radius:999px;font:750 10px var(--mono);text-transform:uppercase;background:#f2f2ee;color:#555}.pill.bull{background:#e5f5ef;color:#0f6e56}.pill.bear{background:#fbeaea;color:#9a2c2b}.pill.warn{background:#fff3d8;color:#875800}.asof{font:10px var(--mono);color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin-top:13px}.metric{background:#f8f8f5;border:1px solid #ecece7;border-radius:8px;padding:9px 10px;min-width:0}.metric span{display:block;font:650 9px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.metric strong{display:block;margin-top:4px;font-size:17px;line-height:1.1}.metric small{display:block;margin-top:3px;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pos{color:var(--green)!important}.neg{color:var(--red)!important}.warnText{color:var(--amber)!important}.guide{margin-top:12px;border-top:1px solid #ecece7;padding-top:11px;font-size:12.5px;line-height:1.55}.controls{display:grid;grid-template-columns:auto auto auto minmax(260px,1fr) auto auto;gap:8px;align-items:center}.btn,input[type=date],input[type=number]{border:1px solid #d7d8d1;background:#fff;border-radius:7px;padding:7px 10px;font:700 11px var(--mono);color:#3f423f}.btn{cursor:pointer}.btn:hover{background:#f0f1ed}.slider{width:100%;accent-color:var(--teal)}.range{display:flex;justify-content:space-between;color:var(--muted);font:10px var(--mono);margin-top:7px}.grid2{display:grid;grid-template-columns:1fr;gap:14px}.chartbox{height:430px;position:relative}.primary-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.chart-toggle{display:flex;border:1px solid #d7d8d1;border-radius:7px;overflow:hidden}.chart-toggle button{border:0;background:#fff;padding:5px 10px;font:700 10px var(--mono);cursor:pointer;color:#60645f}.chart-toggle button+button{border-left:1px solid #d7d8d1}.chart-toggle button.active{background:#0f766e;color:#fff}.primary-read{font:700 10px var(--mono);color:var(--muted)}.chartbox.small{height:250px}.chartbox.medium{height:310px}.chartbox.support-chart{height:285px}.panelhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:9px}.label{font:700 10px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.title{font-size:16px;font-weight:800;margin-top:2px}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:7px}.participation-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:4px 0 8px}.pstat{background:#f8f8f5;border:1px solid #ecece7;border-radius:7px;padding:7px 9px}.pstat span{display:block;font:650 8px var(--mono);text-transform:uppercase;color:var(--muted);letter-spacing:.04em}.pstat strong{display:block;font-size:14px;margin-top:2px}.feed-note{font:10px var(--mono);color:var(--muted);margin-top:5px}.line{width:15px;height:2px;display:inline-block;vertical-align:middle;margin-right:4px}.calibration{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.calibration label{font:650 10px var(--mono);color:var(--muted);text-transform:uppercase}.calibration input{width:100%;margin-top:5px}.note{font-size:11px;color:var(--muted);line-height:1.5}.tablewrap{overflow:auto;max-height:360px;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;font:11px var(--mono)}th,td{padding:7px 8px;border-bottom:1px solid #ecece7;text-align:right;white-space:nowrap}th{position:sticky;top:0;background:#f3f4f0;color:#575b57;text-transform:uppercase;font-size:9px}th:first-child,td:first-child{text-align:left}.source{font-size:10px;color:var(--muted);margin-top:8px}.diagnostic-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.diag{background:#f8f8f5;border:1px solid #ecece7;border-radius:9px;padding:10px 11px}.diag .dlabel{font:700 9px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.diag .dvalue{font-size:16px;font-weight:850;margin-top:5px}.diag .dsub{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35}.traffic{display:inline-flex;align-items:center;gap:7px}.traffic-dot{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px rgba(185,119,0,.12)}.traffic-dot.bull{background:var(--green);box-shadow:0 0 0 3px rgba(17,153,110,.12)}.traffic-dot.bear{background:var(--red);box-shadow:0 0 0 3px rgba(215,71,71,.12)}.signal-table{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.signal-card{border:1px solid var(--line);border-radius:9px;padding:11px;background:#fff}.signal-card strong{display:block;font-size:13px}.signal-card span{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}.footer{text-align:center;font:10px var(--mono);color:var(--muted);margin-top:18px}@media(max-width:1250px){.metrics{grid-template-columns:repeat(4,1fr)}.diagnostic-grid{grid-template-columns:repeat(3,1fr)}.signal-table{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}@media(max-width:760px){body{padding:10px}.head{display:block}.status{margin-top:10px}.metrics,.diagnostic-grid,.signal-table{grid-template-columns:repeat(2,1fr)}.controls{grid-template-columns:repeat(3,auto)}.slider{grid-column:1/-1;grid-row:2}.calibration{grid-template-columns:1fr 1fr}.chartbox{height:340px}}
+.benchmark-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:stretch}.benchmark-column{min-width:0;height:100%}.benchmark-column>.panel{margin-bottom:0;height:100%;display:flex;flex-direction:column}.benchmark-chart{height:350px}.combined-chart-stack{display:grid;grid-template-rows:360px 230px 230px;gap:0;flex:1}.combined-subchart{border-top:1px solid var(--line);padding-top:8px;min-height:220px}.combined-subhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px 7px}.combined-subtitle{font:800 11px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:#4f534f}.combined-subchart .chartbox{height:190px}.interpretation-panel{border-left:5px solid var(--amber)}.interpretation-divider{height:1px;background:var(--line);margin:12px 0}.interpretation-panel.bull{border-left-color:var(--green)}.interpretation-panel.bear{border-left-color:var(--red)}.interpretation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.interpret-card{background:#f8f8f5;border:1px solid #ecece7;border-radius:9px;padding:12px}.interpret-card span{display:block;font:700 9px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.interpret-card strong{display:block;font-size:14px;margin-top:6px}.interpret-card p{font-size:11px;line-height:1.5;color:#4f534f;margin:7px 0 0}
+.decision-widgets{display:grid;grid-template-columns:1.15fr .85fr;gap:10px;margin-top:10px}
+.widget-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}
+.widget-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:9px}
+.widget-title{font-size:13px;font-weight:850}
+.widget-sub{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.35}
+.posture-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.posture-item{background:#f8f8f5;border:1px solid #ecece7;border-radius:8px;padding:9px}
+.posture-label{font:700 8px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.posture-value{display:flex;justify-content:space-between;gap:6px;align-items:baseline;margin-top:5px}
+.posture-value strong{font-size:15px}
+.posture-value small{font-size:9px;color:var(--muted)}
+.progress-track{height:6px;background:#e9eae5;border-radius:999px;overflow:hidden;margin-top:7px}
+.progress-fill{height:100%;border-radius:999px;background:var(--amber);transition:width .2s ease}
+.progress-fill.bull{background:var(--green)}
+.progress-fill.bear{background:var(--red)}
+.recovery-list{display:grid;grid-template-columns:1fr;gap:6px}
+.recovery-item{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:7px;align-items:center;padding:7px 8px;border:1px solid #ecece7;border-radius:7px;background:#f8f8f5}
+.recovery-check{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font:800 9px var(--mono);background:#fbeaea;color:#a52322}
+.recovery-item.pass .recovery-check{background:#e5f5ef;color:#0f6e56}
+.recovery-name{font-size:10px;font-weight:750}
+.recovery-reading{font:700 9px var(--mono);color:var(--muted)}
+.recovery-score{font:850 18px var(--mono)}
+.recovery-score small{font-size:10px;color:var(--muted)}
+.health-context{display:inline-flex;align-items:center;gap:5px;margin-left:5px;font:750 9px var(--mono);padding:2px 6px;border-radius:999px;background:#f2f2ee;color:#555;vertical-align:middle}
+.health-context.bull{background:#e5f5ef;color:#0f6e56}
+.health-context.bear{background:#fbeaea;color:#9a2c2b}
+.health-context.warn{background:#fff3d8;color:#875800}
+@media(max-width:1250px){.decision-widgets{grid-template-columns:1fr}.posture-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.posture-grid{grid-template-columns:1fr}}
+@media(max-width:1250px){.benchmark-grid{grid-template-columns:1fr}.interpretation-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.interpretation-grid{grid-template-columns:1fr}.benchmark-chart{height:340px}.chartbox.support-chart{height:270px}}
+.now-ai-chat-note{
+  margin:0 0 10px;
+  padding:9px 11px;
+  border:1px solid rgba(16,185,129,.28);
+  border-radius:8px;
+  background:rgba(16,185,129,.08);
+  color:inherit;
+  font:700 10px/1.45 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+
+</style>
+</head>
+<body><div class="wrap">
+<div class="app-tabs">
+    <a href="index.html">Market Dashboard</a>
+    <a href="MarketCommandCenter.html">Market Command Center</a>
+    <a href="Institutional_PM_Updated.html">Institutional Update</a>
+    <a href="market_breadth.html">Market Breadth</a>
+    <a href="rs_radar.html">RS Radar</a>
+    <a href="MarketRegime.html">Market Regime</a>
+    <a href="stockbee_market_monitor_live.html">Stockbee Monitor</a>
+    <a href="nasi_institutional_command_center.html" class="active">NASI Command Center</a>
+    <a href="sata_watchlist_dashboard.html">SATA Chart</a>
+    <a href="PowerList.html">Power List</a>
+    <a href="liquid_leaders.html">Liquid Leaders</a>
+    <a href="group_momentum.html">Group Momentum</a>
+    <a href="PriceStructure.html">Price Structure</a>
+    <a href="StageAnalysis.html">Stage Analysis</a>
+    <a href="tv_watchlist.html">TradingView Watchlist</a>
+    <a href="PortfolioManagement.html">Portfolio Management</a>
+    <a href="Playbook.html">Playbook</a>
+  </div>
+<header class="head"><div><div class="eyebrow">Institutional Breadth Engine</div><h1>NASDAQ Institutional Breadth Laboratory</h1><div class="sub">Decision-first NASI, McClellan, participation, thrust, washout, calibration and historical regime analysis</div></div><div class="status warn" id="status">Loading breadth and Stockbee benchmark feeds…</div></header>
+<section class="panel"><div class="panelhead"><div><div class="label">Time machine</div><div class="title">Historical breadth replay</div></div><div class="asof" id="selectedLabel">—</div></div><div class="controls"><button class="btn" id="prev">◀</button><button class="btn" id="play">▶ Play</button><button class="btn" id="next">▶</button><input id="slider" class="slider" type="range" min="0" max="0" value="0"><input id="dateInput" type="date"><button class="btn" id="latest">↻ Latest</button></div><div class="range"><span id="startDate">—</span><span id="endDate">—</span></div></section>
+<section class="panel decision" id="decision"><div class="decision-top"><div><div class="label">Decision first</div><div class="decision-title" id="decisionTitle">Loading internal breadth…</div><div style="margin-top:6px"><span class="pill warn" id="riskPill">Waiting</span> <span class="pill" id="signalPill">—</span></div></div><div class="asof" id="asof">—</div></div><div class="metrics" id="metrics"></div><div class="guide" id="guidance">Building the institutional breadth conclusion…</div></section>
+
+<section class="panel interpretation-panel" id="decisionCenter">
+  <div class="panelhead">
+    <div>
+      <div class="label">Institutional breadth decision center</div>
+      <div class="title">Composite evidence, interpretation and portfolio action</div>
+    </div>
+    <div style="display:flex;gap:7px;align-items:center">
+      <span class="pill" id="gradeBadge">—</span>
+      <span class="pill" id="interpretationBadge">—</span>
+    </div>
+  </div>
+
+  <div class="diagnostic-grid" id="diagnostics"></div>
+  <div class="signal-table" id="signalLab" style="margin-top:10px"></div>
+
+  <div class="decision-widgets">
+    <div class="widget-card">
+      <div class="widget-head">
+        <div>
+          <div class="label">Portfolio operating range</div>
+          <div class="widget-title">Risk budget and execution posture</div>
+          <div class="widget-sub">Dynamic sizing guidance derived from breadth health, trend, momentum and participation.</div>
+        </div>
+        <span class="pill" id="postureBadge">—</span>
+      </div>
+      <div class="posture-grid" id="postureGrid"></div>
+    </div>
+
+    <div class="widget-card">
+      <div class="widget-head">
+        <div>
+          <div class="label">Internal recovery checklist</div>
+          <div class="widget-title">What must improve before increasing exposure</div>
+          <div class="widget-sub">A rules-based breadth repair score, not a prediction.</div>
+        </div>
+        <div class="recovery-score"><span id="recoveryScore">0</span><small>/5</small></div>
+      </div>
+      <div class="recovery-list" id="recoveryList"></div>
+    </div>
+  </div>
+
+  <div class="interpretation-divider"></div>
+
+  <div class="interpretation-grid">
+    <div class="interpret-card">
+      <span>Current state</span>
+      <strong id="interpState">—</strong>
+      <p id="interpWhy">Waiting for breadth evidence.</p>
+    </div>
+    <div class="interpret-card">
+      <span>What is deteriorating</span>
+      <strong id="interpDeterioration">—</strong>
+      <p id="interpDeteriorationDetail">—</p>
+    </div>
+    <div class="interpret-card">
+      <span>What would improve the signal</span>
+      <strong id="interpRepair">Breadth repair checklist</strong>
+      <p id="interpRepairDetail">—</p>
+    </div>
+    <div class="interpret-card">
+      <span>Portfolio implication</span>
+      <strong id="interpPortfolio">—</strong>
+      <p id="interpPortfolioDetail">—</p>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<div class="benchmark-grid">
+  <div class="benchmark-column">
+    <section class="panel">
+      <div class="panelhead">
+        <div>
+          <div class="label">Broad-market benchmark</div>
+          <div class="title">SPY × McClellan Summation Index</div>
+        </div>
+        <span class="pill" id="spyTrendBadge">—</span>
+      </div>
+      <div class="primary-read">Candlestick · FMP NASI · NASI 50-day SMA</div>
+      <div class="combined-chart-stack">
+        <div>
+          <div class="chartbox benchmark-chart"><canvas id="spyNasiChart"></canvas></div>
+          <div class="legend">
+            <span><i class="line" style="background:#0f766e"></i>FMP NASI</span>
+            <span><i class="line" style="background:#2f6fde"></i>NASI 50-day SMA</span>
+            <span><i class="line" style="background:#999"></i>NASI zero</span>
+          </div>
+        </div>
+        <div class="combined-subchart">
+          <div class="combined-subhead">
+            <div>
+              <div class="label">Momentum</div>
+              <div class="combined-subtitle">McClellan Oscillator</div>
+            </div>
+            <span class="pill" id="oscBadge">—</span>
+          </div>
+          <div class="chartbox"><canvas id="oscChart"></canvas></div>
+        </div>
+
+        <div class="combined-subchart">
+          <div class="combined-subhead">
+            <div>
+              <div class="label">Ratio-adjusted breadth</div>
+              <div class="combined-subtitle">RANA impulse · daily bars + 5-day mean</div>
+            </div>
+            <span class="pill" id="ranaBadge">—</span>
+          </div>
+          <div class="chartbox"><canvas id="ranaChart"></canvas></div>
+        </div>
+
+      </div>
+      <div class="feed-note">SPY, McClellan Oscillator and RANA share one synchronized date scale. The visible time axis appears only on the bottom RANA chart; hover any chart to compare the same session.</div>
+    </section>
+  </div>
+
+  <div class="benchmark-column">
+    <section class="panel">
+      <div class="panelhead">
+        <div>
+          <div class="label">Growth / leadership benchmark</div>
+          <div class="title">QQQ × McClellan Summation Index</div>
+        </div>
+        <span class="pill" id="qqqTrendBadge">—</span>
+      </div>
+      <div class="primary-read" id="qqqRead">Candlestick · FMP NASI · NASI 50-day SMA · exact Stockbee QQQ series</div>
+      <div class="combined-chart-stack">
+        <div>
+          <div class="chartbox benchmark-chart"><canvas id="qqqNasiChart"></canvas></div>
+          <div class="legend">
+            <span><i class="line" style="background:#0f766e"></i>FMP NASI</span>
+            <span><i class="line" style="background:#2f6fde"></i>NASI 50-day SMA</span>
+            <span><i class="line" style="background:#999"></i>NASI zero</span>
+          </div>
+        </div>
+        <div class="combined-subchart">
+          <div class="combined-subhead">
+            <div>
+              <div class="label">Participation</div>
+              <div class="combined-subtitle">Daily net advances</div>
+            </div>
+            <span class="pill" id="participationBadge">—</span>
+          </div>
+          <div class="participation-stats" id="participationStats"></div>
+          <div class="chartbox"><canvas id="adChart"></canvas></div>
+        </div>
+
+        <div class="combined-subchart">
+          <div class="combined-subhead">
+            <div>
+              <div class="label">Participation quality</div>
+              <div class="combined-subtitle">A/D balance vs neutral · daily bars + 5-day mean</div>
+            </div>
+            <span class="pill" id="adRatioBadge">—</span>
+          </div>
+          <div class="chartbox"><canvas id="adRatioChart"></canvas></div>
+        </div>
+
+      </div>
+      <div class="feed-note">QQQ, daily net advances and the A/D ratio share the same visible sessions and horizontal time scale. Green columns show positive net breadth; red columns show negative net breadth. Hover any chart to compare the same date.</div>
+    </section>
+  </div>
+</div>
+
+
+
+
+
+
+<section class="panel"><div class="panelhead"><div><div class="label">Canonical source</div><div class="title">FMP Nasdaq Breadth Engine</div></div><span class="pill bull">FMP ONLY · FIXED</span></div><div class="note">Manual NASI calibration and legacy spreadsheet inputs are disabled. All NASI, 50 SMA, McClellan, RANA, participation and risk signals come directly from the published FMP-derived breadth engine.</div></section>
+<section class="panel"><div class="panelhead"><div><div class="label">Recent audit</div><div class="title">Latest breadth observations</div></div><button class="btn" id="refresh">Refresh feeds</button></div><div class="tablewrap"><table><thead><tr><th>Date</th><th>Adv</th><th>Dec</th><th>A/D</th><th>RANA</th><th>Osc</th><th>NASI</th><th>50 SMA</th><th>Health</th><th>Risk</th><th>Signal</th></tr></thead><tbody id="tbody"></tbody></table></div><div class="source">Data source: published FMP-derived MARKET_BREADTH_ENGINE and MARKET_BREADTH_LATEST feeds. This is an independent proprietary series, not the official StockCharts $NASI.</div></section>
+<div class="footer">Educational decision-support system · not financial advice</div>
+</div>
+<script>
+const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vQJgJsQkbBX3USosTbGEO8iwpdXK6Clc6hoUq6lqA7IlbJnkboWtq0asanPGUuZoMIXx9VxRC9d-q6h/pub';
+const GIDS=['1906345525','1126999134'];
+const STOCKBEE_SHEET_ID='1O6OhS7ciA8zwfycBfGPbP2fWJnR0pn2UUvFZVDP9jpE';
+const STOCKBEE_URLS=[`https://docs.google.com/spreadsheets/d/${STOCKBEE_SHEET_ID}/pub?output=csv&_=${Date.now()}`,`https://docs.google.com/spreadsheets/d/${STOCKBEE_SHEET_ID}/gviz/tq?tqx=out:csv&_=${Date.now()}`];
+let rows=[],metrics={},priceByDate={},idx=-1,timer=null,offset=0;
+let spyNasiChart=null,qqqNasiChart=null,oscChart=null,adChart=null,ranaChart=null,adRatioChart=null;
+let liveEtfData={SPY:{},QQQ:{}};
+const n=v=>{const x=Number(String(v??'').replace(/,/g,'').replace(/%/g,'').trim());return Number.isFinite(x)?x:null};
+const norm=s=>String(s??'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ');
+const iso=s=>{const t=String(s??'').trim();if(/^\d{4}-\d{2}-\d{2}$/.test(t))return t;const d=new Date(t);return isNaN(d)?'':d.toISOString().slice(0,10)};
+function candidates(g){return [`${PUB}?gid=${g}&single=true&output=csv&_=${Date.now()}`,`${PUB}?output=csv&gid=${g}&single=true&_=${Date.now()}`,`${PUB}?gid=${g}&single=true&output=csv`];}
+async function fetchText(url){const c=new AbortController();const t=setTimeout(()=>c.abort(),12000);try{const r=await fetch(url,{cache:'no-store',redirect:'follow',signal:c.signal});if(!r.ok)throw Error(`HTTP ${r.status}`);const x=await r.text();if(!x||x.trim().startsWith('<'))throw Error('HTML returned');return x;}finally{clearTimeout(t)}}
+function parseHistory(text){const data=Papa.parse(text,{skipEmptyLines:true}).data;if(data.length<2)return[];const h=data[0].map(norm);const find=(...names)=>h.findIndex(x=>names.some(y=>x===y||x.includes(y)));const c={date:find('date'),adv:find('advances'),dec:find('declines'),unch:find('unchanged'),eligible:find('eligible universe'),rana:find('rana'),osc:find('mcclellan oscillator'),nasi:find('fmp nasi'),nasi50:find('nasi 50 sma'),health:find('breadth health score'),risk:find('risk mode'),signal:find('signal'),regime:find('breadth trend regime','trend regime'),momentum:find('breadth momentum'),guidance:find('tactical guidance'),quality:find('data quality')};if(c.date<0||c.nasi<0)return[];return data.slice(1).map(r=>({date:iso(r[c.date]),adv:n(r[c.adv]),dec:n(r[c.dec]),unch:n(r[c.unch]),eligible:n(r[c.eligible]),rana:n(r[c.rana]),osc:n(r[c.osc]),nasi:n(r[c.nasi]),nasi50:n(r[c.nasi50]),health:n(r[c.health]),risk:r[c.risk]||'',signal:r[c.signal]||'',regime:r[c.regime]||'',momentum:r[c.momentum]||'',guidance:r[c.guidance]||'',quality:n(r[c.quality])})).filter(r=>r.date&&r.nasi!=null).sort((a,b)=>a.date.localeCompare(b.date));}
+function parseLatest(text){const d=Papa.parse(text,{skipEmptyLines:true}).data;const out={};d.slice(1).forEach(r=>{if(r[0])out[norm(r[0])]=r[1]});return out}
+
+async function fetchDirectEtfHistory(){
+  try{
+    const [spyRes,qqqRes]=await Promise.all([
+      fetch('http://localhost:8000/api/history/SPY',{cache:'no-store'}),
+      fetch('http://localhost:8000/api/history/QQQ',{cache:'no-store'})
+    ]);
+
+    if(!spyRes.ok||!qqqRes.ok){
+      throw new Error(`Direct ETF HTTP ${spyRes.status}/${qqqRes.status}`);
+    }
+
+    const [spyJson,qqqJson]=await Promise.all([spyRes.json(),qqqRes.json()]);
+
+    liveEtfData={SPY:{},QQQ:{}};
+
+    if(Array.isArray(spyJson.data)){
+      spyJson.data.forEach(bar=>{
+        if(bar&&bar.Date){
+          liveEtfData.SPY[bar.Date]=bar;
+        }
+      });
+    }
+
+    if(Array.isArray(qqqJson.data)){
+      qqqJson.data.forEach(bar=>{
+        if(bar&&bar.Date){
+          liveEtfData.QQQ[bar.Date]=bar;
+        }
+      });
+    }
+
+    return Object.keys(liveEtfData.SPY).length+
+           Object.keys(liveEtfData.QQQ).length;
+  }catch(error){
+    console.warn('Direct ETF history unavailable; using Stockbee sheet fallback.',error);
+    liveEtfData={SPY:{},QQQ:{}};
+    return 0;
+  }
+}
+
+function mergeDirectEtfIntoPriceMap(){
+  const dates=new Set([
+    ...Object.keys(liveEtfData.SPY),
+    ...Object.keys(liveEtfData.QQQ)
+  ]);
+
+  dates.forEach(date=>{
+    if(!priceByDate[date]) priceByDate[date]={spy:null,qqq:null};
+
+    const spyBar=liveEtfData.SPY[date];
+    if(spyBar){
+      const o=Number(spyBar.Open),h=Number(spyBar.High),
+            l=Number(spyBar.Low),c=Number(spyBar.Close);
+      if([o,h,l,c].every(Number.isFinite)){
+        priceByDate[date].spy=c;
+        priceByDate[date].spyOhlc={o,h,l,c};
+      }
+    }
+
+    const qqqBar=liveEtfData.QQQ[date];
+    if(qqqBar){
+      const o=Number(qqqBar.Open),h=Number(qqqBar.High),
+            l=Number(qqqBar.Low),c=Number(qqqBar.Close);
+      if([o,h,l,c].every(Number.isFinite)){
+        priceByDate[date].qqq=c;
+        priceByDate[date].qqqOhlc={o,h,l,c};
+      }
+    }
+  });
+}
+function parseStockbeePrices(text){
+  const rawRows=Papa.parse(text.trim(),{skipEmptyLines:false}).data;
+  const parsed=[];
+
+  for(const row of rawRows){
+    if(!row||!row[0]||!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(String(row[0]).trim())) continue;
+
+    const num=value=>{
+      if(value===undefined||value===null||String(value).trim()==='') return null;
+      const valueNumber=parseFloat(String(value).replace(/,/g,''));
+      return Number.isFinite(valueNumber)?valueNumber:null;
+    };
+
+    // Exact mapping from stockbee_market_monitor_live.html.
+    parsed.push({
+      sourceDate:String(row[0]).trim(),
+      spy:num(row[15]),
+      qqq:num(row[16])
+    });
+  }
+
+  // Stockbee data is newest-first.
+  parsed.reverse();
+
+  const out={};
+  parsed.forEach(item=>{
+    const parts=item.sourceDate.split('/').map(Number);
+    if(parts.length!==3) return;
+
+    const date=`${parts[2]}-${String(parts[0]).padStart(2,'0')}-${String(parts[1]).padStart(2,'0')}`;
+
+    if(Number.isFinite(item.spy)||Number.isFinite(item.qqq)){
+      out[date]={
+        spy:item.spy,
+        qqq:item.qqq
+      };
+    }
+  });
+
+  return out;
+}
+async function loadBenchmarkPrices(){
+  let best={};
+
+  for(const url of STOCKBEE_URLS){
+    try{
+      const csv=await fetchText(url);
+      const parsed=parseStockbeePrices(csv);
+      if(Object.keys(parsed).length>Object.keys(best).length) best=parsed;
+      if(Object.keys(best).length>20) break;
+    }catch(error){
+      console.warn('Benchmark price feed failed',error);
+    }
+  }
+
+  priceByDate=best;
+  return Object.keys(best).length;
+}
+async function load(){
+  setStatus('warn','Loading breadth and Stockbee benchmark feeds…');
+  let hist=[],latest={},errors=[];
+  try{
+    const pricePromise=Promise.all([
+      loadBenchmarkPrices(),
+      fetchDirectEtfHistory()
+    ]);
+    for(const gid of GIDS){
+      for(const u of candidates(gid)){
+        try{
+          const t=await fetchText(u);
+          const h=parseHistory(t); if(h.length>hist.length)hist=h;
+          const l=parseLatest(t); if(Object.keys(l).length>Object.keys(latest).length)latest=l;
+          if(h.length||Object.keys(l).length)break;
+        }catch(e){errors.push(`${gid}:${e.message}`)}
+      }
+    }
+    const [sheetPriceCount,directEtfCount]=await pricePromise;
+    mergeDirectEtfIntoPriceMap();
+    const priceCount=directEtfCount||sheetPriceCount;
+    if(!hist.length){setStatus('err','Breadth feed unavailable · '+errors.slice(-2).join(' | '));return}
+    rows=hist; metrics=latest; idx=rows.length-1;
+    document.getElementById('slider').max=rows.length-1;
+        render();
+    setStatus('ok',`${rows.length} breadth sessions loaded · ${priceCount?priceCount+' benchmark records linked':'benchmark price overlay unavailable'} · ${directEtfCount?'direct SPY/QQQ OHLC active':'Stockbee sheet fallback active'} · latest ${rows.at(-1).date}`);
+  }catch(e){
+    console.error(e);
+    setStatus('err','Render error · '+e.message);
+  }
+}
+function setStatus(k,t){const e=document.getElementById('status');e.className='status '+k;e.textContent=t}
+function val(r,key){if(r[key]!=null)return r[key];const m={health:'breadth health score',risk:'risk mode',signal:'signal',regime:'breadth trend regime',momentum:'breadth momentum',guidance:'tactical guidance'};return metrics[m[key]]??''}
+function adjusted(r){return {...r,adjNasi:r.nasi,adj50:r.nasi50}}
+function tone(r){const risk=String(val(r,'risk')).toUpperCase(),signal=String(val(r,'signal')).toUpperCase(),health=Number(val(r,'health'));if(risk.includes('OFF')||signal.includes('BREAK')||signal.includes('SELL')||health<35)return'bear';if(risk.includes('ON')&&health>=70)return'bull';return'warn'}
+function fmt(x,d=0,s=false){if(x==null||!Number.isFinite(Number(x)))return'—';const v=Number(x);return(s&&v>0?'+':'')+v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
+function smaSeries(values,period){const out=new Array(values.length).fill(null);for(let i=period-1;i<values.length;i++){const w=values.slice(i-period+1,i+1);if(w.every(Number.isFinite))out[i]=w.reduce((a,b)=>a+b,0)/period;}return out}
+function syntheticOhlc(values){
+  return values.map((c,i)=>{
+    if(!Number.isFinite(c)) return null;
+
+    const prev=i&&Number.isFinite(values[i-1])?values[i-1]:c;
+    const pctMove=prev!==0?Math.abs(c-prev)/Math.abs(prev):0;
+
+    /*
+     * The benchmark source supplies daily closes, not true OHLC bars.
+     * We reconstruct a visual candle from consecutive closes. When a
+     * source/proxy discontinuity exceeds 15%, do not draw a giant body;
+     * anchor the synthetic open to the current close and use a normal wick.
+     */
+    const isOutlier=pctMove>0.15;
+    const open=isOutlier?c:prev;
+    const typicalRange=Math.max(Math.abs(c)*0.004,Math.abs(c-open)*0.30);
+
+    return{
+      o:open,
+      c,
+      h:Math.max(open,c)+typicalRange,
+      l:Math.min(open,c)-typicalRange,
+      sourceOutlier:isOutlier
+    };
+  });
+}
+function autoRange(series,extras=[]){const vals=[];series.forEach(o=>{if(o){if(Number.isFinite(o.l))vals.push(o.l);if(Number.isFinite(o.h))vals.push(o.h)}});extras.flat().forEach(v=>{if(Number.isFinite(v))vals.push(v)});if(!vals.length)return{};const lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(hi-lo,Math.abs(hi)*.025,1);return{min:lo-span*.08,max:hi+span*.08};}
+const candleWicksPlugin={id:'labCandleWicks',afterDatasetsDraw(chart){const{ctx}=chart;chart.data.datasets.forEach((ds,di)=>{if(!ds.isCandle||!ds.ohlc)return;const meta=chart.getDatasetMeta(di),scale=chart.scales[ds.yAxisID||'yPrice'];ctx.save();ctx.strokeStyle='#454843';ctx.lineWidth=1;meta.data.forEach((bar,i)=>{const o=ds.ohlc[i];if(!o)return;ctx.beginPath();ctx.moveTo(bar.x,scale.getPixelForValue(o.h));ctx.lineTo(bar.x,scale.getPixelForValue(o.l));ctx.stroke()});ctx.restore()})}};
+Chart.register(candleWicksPlugin);
+function renderDiagnostics(r,history,t){
+  const health=Number(val(r,'health'))||0;
+  const five=history.length>5?r.adjNasi-history.at(-6).adjNasi:null;
+  const ten=history.length>10?r.adjNasi-history.at(-11).adjNasi:null;
+  const ratio=r.dec?r.adv/r.dec:null;
+  const advPct=(r.adv+r.dec)>0?r.adv/(r.adv+r.dec)*100:null;
+  const dist=r.adj50==null?null:r.adjNasi-r.adj50;
+  const grade=health>=80?'A+':health>=70?'A':health>=60?'B':health>=45?'C':health>=35?'D':'F';
+  const gradeText=grade==='A+'?'Institutional accumulation':grade==='A'?'Strong breadth':grade==='B'?'Healthy participation':grade==='C'?'Transitional':grade==='D'?'Weakening internals':'Internal breakdown';
+  const thrust=advPct!=null&&advPct>=80;
+  const washout=advPct!=null&&advPct<=20;
+  const expansion=ratio!=null&&ratio>=1.5&&r.osc>0;
+  const deterioration=dist!=null&&dist<0&&five!=null&&five<0;
+  document.getElementById('gradeBadge').textContent=`${grade} · ${gradeText}`;
+  document.getElementById('gradeBadge').className='pill '+t;
+  const items=[
+    ['Traffic light',`<span class="traffic"><i class="traffic-dot ${t}"></i>${t==='bull'?'GREEN':t==='bear'?'RED':'AMBER'}</span>`,'Composite institutional posture'],
+    ['NASI 5-day slope',fmt(five,0,true),five>=0?'Breadth trend improving':'Breadth trend deteriorating'],
+    ['NASI 10-day ROC',ten==null?'—':fmt((ten/(Math.abs(history.at(-11).adjNasi)||1))*100,1,true)+'%',ten>=0?'Positive medium impulse':'Negative medium impulse'],
+    ['Participation',advPct==null?'—':fmt(advPct,1)+'%',ratio>=1?'Advancers lead decliners':'Decliners dominate'],
+    ['Trend confirmation',fmt(dist,0,true),dist>=0?'NASI above 50 SMA':'NASI below 50 SMA'],
+    ['Composite grade',grade,gradeText]
+  ];
+  document.getElementById('diagnostics').innerHTML=items.map(x=>`<div class="diag"><div class="dlabel">${x[0]}</div><div class="dvalue">${x[1]}</div><div class="dsub">${x[2]}</div></div>`).join('');
+  const signals=[
+    ['Breadth thrust',thrust?'ACTIVE':'Inactive',thrust?'At least 80% of directional issues advanced.':'No exceptional upside participation surge.'],
+    ['Washout / capitulation',washout?'ACTIVE':'Inactive',washout?'At most 20% of directional issues advanced.':'No extreme downside participation washout.'],
+    ['Expansion confirmation',expansion?'CONFIRMED':'Unconfirmed',expansion?'A/D ratio and oscillator confirm expansion.':'Impulse and daily participation are not fully aligned.'],
+    ['Internal deterioration',deterioration?'ACTIVE':'Inactive',deterioration?'Below 50 SMA with negative five-day slope.':'No combined trend-and-slope breakdown.']
+  ];
+  document.getElementById('signalLab').innerHTML=signals.map(x=>`<div class="signal-card"><strong>${x[0]} · ${x[1]}</strong><span>${x[2]}</span></div>`).join('');
+  document.getElementById('ranaBadge').textContent=r.rana>=0?'Positive breadth impulse':'Negative breadth impulse';
+  document.getElementById('ranaBadge').className='pill '+(r.rana>=0?'bull':'bear');
+  document.getElementById('adRatioBadge').textContent=ratio>=1?'Advancers leading':'Decliners leading';
+  document.getElementById('adRatioBadge').className='pill '+(ratio>=1?'bull':'bear');
+}
+function render(){if(!rows.length)return;const r=adjusted(rows[idx]),t=tone(r),history=rows.slice(0,idx+1).map(adjusted);document.getElementById('decision').className='panel decision '+t;document.getElementById('decisionTitle').textContent=t==='bear'?'Defensive internal breadth':t==='bull'?'Constructive internal breadth':'Transitional internal breadth';const risk=val(r,'risk')||'—',signal=val(r,'signal')||'—';document.getElementById('riskPill').textContent=risk;document.getElementById('riskPill').className='pill '+t;document.getElementById('signalPill').textContent=signal;document.getElementById('asof').textContent='As of '+r.date;document.getElementById('selectedLabel').textContent=r.date;document.getElementById('slider').value=idx;document.getElementById('dateInput').value=r.date;document.getElementById('startDate').textContent=rows[0].date;document.getElementById('endDate').textContent=rows.at(-1).date;document.getElementById('prev').disabled=idx===0;document.getElementById('next').disabled=idx===rows.length-1;const health=Number(val(r,'health'));const dist=r.adj50==null?null:r.adjNasi-r.adj50;const five=history.length>5?r.adjNasi-history.at(-6).adjNasi:null;document.getElementById('metrics').innerHTML=[['Breadth health',`${fmt(health)} <span class="health-context ${health>=65?'bull':health<40?'bear':'warn'}">${health>=80?'Strong':health>=65?'Healthy':health>=45?'Transitional':health>=35?'Weak':'Critical'}</span>`,'0–100 composite',health>=65?'pos':health<40?'neg':'warnText'],['FMP NASI',fmt(r.adjNasi,0,true),'FMP cumulative breadth',r.adjNasi>=0?'pos':'neg'],['NASI vs 50 SMA',fmt(dist,0,true),'Trend confirmation',dist>=0?'pos':'neg'],['McClellan Osc',fmt(r.osc,1,true),'Short-term breadth impulse',r.osc>=0?'pos':'neg'],['5-day NASI change',fmt(five,0,true),'Slope / momentum',five>=0?'pos':'neg'],['A/D ratio',fmt(r.dec? r.adv/r.dec:null,2),'Daily participation',r.adv>r.dec?'pos':'neg'],['Eligible universe',fmt(r.eligible),'Data breadth',''],['Data quality',r.quality!=null?fmt(r.quality>1?r.quality:r.quality*100,1)+'%':'—','Coverage','']].map(x=>`<div class="metric"><span>${x[0]}</span><strong class="${x[3]}">${x[1]}</strong><small>${x[2]}</small></div>`).join('');const guide=val(r,'guidance')||`${val(r,'regime')||'Breadth regime unavailable'} · ${val(r,'momentum')||'Momentum unavailable'}`;document.getElementById('guidance').innerHTML=`<strong>Portfolio guidance:</strong> ${guide}`;document.getElementById('spyTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('spyTrendBadge').className='pill '+t;document.getElementById('qqqTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('qqqTrendBadge').className='pill '+t;document.getElementById('oscBadge').textContent=r.osc>=0?'Positive impulse':'Negative impulse';document.getElementById('oscBadge').className='pill '+(r.osc>=0?'bull':'bear');renderInterpretation(r,history,t);const net=(r.adv||0)-(r.dec||0),adRatio=r.dec?r.adv/r.dec:null,partTone=net>=0?'bull':'bear';document.getElementById('participationBadge').textContent=net>=0?'Net advancing':'Net declining';document.getElementById('participationBadge').className='pill '+partTone;document.getElementById('participationStats').innerHTML=`<div class="pstat"><span>Advances</span><strong class="pos">${fmt(r.adv)}</strong></div><div class="pstat"><span>Declines</span><strong class="neg">${fmt(r.dec)}</strong></div><div class="pstat"><span>Net A−D</span><strong class="${net>=0?'pos':'neg'}">${fmt(net,0,true)}</strong></div><div class="pstat"><span>A/D ratio</span><strong class="${adRatio>=1?'pos':'neg'}">${fmt(adRatio,2)}</strong></div>`;renderDiagnostics(r,history,t);renderCharts(history);renderTable(history.slice(-15).reverse());}
+function benchmarkVisibleSlice(symbol,h){
+  const key=symbol==='SPY'?'spy':'qqq';
+  const firstValid=h.findIndex(row=>Number.isFinite(priceByDate[row.date]?.[key]));
+  const startIndex=firstValid>=0?firstValid:0;
+  return h.slice(startIndex);
+}
+
+function renderBenchmarkNasiChart(symbol,h,chart,id){
+  const key=symbol==='SPY'?'spy':'qqq';
+  const ohlcKey=symbol==='SPY'?'spyOhlc':'qqqOhlc';
+
+  const visible=benchmarkVisibleSlice(symbol,h);
+  const price=visible.map(r=>priceByDate[r.date]?.[key]??null);
+
+  const exactOhlc=visible.map((row,index)=>{
+    const direct=priceByDate[row.date]?.[ohlcKey];
+    if(direct&&[direct.o,direct.h,direct.l,direct.c].every(Number.isFinite)){
+      return direct;
+    }
+
+    const close=price[index];
+    if(!Number.isFinite(close)) return null;
+    const previous=index&&Number.isFinite(price[index-1])?price[index-1]:close;
+    return{
+      o:previous,
+      h:Math.max(previous,close),
+      l:Math.min(previous,close),
+      c:close
+    };
+  });
+
+  const rightPad=4;
+  const labels=visible.map(r=>r.date).concat(new Array(rightPad).fill(''));
+  const range=autoRange(exactOhlc,[]);
+  const pad=a=>a.concat(new Array(rightPad).fill(null));
+  const paddedOhlc=exactOhlc.concat(new Array(rightPad).fill(null));
+
+  const candleColors=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?'rgba(17,153,110,.82)':'rgba(215,71,71,.82)');
+  const candleBorders=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?'#087c55':'#a52322');
+
+  const datasets=[
+    {type:'bar',label:symbol,data:pad(exactOhlc.map(o=>o?[o.o,o.c]:null)),ohlc:paddedOhlc,isCandle:true,backgroundColor:candleColors,borderColor:candleBorders,borderWidth:1.1,borderSkipped:false,barPercentage:.68,categoryPercentage:.92,yAxisID:'yPrice'},
+    {type:'line',label:'FMP NASI',data:pad(visible.map(r=>r.adjNasi)),borderColor:'#0f766e',pointRadius:0,borderWidth:2,tension:.12,yAxisID:'y',segment:{borderColor:c=>c.p1.parsed.y>=c.p0.parsed.y?'#0f766e':'#d74747'}},
+    {type:'line',label:'NASI 50 SMA',data:pad(visible.map(r=>r.adj50)),borderColor:'#2f6fde',pointRadius:0,borderWidth:1.7,tension:.12,yAxisID:'y'},
+    {type:'line',label:'NASI Zero',data:pad(visible.map(()=>0)),borderColor:'#999',borderDash:[4,3],pointRadius:0,borderWidth:1,yAxisID:'y'}
+  ];
+
+  const options={
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        mode:'index',
+        intersect:false,
+        filter:ctx=>ctx.dataIndex<visible.length,
+        callbacks:{
+          label(ctx){
+            const ds=ctx.dataset;
+            if(ds.isCandle){
+              const o=ds.ohlc[ctx.dataIndex];
+              return o?`${symbol}  O ${o.o.toFixed(2)}  H ${o.h.toFixed(2)}  L ${o.l.toFixed(2)}  C ${o.c.toFixed(2)}`:`${symbol}: —`;
+            }
+            const v=ctx.parsed.y;
+            return `${ds.label}: ${v==null?'—':Number(v).toFixed(2)}`;
+          }
+        }
+      }
+    },
+    scales:{
+      x:{grid:{display:false},ticks:{display:false},border:{display:false}},
+      y:{position:'left',grid:{color:'#ecece7'},ticks:{color:'#0f766e',font:{size:10}},title:{display:true,text:'FMP NASI',color:'#0f766e'}},
+      yPrice:{position:'right',min:range.min,max:range.max,beginAtZero:false,bounds:'data',grid:{drawOnChartArea:false},ticks:{color:symbol==='SPY'?'#2a78d6':'#9333ea',font:{size:10}},title:{display:true,text:symbol+' Price',color:symbol==='SPY'?'#2a78d6':'#9333ea'}}
+    }
+  };
+
+  return upsert(chart,id,'bar',labels,datasets,options);
+}
+function renderInterpretation(r,h,t){
+  const risk=(val(r,'risk')||'NEUTRAL').toUpperCase();
+  const signal=(val(r,'signal')||'NO ACTIVE SIGNAL').toUpperCase();
+  const regime=(val(r,'regime')||'—').toUpperCase();
+  const momentum=(val(r,'momentum')||'—').toUpperCase();
+
+  const slope=r.nasi5??(h.length>5?r.adjNasi-h[h.length-6].adjNasi:null);
+  const dist=r.adj50==null?null:r.adjNasi-r.adj50;
+  const ad=r.dec?r.adv/r.dec:null;
+  const health=Number(val(r,'health'))||0;
+
+  const oscPass=Number.isFinite(r.osc)&&r.osc>0;
+  const slopePass=Number.isFinite(slope)&&slope>0;
+  const trendPass=Number.isFinite(dist)&&dist>0;
+  const adPass=Number.isFinite(ad)&&ad>1;
+  const healthPass=health>=60;
+
+  const recovery=[
+    {name:'McClellan above zero',pass:oscPass,reading:fmt(r.osc,1,true)},
+    {name:'NASI 5-day slope positive',pass:slopePass,reading:fmt(slope,0,true)},
+    {name:'NASI above 50-day SMA',pass:trendPass,reading:fmt(dist,0,true)},
+    {name:'A/D ratio above 1.0',pass:adPass,reading:fmt(ad,2)},
+    {name:'Breadth health at least 60',pass:healthPass,reading:fmt(health)}
+  ];
+
+  const repairCount=recovery.filter(item=>item.pass).length;
+  const defensive=t==='bear'||risk.includes('OFF')||signal.includes('BREAKDOWN')||signal.includes('SELL');
+
+  const bad=[];
+  if(!oscPass) bad.push('negative short-term breadth impulse');
+  if(!slopePass) bad.push('falling five-day NASI slope');
+  if(!trendPass) bad.push('NASI below its 50-day SMA');
+  if(!adPass) bad.push('decliners leading advancers');
+
+  const panel=document.querySelector('.interpretation-panel');
+  panel.className='panel interpretation-panel '+t;
+
+  const badge=document.getElementById('interpretationBadge');
+  badge.textContent=`${risk} · ${signal}`;
+  badge.className='pill '+t;
+
+  document.getElementById('interpState').textContent=`${risk} · ${signal}`;
+  document.getElementById('interpWhy').textContent=
+    `${regime}. ${bad.length?bad.slice(0,2).join(' and '):'Breadth trend and participation are aligned constructively'}.`;
+
+  document.getElementById('interpDeterioration').textContent=
+    bad.length?'Breadth repair remains incomplete':'No material internal deterioration';
+
+  document.getElementById('interpDeteriorationDetail').textContent=
+    r.osc<0
+      ? `Negative breadth impulse: declining issues retain short-term control. Oscillator ${fmt(r.osc,1,true)}; a move above zero is the first momentum repair signal.`
+      : `Positive breadth impulse: advancing issues have regained short-term control. Oscillator ${fmt(r.osc,1,true)}.`;
+
+  document.getElementById('interpRepairDetail').textContent=
+    `${repairCount} of 5 recovery conditions are satisfied. Increase risk only as the checklist improves and benchmark price action confirms.`;
+
+  document.getElementById('interpPortfolio').textContent=
+    defensive?'Capital preservation':'Selective participation';
+
+  document.getElementById('interpPortfolioDetail').textContent=
+    defensive
+      ? 'Keep exposure reduced, use smaller positions and avoid marginal breakouts until breadth repair broadens.'
+      : 'Maintain selective exposure in quality leaders; expand only while breadth and benchmark trend remain aligned.';
+
+  document.getElementById('recoveryScore').textContent=repairCount;
+  document.getElementById('recoveryList').innerHTML=recovery.map(item=>`
+    <div class="recovery-item ${item.pass?'pass':''}">
+      <span class="recovery-check">${item.pass?'✓':'×'}</span>
+      <span class="recovery-name">${item.name}</span>
+      <span class="recovery-reading">${item.reading}</span>
+    </div>`).join('');
+
+  const recoveryPct=repairCount/5*100;
+  const correctionRisk=Math.max(10,Math.min(95,100-(health*.7+recoveryPct*.3)));
+  const maxExposure=Math.round(Math.max(10,Math.min(100,health*.55+recoveryPct*.45)));
+  const positionSize=maxExposure<30?25:maxExposure<55?50:maxExposure<75?75:100;
+  const aggression=Math.round(Math.max(5,Math.min(100,recoveryPct*.55+health*.45)));
+
+  const postureTone=maxExposure>=65?'bull':maxExposure<35?'bear':'warn';
+  const postureBadge=document.getElementById('postureBadge');
+  postureBadge.textContent=
+    maxExposure<25?'Capital preservation':
+    maxExposure<50?'Defensive / selective':
+    maxExposure<70?'Measured offense':'Offensive';
+  postureBadge.className='pill '+postureTone;
+
+  const postureItems=[
+    ['Maximum exposure',`${maxExposure}%`,'risk budget',maxExposure,postureTone],
+    ['Position size',`${positionSize}%`,'of normal',positionSize,positionSize>=75?'bull':positionSize<=25?'bear':'warn'],
+    ['Execution aggression',`${aggression}%`,'setup tolerance',aggression,aggression>=65?'bull':aggression<35?'bear':'warn'],
+    ['Correction risk',`${Math.round(correctionRisk)}%`,'internal risk',correctionRisk,correctionRisk<=35?'bull':correctionRisk>=65?'bear':'warn']
+  ];
+
+  document.getElementById('postureGrid').innerHTML=postureItems.map(item=>`
+    <div class="posture-item">
+      <div class="posture-label">${item[0]}</div>
+      <div class="posture-value"><strong>${item[1]}</strong><small>${item[2]}</small></div>
+      <div class="progress-track"><div class="progress-fill ${item[4]}" style="width:${Math.max(0,Math.min(100,item[3]))}%"></div></div>
+    </div>`).join('');
+}
+function rollingMean(values,period){
+  return values.map((value,index)=>{
+    if(index<period-1) return null;
+    const window=values.slice(index-period+1,index+1).filter(Number.isFinite);
+    return window.length===period
+      ? window.reduce((sum,item)=>sum+item,0)/period
+      : null;
+  });
+}
+
+function renderCharts(h){
+  const baseCommon={
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{
+        grid:{display:false},
+        ticks:{maxTicksLimit:9,color:'#777',font:{size:10}}
+      },
+      y:{
+        grid:{color:'#ecece7'},
+        ticks:{color:'#777',font:{size:10}}
+      }
+    }
+  };
+
+  // Upper and middle charts suppress x-axis labels. Only the bottom
+  // chart in each panel shows the shared visible date scale.
+  const hiddenXCommon={
+    ...baseCommon,
+    scales:{
+      ...baseCommon.scales,
+      x:{
+        grid:{display:false},
+        ticks:{display:false},
+        border:{display:false}
+      }
+    }
+  };
+
+  const spyRows=benchmarkVisibleSlice('SPY',h);
+  const qqqRows=benchmarkVisibleSlice('QQQ',h);
+
+  spyNasiChart=renderBenchmarkNasiChart('SPY',h,spyNasiChart,'spyNasiChart');
+  qqqNasiChart=renderBenchmarkNasiChart('QQQ',h,qqqNasiChart,'qqqNasiChart');
+  document.getElementById('qqqRead').textContent='Candlestick · FMP NASI · NASI 50-day SMA · exact Stockbee QQQ series';
+
+  // SPY middle: McClellan Oscillator, with hidden x labels.
+  const oscLabels=spyRows.map(r=>r.date).concat(['','','','']);
+  const oscPad=a=>a.concat([null,null,null,null]);
+  const oscSets=[
+    {
+      label:'Oscillator',
+      data:oscPad(spyRows.map(r=>r.osc)),
+      borderColor:'#6d52c7',
+      backgroundColor:oscPad(spyRows.map(r=>r.osc>=0?'rgba(17,153,110,.25)':'rgba(215,71,71,.22)')),
+      fill:true,
+      pointRadius:0,
+      borderWidth:1.5,
+      tension:.1
+    },
+    {
+      label:'Zero',
+      data:oscPad(spyRows.map(()=>0)),
+      borderColor:'#999',
+      borderDash:[3,3],
+      pointRadius:0,
+      borderWidth:1
+    }
+  ];
+  oscChart=upsert(oscChart,'oscChart','line',oscLabels,oscSets,hiddenXCommon);
+
+  // QQQ middle: net advances, with hidden x labels.
+  const adLabels=qqqRows.map(r=>r.date).concat(['','','','']);
+  const adPad=a=>a.concat([null,null,null,null]);
+  const netBreadth=qqqRows.map(r=>(r.adv||0)-(r.dec||0));
+
+  const adSets=[
+    {
+      type:'bar',
+      label:'Net advances',
+      data:adPad(netBreadth),
+      backgroundColor:adPad(netBreadth.map(v=>
+        v>=0?'rgba(17,153,110,.80)':'rgba(215,71,71,.78)'
+      )),
+      borderColor:adPad(netBreadth.map(v=>
+        v>=0?'#087c55':'#a52322'
+      )),
+      borderWidth:.7,
+      barPercentage:.78,
+      categoryPercentage:.92
+    },
+    {
+      type:'line',
+      label:'Zero',
+      data:adPad(qqqRows.map(()=>0)),
+      borderColor:'#8b8f8c',
+      borderDash:[3,3],
+      pointRadius:0,
+      borderWidth:1
+    }
+  ];
+
+  const adOpts={
+    ...hiddenXCommon,
+    plugins:{
+      ...hiddenXCommon.plugins,
+      tooltip:{
+        mode:'index',
+        intersect:false,
+        callbacks:{
+          label(ctx){
+            const value=Number(ctx.parsed.y||0);
+            if(ctx.dataset.label==='Zero') return 'Zero reference';
+            return `Net advances: ${value>=0?'+':''}${value.toLocaleString()}`;
+          }
+        }
+      }
+    },
+    scales:{
+      ...hiddenXCommon.scales,
+      y:{
+        ...hiddenXCommon.scales.y,
+        suggestedMin:-1200,
+        suggestedMax:1200,
+        ticks:{
+          ...hiddenXCommon.scales.y.ticks,
+          callback:value=>{
+            const number=Number(value);
+            return `${number>0?'+':''}${number.toLocaleString()}`;
+          }
+        },
+        title:{
+          display:true,
+          text:'Advances − Declines',
+          color:'#666'
+        }
+      }
+    }
+  };
+  adChart=upsert(adChart,'adChart','bar',adLabels,adSets,adOpts);
+
+  // SPY bottom: RANA as diverging columns plus 5-day mean.
+  const ranaLabels=spyRows.map(r=>r.date).concat(['','','','']);
+  const ranaPad=a=>a.concat([null,null,null,null]);
+  const ranaValues=spyRows.map(r=>Number(r.rana));
+  const ranaMean5=rollingMean(ranaValues,5);
+
+  const ranaSets=[
+    {
+      type:'bar',
+      label:'Daily RANA',
+      data:ranaPad(ranaValues),
+      backgroundColor:ranaPad(ranaValues.map(v=>
+        v>=0?'rgba(17,153,110,.78)':'rgba(215,71,71,.76)'
+      )),
+      borderColor:ranaPad(ranaValues.map(v=>
+        v>=0?'#087c55':'#a52322'
+      )),
+      borderWidth:.6,
+      barPercentage:.78,
+      categoryPercentage:.92
+    },
+    {
+      type:'line',
+      label:'RANA 5-day mean',
+      data:ranaPad(ranaMean5),
+      borderColor:'#2f6fde',
+      pointRadius:0,
+      borderWidth:1.7,
+      tension:.18
+    },
+    {
+      type:'line',
+      label:'Zero',
+      data:ranaPad(spyRows.map(()=>0)),
+      borderColor:'#999',
+      borderDash:[3,3],
+      pointRadius:0,
+      borderWidth:1
+    }
+  ];
+
+  const ranaOpts={
+    ...baseCommon,
+    plugins:{
+      ...baseCommon.plugins,
+      tooltip:{
+        mode:'index',
+        intersect:false,
+        callbacks:{
+          label(ctx){
+            const value=ctx.parsed.y;
+            if(value==null) return `${ctx.dataset.label}: —`;
+            return `${ctx.dataset.label}: ${Number(value)>=0?'+':''}${Number(value).toFixed(1)}`;
+          }
+        }
+      }
+    },
+    scales:{
+      ...baseCommon.scales,
+      y:{
+        ...baseCommon.scales.y,
+        suggestedMin:-700,
+        suggestedMax:700,
+        ticks:{
+          ...baseCommon.scales.y.ticks,
+          callback:value=>`${Number(value)>0?'+':''}${Number(value).toFixed(0)}`
+        },
+        title:{
+          display:true,
+          text:'RANA impulse',
+          color:'#666'
+        }
+      }
+    }
+  };
+  ranaChart=upsert(ranaChart,'ranaChart','bar',ranaLabels,ranaSets,ranaOpts);
+
+  // QQQ bottom: A/D balance as deviation from neutral ratio 1.0,
+  // shown as diverging columns plus a 5-day mean. Tooltip retains the
+  // actual A/D ratio for direct interpretation.
+  const ratioLabels=qqqRows.map(r=>r.date).concat(['','','','']);
+  const ratioPad=a=>a.concat([null,null,null,null]);
+  const actualRatios=qqqRows.map(r=>r.dec?r.adv/r.dec:null);
+  const ratioDeviation=actualRatios.map(v=>Number.isFinite(v)?v-1:null);
+  const ratioMean5=rollingMean(ratioDeviation,5);
+
+  const ratioSets=[
+    {
+      type:'bar',
+      label:'A/D balance',
+      data:ratioPad(ratioDeviation),
+      actualRatios:ratioPad(actualRatios),
+      backgroundColor:ratioPad(ratioDeviation.map(v=>
+        v==null?'rgba(0,0,0,0)':v>=0?'rgba(17,153,110,.78)':'rgba(215,71,71,.75)'
+      )),
+      borderColor:ratioPad(ratioDeviation.map(v=>
+        v==null?'rgba(0,0,0,0)':v>=0?'#087c55':'#a52322'
+      )),
+      borderWidth:.6,
+      barPercentage:.78,
+      categoryPercentage:.92
+    },
+    {
+      type:'line',
+      label:'5-day balance mean',
+      data:ratioPad(ratioMean5),
+      borderColor:'#2f6fde',
+      pointRadius:0,
+      borderWidth:1.7,
+      tension:.18
+    },
+    {
+      type:'line',
+      label:'Neutral',
+      data:ratioPad(qqqRows.map(()=>0)),
+      borderColor:'#999',
+      borderDash:[4,3],
+      pointRadius:0,
+      borderWidth:1
+    }
+  ];
+
+  const ratioOpts={
+    ...baseCommon,
+    plugins:{
+      ...baseCommon.plugins,
+      tooltip:{
+        mode:'index',
+        intersect:false,
+        callbacks:{
+          label(ctx){
+            if(ctx.dataset.label==='A/D balance'){
+              const ratio=ctx.dataset.actualRatios?.[ctx.dataIndex];
+              const deviation=ctx.parsed.y;
+              return Number.isFinite(ratio)
+                ? `A/D ratio: ${ratio.toFixed(2)} · balance ${deviation>=0?'+':''}${deviation.toFixed(2)}`
+                : 'A/D ratio: —';
+            }
+            const value=ctx.parsed.y;
+            return `${ctx.dataset.label}: ${value==null?'—':`${Number(value)>=0?'+':''}${Number(value).toFixed(2)}`}`;
+          }
+        }
+      }
+    },
+    scales:{
+      ...baseCommon.scales,
+      y:{
+        ...baseCommon.scales.y,
+        suggestedMin:-1,
+        suggestedMax:1.5,
+        ticks:{
+          ...baseCommon.scales.y.ticks,
+          callback:value=>{
+            const ratio=Number(value)+1;
+            return `${ratio.toFixed(1)}×`;
+          }
+        },
+        title:{
+          display:true,
+          text:'A/D ratio (neutral = 1.0×)',
+          color:'#666'
+        }
+      }
+    }
+  };
+  adRatioChart=upsert(adRatioChart,'adRatioChart','bar',ratioLabels,ratioSets,ratioOpts);
+
+  linkChartPair(spyNasiChart,oscChart);
+  linkChartPair(spyNasiChart,ranaChart);
+  linkChartPair(qqqNasiChart,adChart);
+  linkChartPair(qqqNasiChart,adRatioChart);
+}
+function upsert(chart,id,type,labels,datasets,options){if(!chart)return new Chart(document.getElementById(id),{type,data:{labels,datasets},options});chart.data.labels=labels;chart.data.datasets=datasets;chart.options=options;chart.update();return chart}
+function linkChartPair(topChart,bottomChart){
+  if(!topChart||!bottomChart) return;
+
+  const bind=(source,target)=>{
+    const canvas=source.canvas;
+    if(canvas.dataset.linkedHover==='1') return;
+    canvas.dataset.linkedHover='1';
+
+    canvas.addEventListener('mousemove',event=>{
+      const points=source.getElementsAtEventForMode(
+        event,
+        'index',
+        {intersect:false},
+        false
+      );
+      if(!points.length) return;
+
+      const index=points[0].index;
+      const active=target.data.datasets
+        .map((dataset,datasetIndex)=>dataset.data[index]!=null?{datasetIndex,index}:null)
+        .filter(Boolean);
+
+      target.setActiveElements(active);
+      target.tooltip.setActiveElements(active,{x:0,y:0});
+      target.update('none');
+    });
+
+    canvas.addEventListener('mouseleave',()=>{
+      target.setActiveElements([]);
+      target.tooltip.setActiveElements([],{x:0,y:0});
+      target.update('none');
+    });
+  };
+
+  bind(topChart,bottomChart);
+  bind(bottomChart,topChart);
+}
+
+function renderTable(list){document.getElementById('tbody').innerHTML=list.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.adv)}</td><td>${fmt(r.dec)}</td><td>${fmt(r.dec?r.adv/r.dec:null,2)}</td><td>${fmt(r.rana,1,true)}</td><td>${fmt(r.osc,1,true)}</td><td>${fmt(r.adjNasi,0,true)}</td><td>${fmt(r.adj50,0,true)}</td><td>${fmt(Number(val(r,'health')))}</td><td>${val(r,'risk')||'—'}</td><td>${val(r,'signal')||'—'}</td></tr>`).join('')}
+document.getElementById('prev').onclick=()=>{if(idx>0){idx--;render()}};
+document.getElementById('next').onclick=()=>{if(idx<rows.length-1){idx++;render()}};
+document.getElementById('latest').onclick=()=>{idx=rows.length-1;render()};
+document.getElementById('slider').oninput=e=>{idx=Number(e.target.value);render()};
+document.getElementById('dateInput').onchange=e=>{
+  const d=e.target.value;
+  let i=rows.findIndex(r=>r.date>=d);
+  idx=i<0?rows.length-1:i;
+  render();
+};
+document.getElementById('play').onclick=()=>{
+  if(timer){
+    clearInterval(timer);
+    timer=null;
+    document.getElementById('play').textContent='▶ Play';
+    return;
+  }
+  if(idx===rows.length-1)idx=0;
+  document.getElementById('play').textContent='Ⅱ Pause';
+  timer=setInterval(()=>{
+    if(idx>=rows.length-1){
+      clearInterval(timer);
+      timer=null;
+      document.getElementById('play').textContent='▶ Play';
+      return;
+    }
+    idx++;
+    render();
+  },450);
+};
+document.getElementById('refresh').onclick=load;
+load();
+</script>
+
+<style id="now-ai-brief-style">
+#nowAiBriefDock{position:fixed;right:16px;bottom:16px;z-index:99997;display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:520px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.now-ai-btn{border:1px solid rgba(120,140,165,.45);background:#0f766e;color:#fff;border-radius:8px;padding:9px 12px;font:800 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.now-ai-btn.secondary{background:#173b63}.now-ai-btn.ghost{background:#fff;color:#17324f}.now-ai-btn:hover{filter:brightness(1.08)}
+#nowAiBriefModal{position:fixed;inset:0;z-index:99999;background:rgba(4,10,18,.72);display:none;align-items:center;justify-content:center;padding:20px}
+#nowAiBriefModal.open{display:flex}.now-ai-box{width:min(1180px,96vw);height:min(820px,92vh);background:#fff;color:#132238;border-radius:12px;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;box-shadow:0 25px 90px rgba(0,0,0,.45)}
+.now-ai-head{padding:12px 14px;border-bottom:1px solid #d8e1eb;display:flex;justify-content:space-between;align-items:center;gap:12px}.now-ai-head b{font:900 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.now-ai-head span{font:11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#65758a}
+#nowAiBriefText{width:100%;height:100%;resize:none;border:0;outline:0;padding:16px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#17283d;background:#f8fafc;white-space:pre-wrap}
+.now-ai-actions{padding:10px 14px;border-top:1px solid #d8e1eb;display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:700px){#nowAiBriefDock{left:10px;right:10px;bottom:10px}.now-ai-btn{flex:1}.now-ai-box{width:100%;height:94vh}}
+</style>
+
+
+<script id="now-ai-brief-module">
+(()=>{
+'use strict';
+const PAGE_NAME="NASDAQ Institutional Breadth Laboratory";
+const MASTER_PROMPT="You are the Chief Market Strategist at an institutional hedge fund. Analyze the complete NASDAQ Institutional Breadth Laboratory exactly as an institutional market technician would. Determine the true internal health of the market using NASI, McClellan Oscillator, McClellan Summation, advance-decline evidence, RANA, participation quality, divergences, breadth thrusts, washouts, price confirmation, and the recovery checklist. Do not explain indicators independently. Reconcile conflicting signals and take a clear stance. Finish with: OVERALL MARKET HEALTH; BREADTH CONDITION; INSTITUTIONAL PARTICIPATION; PRICE CONFIRMATION; DIVERGENCES; MARKET STAGE; RALLY SUCCESS PROBABILITY; CORRECTION RISK; PORTFOLIO EXPOSURE; MAX POSITION SIZE; MAX POSITIONS; HOLDING PERIOD; RISK PER TRADE; AGGRESSION LEVEL; FIVE THINGS TO WATCH NEXT; BIGGEST POSITIVE; BIGGEST WARNING; EXECUTION PLAN; CONVICTION 0-100; MARKET RISK 0-100; TODAY'S GRADE.";
+const $=id=>document.getElementById(id);
+const clean=s=>String(s??'').replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+function visibleState(){
+ const inputs=[...document.querySelectorAll('input,select,textarea')].map(el=>{const name=el.getAttribute('aria-label')||el.name||el.id||el.placeholder||el.tagName;const value=el.type==='checkbox'||el.type==='radio'?String(el.checked):el.value;return value?`${name}: ${value}`:''}).filter(Boolean);
+ return inputs.join('\n');
+}
+function chartState(){
+ const out=[];
+ try{
+  if(window.Chart&&Chart.instances){
+   const instances=Chart.instances instanceof Map?[...Chart.instances.values()]:Object.values(Chart.instances||{});
+   instances.forEach((ch,i)=>{
+    if(!ch?.data)return;
+    const title=ch.options?.plugins?.title?.text||ch.canvas?.getAttribute('aria-label')||ch.canvas?.id||`Chart ${i+1}`;
+    const labels=Array.isArray(ch.data.labels)?ch.data.labels:[];
+    const end=Math.max(0,labels.length-12);
+    const ds=(ch.data.datasets||[]).map(d=>{const vals=(d.data||[]).slice(end).map(v=>Array.isArray(v)?v.join('/'):(v&&typeof v==='object'?(v.y??v.c??JSON.stringify(v)):v));return `${d.label||'Series'}: ${vals.join(', ')}`}).join(' | ');
+    out.push(`${title}\nDates: ${labels.slice(end).join(', ')}\n${ds}`);
+   });
+  }
+ }catch(e){out.push(`Chart extraction warning: ${e.message}`)}
+ return out.join('\n\n');
+}
+function sectionText(){
+ const clone=document.body.cloneNode(true);
+ clone.querySelectorAll('script,style,noscript,iframe,canvas,#nowAiBriefDock,#nowAiBriefModal').forEach(n=>n.remove());
+ clone.querySelectorAll('[hidden]').forEach(n=>n.removeAttribute('hidden'));
+ clone.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.setAttribute('aria-hidden','false'));
+ return clean(clone.textContent);
+}
+function sourceFreshness(){
+ const candidates=[...document.querySelectorAll('[id*="date" i],[id*="asof" i],[id*="updated" i],[class*="status" i],[class*="asof" i]')].slice(0,80).map(n=>clean(n.textContent)).filter(Boolean);
+ return [...new Set(candidates)].slice(0,30).join(' | ');
+}
+function buildBrief(){
+ const now=new Date();
+ return `${MASTER_PROMPT}
+
+==================================================
+SOURCE PACKAGE
+==================================================
+Page: ${PAGE_NAME}
+Captured: ${now.toLocaleString()}
+URL: ${location.href}
+Freshness/Status: ${sourceFreshness()||'Not explicitly detected'}
+
+IMPORTANT READING RULES
+- Use only evidence contained in this source package.
+- Treat stale, missing, unavailable or conflicting fields explicitly.
+- Hidden internal workspaces and inactive tabs are included in the DOM extraction.
+- Canvas chart datasets are appended when Chart.js exposes them.
+- Do not invent values that are absent.
+
+==================================================
+PAGE DATA — ALL DOM WORKSPACES
+==================================================
+${sectionText()}
+
+==================================================
+ACTIVE CONTROLS / FILTERS
+==================================================
+${visibleState()||'No active form controls detected.'}
+
+==================================================
+CHART DATA — RECENT OBSERVATIONS
+==================================================
+${chartState()||'No readable Chart.js datasets detected. Interpret chart-related claims only from the textual dashboard evidence.'}`;
+}
+async function copyText(text){try{await navigator.clipboard.writeText(text)}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}}
+function preview(){const text=buildBrief();$('nowAiBriefText').value=text;$('nowAiBriefMeta').textContent=`${text.length.toLocaleString()} characters captured`;$('nowAiBriefModal').classList.add('open')}
+function download(){const text=buildBrief();const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`NOW_AI_Brief_${PAGE_NAME.replace(/[^a-z0-9]+/gi,'_')}_${new Date().toISOString().slice(0,10)}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+async function askChatGPT(){
+  const brief=buildBrief();
+  // Open immediately inside the click event so Safari/Chrome do not block it.
+  const chatWindow=window.open('https://chatgpt.com/','_blank');
+  const button=$('nowAiAsk');
+  const old=button?button.textContent:'Ask ChatGPT';
+  try{
+    await copyText(brief);
+    if(button){
+      button.textContent='Copied — paste in ChatGPT';
+      setTimeout(()=>button.textContent=old,3200);
+    }
+    // Browsers do not provide a supported way for a public webpage to insert
+    // text directly into the ChatGPT composer. The complete brief is therefore
+    // placed on the clipboard for one Cmd+V / Ctrl+V paste.
+    if(!chatWindow){
+      alert('The AI brief was copied. Your browser blocked the new tab—open chatgpt.com, paste with Cmd+V or Ctrl+V, then press Send.');
+    }
+  }catch(error){
+    if(button)button.textContent='Copy failed';
+    alert('Could not copy the AI brief. Use Preview AI Brief, then select and copy the text manually.');
+    setTimeout(()=>{if(button)button.textContent=old},2500);
+  }
+}
+
+function mount(){
+ const dock=document.createElement('div');dock.id='nowAiBriefDock';dock.innerHTML='<button class="now-ai-btn" id="nowAiAsk">Ask ChatGPT</button><button class="now-ai-btn secondary" id="nowAiCopy">Copy AI Brief</button><button class="now-ai-btn secondary" id="nowAiPreview">Preview AI Brief</button><button class="now-ai-btn ghost" id="nowAiDownload">Download AI Brief</button>';document.body.appendChild(dock);
+ const modal=document.createElement('div');modal.id='nowAiBriefModal';modal.innerHTML='<div class="now-ai-box"><div class="now-ai-head"><div><b>NOW AI Brief Preview</b><br><span id="nowAiBriefMeta">—</span></div><button class="now-ai-btn ghost" id="nowAiClose">Close</button></div><div class="now-ai-chat-note">Ask ChatGPT copies the complete live brief, opens ChatGPT, then you paste with Cmd+V (Mac) or Ctrl+V (Windows) and press Send.</div><textarea id="nowAiBriefText" spellcheck="false"></textarea><div class="now-ai-actions"><button class="now-ai-btn secondary" id="nowAiModalCopy">Copy</button><button class="now-ai-btn" id="nowAiModalDownload">Download</button></div></div>';document.body.appendChild(modal);
+ $('nowAiAsk').onclick=askChatGPT;$('nowAiCopy').onclick=async()=>{const b=$('nowAiCopy');const old=b.textContent;await copyText(buildBrief());b.textContent='Copied ✓';setTimeout(()=>b.textContent=old,1600)};$('nowAiPreview').onclick=preview;$('nowAiDownload').onclick=download;$('nowAiClose').onclick=()=>modal.classList.remove('open');$('nowAiModalCopy').onclick=async()=>copyText($('nowAiBriefText').value);$('nowAiModalDownload').onclick=download;modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
+
+</body></html>
