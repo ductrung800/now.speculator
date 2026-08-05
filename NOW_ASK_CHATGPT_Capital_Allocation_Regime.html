@@ -199,7 +199,7 @@
     .negative-text { color:var(--red); }
     .mixed-text { color:var(--amber); }
 
-    .factor-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--gap); }
+    .factor-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--gap); }
     .factor-chart-card .card-head { cursor:pointer; }
     .chart-value { display:flex; align-items:baseline; gap:7px; }
     .chart-value strong { font-size:13px; }
@@ -387,16 +387,10 @@
         </article>
 
         <article class="card span-12">
-          <div class="card-head"><div><div class="card-title">Primary Factor Relative-Strength Charts</div><div class="card-sub">Click any chart header to open the ratio in TradingView</div></div></div>
+          <div class="card-head"><div><div class="card-title">Factor Relative-Strength Charts · 3×3 Institutional Grid</div><div class="card-sub">Nine factor, participation and speculative-appetite ratios · click any chart header to open TradingView</div></div></div>
           <div class="card-body"><div id="primaryFactorGrid" class="factor-grid"></div></div>
         </article>
-
-        <article class="card span-12">
-          <div class="card-head"><div><div class="card-title">Participation, Size and Speculative Appetite</div><div class="card-sub">Is leadership broadening beyond the headline growth complex?</div></div></div>
-          <div class="card-body"><div id="secondaryFactorGrid" class="factor-grid"></div></div>
-        </article>
-
-        <article class="card span-12">
+<article class="card span-12">
           <div class="card-head"><div><div class="card-title">Macro × Factor × Micro Alignment</div><div class="card-sub">Institutional synthesis translated into swing-trading behaviour</div></div></div>
           <div class="card-body synthesis">
             <div class="synth-block"><div class="synth-title">Regime synthesis</div><div id="regimeSynthesis" class="synth-text">Awaiting live data.</div></div>
@@ -654,17 +648,15 @@ const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJ
     makeChart('macroChart',labels,[{label:'SPX/Gold',data,width:1.8},{label:'20 EMA',data:ma20},{label:'50 SMA',data:ma50},{label:'200 SMA',data:ma200}],false);
   }
   function renderFactorCharts(m) {
-    for(const group of ['primary','secondary']) {
-      const container=$(group==='primary'?'primaryFactorGrid':'secondaryFactorGrid');
-      const subset=FACTORS.filter(f=>f.group===group);
-      container.innerHTML=subset.map((f,i)=>`<article class="card factor-chart-card"><div class="card-head" data-tv="${f.tv}"><div><div class="card-title">${f.name} · ${f.proxy}</div><div class="card-sub">Relative trend versus SPY</div></div><div class="chart-value"><strong id="fv-${f.key}">—</strong><span id="fm-${f.key}" class="chart-meta">—</span></div></div><div class="card-body"><div class="mini-chart-wrap"><canvas id="fc-${f.key}"></canvas></div></div></article>`).join('');
-      subset.forEach(f=>{
-        const s=state.ratios[f.key], x=m.factorMetrics[f.key]; if(!s||!x) return;
-        const end=x.index, start=Math.max(0,end-125), ma50=sma(s,50);
-        makeChart(`fc-${f.key}`,s.slice(start,end+1).map(v=>v.date),[{label:f.proxy,data:s.slice(start,end+1).map(v=>v.close),width:1.5},{label:'50 SMA',data:ma50.slice(start,end+1)}],true);
-        $(`fv-${f.key}`).textContent=fmt(x.value,4); $(`fm-${f.key}`).textContent=`${fmtPct(x.r1)} · ${x.status}`; $(`fm-${f.key}`).className=`chart-meta ${signClass(x.r1)}`;
-      });
-    }
+    const container=$('primaryFactorGrid');
+    const subset=FACTORS;
+    container.innerHTML=subset.map((f,i)=>`<article class="card factor-chart-card"><div class="card-head" data-tv="${f.tv}"><div><div class="card-title">${f.name} · ${f.proxy}</div><div class="card-sub">${f.group==='primary'?'Style leadership':'Participation / speculative appetite'} · relative trend versus SPY</div></div><div class="chart-value"><strong id="fv-${f.key}">—</strong><span id="fm-${f.key}" class="chart-meta">—</span></div></div><div class="card-body"><div class="mini-chart-wrap"><canvas id="fc-${f.key}"></canvas></div></div></article>`).join('');
+    subset.forEach(f=>{
+      const s=state.ratios[f.key], x=m.factorMetrics[f.key]; if(!s||!x) return;
+      const end=x.index, start=Math.max(0,end-125), ma50=sma(s,50);
+      makeChart(`fc-${f.key}`,s.slice(start,end+1).map(v=>v.date),[{label:f.proxy,data:s.slice(start,end+1).map(v=>v.close),width:1.5},{label:'50 SMA',data:ma50.slice(start,end+1)}],true);
+      $(`fv-${f.key}`).textContent=fmt(x.value,4); $(`fm-${f.key}`).textContent=`${fmtPct(x.r1)} · ${x.status}`; $(`fm-${f.key}`).className=`chart-meta ${signClass(x.r1)}`;
+    });
     document.querySelectorAll('[data-tv]').forEach(el=>el.onclick=()=>window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(el.dataset.tv)}`,'_blank','noopener'));
   }
 
