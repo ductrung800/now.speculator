@@ -51,89 +51,67 @@
 }
 
 
-/* Native unified light/dark theme */
+/* ===== NASI NATIVE THEME SYSTEM ===== */
+:root{
+  --bg:#f7f8f6;--card:#ffffff;--card2:#f8f8f5;--card3:#f1f3ef;
+  --line:#dedfd8;--line2:#ecece7;--text:#101214;--muted:#6f736e;
+  --chart-grid:#e6e8e3;--chart-tick:#666b67;--input:#ffffff;
+}
 html[data-theme="dark"]{
-  --bg:#07111d;
-  --card:#0d1826;
-  --line:#25364b;
-  --text:#e8eef7;
-  --muted:#93a4b7;
-  --green:#27d39a;
-  --red:#ff657d;
-  --amber:#f2b84b;
-  --blue:#6ea7ff;
-  --teal:#29c7b4;
-  --purple:#9d8cff;
+  --bg:#07111d;--card:#0d1826;--card2:#111e2e;--card3:#152235;
+  --line:#26384e;--line2:#1d2e43;--text:#e8eef7;--muted:#98a9bd;
+  --chart-grid:#2a3b50;--chart-tick:#9eb0c4;--input:#101d2d;
+  --green:#28d39b;--red:#ff657d;--amber:#f2bd55;--blue:#72a8ff;
+  --teal:#2ac8b5;--purple:#ae94ff;
 }
-.head-actions{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.theme-switch{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
-.theme-switch button{border:0;background:transparent;color:var(--muted);padding:8px 10px;font:800 10px var(--mono);cursor:pointer}
-.theme-switch button.active{background:var(--teal);color:#04231f}
-html[data-theme="dark"] body{background:var(--bg);color:var(--text)}
-html[data-theme="dark"] .panel,
-html[data-theme="dark"] .status,
-html[data-theme="dark"] .widget-card,
-html[data-theme="dark"] .signal-card,
-html[data-theme="dark"] .metric,
-html[data-theme="dark"] .pstat,
-html[data-theme="dark"] .diag,
-html[data-theme="dark"] .interpret-card,
-html[data-theme="dark"] .posture-item,
-html[data-theme="dark"] .check-item,
-html[data-theme="dark"] .decision-strip,
-html[data-theme="dark"] .decision-cell{
-  background:var(--card)!important;
-  border-color:var(--line)!important;
-  color:var(--text)!important;
+body{background:var(--bg)!important;color:var(--text)!important}
+.head-right{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.theme-toggle{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.theme-toggle button{border:0;background:transparent;color:var(--muted);padding:8px 10px;font:800 10px var(--mono);cursor:pointer}
+.theme-toggle button.active{background:var(--teal);color:#03231e}
+.panel,.status,.widget-card,.metric,.pstat,.diag,.signal-card,.interpret-card,.posture-item,.recovery-item{
+  background:var(--card)!important;border-color:var(--line)!important;color:var(--text)!important
 }
-html[data-theme="dark"] .combined-subchart,
-html[data-theme="dark"] .guide,
-html[data-theme="dark"] .interpretation-divider,
-html[data-theme="dark"] th,
-html[data-theme="dark"] td{
-  border-color:var(--line)!important;
+.metric,.pstat,.diag,.interpret-card,.posture-item,.recovery-item{background:var(--card2)!important}
+.combined-subchart,.guide,.interpretation-divider,.tablewrap,th,td{border-color:var(--line2)!important}
+th{background:var(--card3)!important;color:var(--muted)!important}
+input[type=date],input[type=number],.btn,.chart-toggle button{
+  background:var(--input)!important;color:var(--text)!important;border-color:var(--line)!important
 }
-html[data-theme="dark"] th{background:#101c2b!important;color:var(--muted)!important}
-html[data-theme="dark"] input,
-html[data-theme="dark"] select,
-html[data-theme="dark"] .btn,
-html[data-theme="dark"] .chart-toggle button{
-  background:#101c2b!important;
-  color:var(--text)!important;
-  border-color:var(--line)!important;
+.btn:hover{background:var(--card3)!important}
+.chart-toggle button.active{background:var(--teal)!important;color:#03231e!important}
+.title,.decision-title,.widget-title,.combined-subtitle,.interpret-card strong,.posture-value,.recovery-name{
+  color:var(--text)!important
 }
-html[data-theme="dark"] .chart-toggle button.active{background:var(--teal)!important;color:#04231f!important}
-html[data-theme="dark"] .pill{background:#152235;color:var(--text)}
-html[data-theme="dark"] .pill.bull{background:rgba(39,211,154,.15);color:#67e2b9}
-html[data-theme="dark"] .pill.bear{background:rgba(255,101,125,.15);color:#ff9bad}
-html[data-theme="dark"] .pill.warn{background:rgba(242,184,75,.15);color:#ffd36f}
-html[data-theme="dark"] .interpret-card p,
-html[data-theme="dark"] .combined-subtitle,
-html[data-theme="dark"] .posture-value,
-html[data-theme="dark"] .widget-title,
-html[data-theme="dark"] .decision-title,
-html[data-theme="dark"] .title{
-  color:var(--text)!important;
+.sub,.label,.asof,.primary-read,.legend,.feed-note,.widget-sub,.posture-label,.recovery-reading,
+.metric span,.metric small,.pstat span,.diag .dlabel,.diag .dsub,.interpret-card span,.interpret-card p{
+  color:var(--muted)!important
 }
-html[data-theme="dark"] .status{background:#0f1b2a!important}
+.recovery-item{box-shadow:none!important}
+.recovery-check{background:rgba(255,101,125,.16)!important;color:#ff8ea0!important}
+.recovery-item.pass .recovery-check{background:rgba(40,211,155,.16)!important;color:#70e7bd!important}
+.health-context{background:var(--card3)!important;color:var(--muted)!important}
+.pill{background:var(--card3);color:var(--text)}
+canvas{background:transparent!important}
+@media(max-width:760px){.head-right{margin-top:10px;justify-content:flex-start}}
 
 </style>
 </head>
 <body><div class="wrap">
 <header class="head">
-      <div>
-        <div class="eyebrow">Institutional Breadth Engine</div>
-        <h1>NASDAQ Institutional Breadth Laboratory</h1>
-        <div class="sub">Decision-first NASI, McClellan, participation, thrust, washout, calibration and historical regime analysis</div>
-      </div>
-      <div class="head-actions">
-        <div class="status warn" id="status">Loading breadth and Stockbee benchmark feeds…</div>
-        <div class="theme-switch">
-          <button id="nasiLightBtn" type="button">Light</button>
-          <button id="nasiDarkBtn" type="button">Dark</button>
-        </div>
-      </div>
-    </header>
+  <div>
+    <div class="eyebrow">Institutional Breadth Engine</div>
+    <h1>NASDAQ Institutional Breadth Laboratory</h1>
+    <div class="sub">Decision-first NASI, McClellan, participation, thrust, washout, calibration and historical regime analysis</div>
+  </div>
+  <div class="head-right">
+    <div class="status warn" id="status">Loading breadth and Stockbee benchmark feeds…</div>
+    <div class="theme-toggle" aria-label="Theme">
+      <button id="nasiLight" type="button">Light</button>
+      <button id="nasiDark" type="button">Dark</button>
+    </div>
+  </div>
+</header>
 <section class="panel"><div class="panelhead"><div><div class="label">Time machine</div><div class="title">Historical breadth replay</div></div><div class="asof" id="selectedLabel">—</div></div><div class="controls"><button class="btn" id="prev">◀</button><button class="btn" id="play">▶ Play</button><button class="btn" id="next">▶</button><input id="slider" class="slider" type="range" min="0" max="0" value="0"><input id="dateInput" type="date"><button class="btn" id="latest">↻ Latest</button></div><div class="range"><span id="startDate">—</span><span id="endDate">—</span></div></section>
 <section class="panel decision" id="decision"><div class="decision-top"><div><div class="label">Decision first</div><div class="decision-title" id="decisionTitle">Loading internal breadth…</div><div style="margin-top:6px"><span class="pill warn" id="riskPill">Waiting</span> <span class="pill" id="signalPill">—</span></div></div><div class="asof" id="asof">—</div></div><div class="metrics" id="metrics"></div><div class="guide" id="guidance">Building the institutional breadth conclusion…</div></section>
 
@@ -558,7 +536,7 @@ function renderDiagnostics(r,history,t){
   document.getElementById('adRatioBadge').textContent=ratio>=1?'Advancers leading':'Decliners leading';
   document.getElementById('adRatioBadge').className='pill '+(ratio>=1?'bull':'bear');
 }
-function render(){if(!rows.length)return;const r=adjusted(rows[idx]),t=tone(r),history=rows.slice(0,idx+1).map(adjusted);document.getElementById('decision').className='panel decision '+t;document.getElementById('decisionTitle').textContent=t==='bear'?'Defensive internal breadth':t==='bull'?'Constructive internal breadth':'Transitional internal breadth';const risk=val(r,'risk')||'—',signal=val(r,'signal')||'—';document.getElementById('riskPill').textContent=risk;document.getElementById('riskPill').className='pill '+t;document.getElementById('signalPill').textContent=signal;document.getElementById('asof').textContent='As of '+r.date;document.getElementById('selectedLabel').textContent=r.date;document.getElementById('slider').value=idx;document.getElementById('dateInput').value=r.date;document.getElementById('startDate').textContent=rows[0].date;document.getElementById('endDate').textContent=rows.at(-1).date;document.getElementById('prev').disabled=idx===0;document.getElementById('next').disabled=idx===rows.length-1;const health=Number(val(r,'health'));const dist=r.adj50==null?null:r.adjNasi-r.adj50;const five=history.length>5?r.adjNasi-history.at(-6).adjNasi:null;document.getElementById('metrics').innerHTML=[['Breadth health',`${fmt(health)} <span class="health-context ${health>=65?'bull':health<40?'bear':'warn'}">${health>=80?'Strong':health>=65?'Healthy':health>=45?'Transitional':health>=35?'Weak':'Critical'}</span>`,'0–100 composite',health>=65?'pos':health<40?'neg':'warnText'],['FMP NASI',fmt(r.adjNasi,0,true),'FMP cumulative breadth',r.adjNasi>=0?'pos':'neg'],['NASI vs 50 SMA',fmt(dist,0,true),'Trend confirmation',dist>=0?'pos':'neg'],['McClellan Osc',fmt(r.osc,1,true),'Short-term breadth impulse',r.osc>=0?'pos':'neg'],['5-day NASI change',fmt(five,0,true),'Slope / momentum',five>=0?'pos':'neg'],['A/D ratio',fmt(r.dec? r.adv/r.dec:null,2),'Daily participation',r.adv>r.dec?'pos':'neg'],['Eligible universe',fmt(r.eligible),'Data breadth',''],['Data quality',r.quality!=null?fmt(r.quality>1?r.quality:r.quality*100,1)+'%':'—','Coverage','']].map(x=>`<div class="metric"><span>${x[0]}</span><strong class="${x[3]}">${x[1]}</strong><small>${x[2]}</small></div>`).join('');const guide=val(r,'guidance')||`${val(r,'regime')||'Breadth regime unavailable'} · ${val(r,'momentum')||'Momentum unavailable'}`;document.getElementById('guidance').innerHTML=`<strong>Portfolio guidance:</strong> ${guide}`;document.getElementById('spyTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('spyTrendBadge').className='pill '+t;document.getElementById('qqqTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('qqqTrendBadge').className='pill '+t;document.getElementById('oscBadge').textContent=r.osc>=0?'Positive impulse':'Negative impulse';document.getElementById('oscBadge').className='pill '+(r.osc>=0?'bull':'bear');renderInterpretation(r,history,t);const net=(r.adv||0)-(r.dec||0),adRatio=r.dec?r.adv/r.dec:null,partTone=net>=0?'bull':'bear';document.getElementById('participationBadge').textContent=net>=0?'Net advancing':'Net declining';document.getElementById('participationBadge').className='pill '+partTone;document.getElementById('participationStats').innerHTML=`<div class="pstat"><span>Advances</span><strong class="pos">${fmt(r.adv)}</strong></div><div class="pstat"><span>Declines</span><strong class="neg">${fmt(r.dec)}</strong></div><div class="pstat"><span>Net A−D</span><strong class="${net>=0?'pos':'neg'}">${fmt(net,0,true)}</strong></div><div class="pstat"><span>A/D ratio</span><strong class="${adRatio>=1?'pos':'neg'}">${fmt(adRatio,2)}</strong></div>`;renderDiagnostics(r,history,t);renderCharts(history);renderTable(history.slice(-15).reverse());}
+function render(){if(!rows.length)return;const r=adjusted(rows[idx]),t=tone(r),history=rows.slice(0,idx+1).map(adjusted);document.getElementById('decision').className='panel decision '+t;document.getElementById('decisionTitle').textContent=t==='bear'?'Defensive internal breadth':t==='bull'?'Constructive internal breadth':'Transitional internal breadth';const risk=val(r,'risk')||'—',signal=val(r,'signal')||'—';document.getElementById('riskPill').textContent=risk;document.getElementById('riskPill').className='pill '+t;document.getElementById('signalPill').textContent=signal;document.getElementById('asof').textContent='As of '+r.date;document.getElementById('selectedLabel').textContent=r.date;document.getElementById('slider').value=idx;document.getElementById('dateInput').value=r.date;document.getElementById('startDate').textContent=rows[0].date;document.getElementById('endDate').textContent=rows.at(-1).date;document.getElementById('prev').disabled=idx===0;document.getElementById('next').disabled=idx===rows.length-1;const health=Number(val(r,'health'));const dist=r.adj50==null?null:r.adjNasi-r.adj50;const five=history.length>5?r.adjNasi-history.at(-6).adjNasi:null;document.getElementById('metrics').innerHTML=[['Breadth health',`${fmt(health)} <span class="health-context ${health>=65?'bull':health<40?'bear':'warn'}">${health>=80?'Strong':health>=65?'Healthy':health>=45?'Transitional':health>=35?'Weak':'Critical'}</span>`,'0–100 composite',health>=65?'pos':health<40?'neg':'warnText'],['FMP NASI',fmt(r.adjNasi,0,true),'FMP cumulative breadth',r.adjNasi>=0?'pos':'neg'],['NASI vs 50 SMA',fmt(dist,0,true),'Trend confirmation',dist>=0?'pos':'neg'],['McClellan Osc',fmt(r.osc,1,true),'Short-term breadth impulse',r.osc>=0?'pos':'neg'],['5-day NASI change',fmt(five,0,true),'Slope / momentum',five>=0?'pos':'neg'],['A/D ratio',fmt(r.dec? r.adv/r.dec:null,2),'Daily participation',r.adv>r.dec?'pos':'neg'],['Eligible universe',fmt(r.eligible),'Data breadth',''],['Data quality',r.quality!=null?fmt(r.quality>1?r.quality:r.quality*100,1)+'%':'—','Coverage','']].map(x=>`<div class="metric"><span>${x[0]}</span><strong class="${x[3]}">${x[1]}</strong><small>${x[2]}</small></div>`).join('');const guide=val(r,'guidance')||`${val(r,'regime')||'Breadth regime unavailable'} · ${val(r,'momentum')||'Momentum unavailable'}`;document.getElementById('guidance').innerHTML=`<strong>Portfolio guidance:</strong> ${guide}`;document.getElementById('spyTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('spyTrendBadge').className='pill '+t;document.getElementById('qqqTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('qqqTrendBadge').className='pill '+t;document.getElementById('oscBadge').textContent=r.osc>=0?'Positive impulse':'Negative impulse';document.getElementById('oscBadge').className='pill '+(r.osc>=0?'bull':'bear');renderInterpretation(r,history,t);const net=(r.adv||0)-(r.dec||0),adRatio=r.dec?r.adv/r.dec:null,partTone=net>=0?'bull':'bear';document.getElementById('participationBadge').textContent=net>=0?'Net advancing':'Net declining';document.getElementById('participationBadge').className='pill '+partTone;document.getElementById('participationStats').innerHTML=`<div class="pstat"><span>Advances</span><strong class="pos">${fmt(r.adv)}</strong></div><div class="pstat"><span>Declines</span><strong class="neg">${fmt(r.dec)}</strong></div><div class="pstat"><span>Net A−D</span><strong class="${net>=0?'pos':'neg'}">${fmt(net,0,true)}</strong></div><div class="pstat"><span>A/D ratio</span><strong class="${adRatio>=1?'pos':'neg'}">${fmt(adRatio,2)}</strong></div>`;renderDiagnostics(r,history,t);renderCharts(history);renderTable(history.slice(-15).reverse());setTimeout(()=>window.NASI_RETHEME_CHARTS?.(),0);}
 function benchmarkVisibleSlice(symbol,h){
   const key=symbol==='SPY'?'spy':'qqq';
   const firstValid=h.findIndex(row=>Number.isFinite(priceByDate[row.date]?.[key]));
@@ -1253,25 +1231,62 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<script id="nasiTheme">
+<script id="nasiNativeTheme">
 (function(){
   const KEY='now.dashboard.theme';
+  function palette(){
+    const dark=document.documentElement.dataset.theme==='dark';
+    return {
+      grid:dark?'#2a3b50':'#e6e8e3',
+      tick:dark?'#9eb0c4':'#666b67',
+      tooltip:dark?'#101d2d':'#ffffff',
+      tooltipText:dark?'#e8eef7':'#101214',
+      border:dark?'#26384e':'#dedfd8'
+    };
+  }
+  function rethemeCharts(){
+    if(typeof Chart==='undefined') return;
+    const p=palette();
+    Chart.defaults.color=p.tick;
+    Chart.defaults.borderColor=p.grid;
+    Chart.instances.forEach(chart=>{
+      const o=chart.options||{};
+      if(o.plugins?.legend?.labels) o.plugins.legend.labels.color=p.tick;
+      if(o.plugins?.tooltip){
+        o.plugins.tooltip.backgroundColor=p.tooltip;
+        o.plugins.tooltip.titleColor=p.tooltipText;
+        o.plugins.tooltip.bodyColor=p.tooltipText;
+        o.plugins.tooltip.borderColor=p.border;
+        o.plugins.tooltip.borderWidth=1;
+      }
+      Object.values(o.scales||{}).forEach(scale=>{
+        if(scale.grid) scale.grid.color=p.grid;
+        if(scale.ticks) scale.ticks.color=p.tick;
+        if(scale.title) scale.title.color=p.tick;
+        if(scale.border) scale.border.color=p.border;
+      });
+      chart.update('none');
+    });
+  }
   function apply(theme){
     theme=theme==='dark'?'dark':'light';
     document.documentElement.dataset.theme=theme;
     try{localStorage.setItem(KEY,theme)}catch(_){}
-    const l=document.getElementById('nasiLightBtn');
-    const d=document.getElementById('nasiDarkBtn');
-    if(l)l.classList.toggle('active',theme==='light');
-    if(d)d.classList.toggle('active',theme==='dark');
+    document.getElementById('nasiLight')?.classList.toggle('active',theme==='light');
+    document.getElementById('nasiDark')?.classList.toggle('active',theme==='dark');
+    setTimeout(rethemeCharts,0);
   }
   document.addEventListener('DOMContentLoaded',()=>{
     let theme='light';
-    try{theme=localStorage.getItem(KEY)||((matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light')}catch(_){}
-    document.getElementById('nasiLightBtn')?.addEventListener('click',()=>apply('light'));
-    document.getElementById('nasiDarkBtn')?.addEventListener('click',()=>apply('dark'));
+    try{theme=localStorage.getItem(KEY)||((matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light')}catch(_){}
+    document.getElementById('nasiLight')?.addEventListener('click',()=>apply('light'));
+    document.getElementById('nasiDark')?.addEventListener('click',()=>apply('dark'));
     apply(theme);
+    setTimeout(rethemeCharts,1200);
+    setTimeout(rethemeCharts,3500);
   });
+  window.addEventListener('now-data-rendered',rethemeCharts);
+  window.NASI_RETHEME_CHARTS=rethemeCharts;
 })();
 </script>
 
