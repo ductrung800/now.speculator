@@ -51,137 +51,89 @@
 }
 
 
-/* ---------- UNIFIED PAGE HEADER / THEME ---------- */
-:root{
-  --page-bg:#f7f9fc;
-  --page-panel:#ffffff;
-  --page-panel-2:#f3f6fa;
-  --page-text:#122033;
-  --page-muted:#66758a;
-  --page-line:#dbe3ec;
-  --page-accent:#14b8a6;
-  --page-accent-2:#0f766e;
-  --page-shadow:0 1px 2px rgba(15,23,42,.05);
-}
+/* Native unified light/dark theme */
 html[data-theme="dark"]{
-  --page-bg:#07111d;
-  --page-panel:#0d1826;
-  --page-panel-2:#101d2d;
-  --page-text:#e7eef7;
-  --page-muted:#92a3b8;
-  --page-line:#22344a;
-  --page-accent:#2dd4bf;
-  --page-accent-2:#14b8a6;
-  --page-shadow:none;
+  --bg:#07111d;
+  --card:#0d1826;
+  --line:#25364b;
+  --text:#e8eef7;
+  --muted:#93a4b7;
+  --green:#27d39a;
+  --red:#ff657d;
+  --amber:#f2b84b;
+  --blue:#6ea7ff;
+  --teal:#29c7b4;
+  --purple:#9d8cff;
 }
-html[data-theme="dark"] body{background:var(--page-bg)!important;color:var(--page-text)!important}
+.head-actions{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.theme-switch{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.theme-switch button{border:0;background:transparent;color:var(--muted);padding:8px 10px;font:800 10px var(--mono);cursor:pointer}
+.theme-switch button.active{background:var(--teal);color:#04231f}
+html[data-theme="dark"] body{background:var(--bg);color:var(--text)}
 html[data-theme="dark"] .panel,
-html[data-theme="dark"] .card,
-html[data-theme="dark"] .benchmark-module,
-html[data-theme="dark"] .command-strip,
-html[data-theme="dark"] .time-machine,
-html[data-theme="dark"] details.detail-panel,
-html[data-theme="dark"] .status-bar,
-html[data-theme="dark"] .market-summary-panel,
-html[data-theme="dark"] .institutional-panel,
-html[data-theme="dark"] .institutional-inline,
-html[data-theme="dark"] .danger-panel,
+html[data-theme="dark"] .status,
+html[data-theme="dark"] .widget-card,
+html[data-theme="dark"] .signal-card,
 html[data-theme="dark"] .metric,
-html[data-theme="dark"] .institutional-card,
-html[data-theme="dark"] .nasi-metric,
-html[data-theme="dark"] .osc-insight{
-  background:var(--page-panel)!important;
-  border-color:var(--page-line)!important;
-  color:var(--page-text)!important;
+html[data-theme="dark"] .pstat,
+html[data-theme="dark"] .diag,
+html[data-theme="dark"] .interpret-card,
+html[data-theme="dark"] .posture-item,
+html[data-theme="dark"] .check-item,
+html[data-theme="dark"] .decision-strip,
+html[data-theme="dark"] .decision-cell{
+  background:var(--card)!important;
+  border-color:var(--line)!important;
+  color:var(--text)!important;
 }
-html[data-theme="dark"] .benchmark-subchart,
-html[data-theme="dark"] .danger-attached,
-html[data-theme="dark"] .command-bottom,
-html[data-theme="dark"] .detail-content,
-html[data-theme="dark"] .research-controls{
-  background:var(--page-panel-2)!important;
-  border-color:var(--page-line)!important;
+html[data-theme="dark"] .combined-subchart,
+html[data-theme="dark"] .guide,
+html[data-theme="dark"] .interpretation-divider,
+html[data-theme="dark"] th,
+html[data-theme="dark"] td{
+  border-color:var(--line)!important;
 }
-html[data-theme="dark"] .subtitle,
-html[data-theme="dark"] .subline,
-html[data-theme="dark"] .panel-label,
-html[data-theme="dark"] .metric-label,
-html[data-theme="dark"] .metric-sub,
-html[data-theme="dark"] .note,
-html[data-theme="dark"] .asof,
-html[data-theme="dark"] .command-label,
-html[data-theme="dark"] .command-sub,
-html[data-theme="dark"] .command-asof,
-html[data-theme="dark"] .institutional-subtitle,
-html[data-theme="dark"] .engine-source,
-html[data-theme="dark"] .breadth-read,
-html[data-theme="dark"] .benchmark-kicker,
-html[data-theme="dark"] .card-sub{
-  color:var(--page-muted)!important;
-}
-html[data-theme="dark"] h1,
-html[data-theme="dark"] h2,
-html[data-theme="dark"] h3,
-html[data-theme="dark"] .command-title,
-html[data-theme="dark"] .benchmark-title,
-html[data-theme="dark"] .institutional-title,
-html[data-theme="dark"] .metric-value,
-html[data-theme="dark"] .command-value,
-html[data-theme="dark"] .commentary p{
-  color:var(--page-text)!important;
-}
+html[data-theme="dark"] th{background:#101c2b!important;color:var(--muted)!important}
 html[data-theme="dark"] input,
 html[data-theme="dark"] select,
-html[data-theme="dark"] button{
-  background:var(--page-panel-2);
-  color:var(--page-text);
-  border-color:var(--page-line);
+html[data-theme="dark"] .btn,
+html[data-theme="dark"] .chart-toggle button{
+  background:#101c2b!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
 }
-.app-tabs,.topnav{display:none!important}
-.now-page-theme-toggle{
-  position:fixed;
-  top:14px;
-  right:16px;
-  z-index:9997;
-  display:flex;
-  gap:6px;
-  align-items:center;
-  padding:4px;
-  border:1px solid var(--page-line);
-  border-radius:9px;
-  background:var(--page-panel);
-  box-shadow:var(--page-shadow);
+html[data-theme="dark"] .chart-toggle button.active{background:var(--teal)!important;color:#04231f!important}
+html[data-theme="dark"] .pill{background:#152235;color:var(--text)}
+html[data-theme="dark"] .pill.bull{background:rgba(39,211,154,.15);color:#67e2b9}
+html[data-theme="dark"] .pill.bear{background:rgba(255,101,125,.15);color:#ff9bad}
+html[data-theme="dark"] .pill.warn{background:rgba(242,184,75,.15);color:#ffd36f}
+html[data-theme="dark"] .interpret-card p,
+html[data-theme="dark"] .combined-subtitle,
+html[data-theme="dark"] .posture-value,
+html[data-theme="dark"] .widget-title,
+html[data-theme="dark"] .decision-title,
+html[data-theme="dark"] .title{
+  color:var(--text)!important;
 }
-.now-theme-btn{
-  border:0;
-  border-radius:6px;
-  padding:6px 10px;
-  font:800 9px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-  letter-spacing:.05em;
-  cursor:pointer;
-  color:var(--page-muted);
-  background:transparent;
-}
-.now-theme-btn.active{
-  background:var(--page-accent);
-  color:#06241f;
-}
-html[data-theme="dark"] .now-theme-btn.active{color:#03211c}
-@media(max-width:720px){
-  .now-page-theme-toggle{top:8px;right:8px}
-  .now-theme-btn{padding:6px 8px}
-}
+html[data-theme="dark"] .status{background:#0f1b2a!important}
 
 </style>
 </head>
-<body>
-
-<div class="now-page-theme-toggle" aria-label="NASDAQ Institutional Breadth Laboratory theme">
-  <button class="now-theme-btn" id="nowThemeLight" type="button">Light</button>
-  <button class="now-theme-btn" id="nowThemeDark" type="button">Dark</button>
-</div>
-<div class="wrap">
-<header class="head"><div><div class="eyebrow">Institutional Breadth Engine</div><h1>NASDAQ Institutional Breadth Laboratory</h1><div class="sub">Decision-first NASI, McClellan, participation, thrust, washout, calibration and historical regime analysis</div></div><div class="status warn" id="status">Loading breadth and Stockbee benchmark feeds…</div></header>
+<body><div class="wrap">
+<header class="head">
+      <div>
+        <div class="eyebrow">Institutional Breadth Engine</div>
+        <h1>NASDAQ Institutional Breadth Laboratory</h1>
+        <div class="sub">Decision-first NASI, McClellan, participation, thrust, washout, calibration and historical regime analysis</div>
+      </div>
+      <div class="head-actions">
+        <div class="status warn" id="status">Loading breadth and Stockbee benchmark feeds…</div>
+        <div class="theme-switch">
+          <button id="nasiLightBtn" type="button">Light</button>
+          <button id="nasiDarkBtn" type="button">Dark</button>
+        </div>
+      </div>
+    </header>
 <section class="panel"><div class="panelhead"><div><div class="label">Time machine</div><div class="title">Historical breadth replay</div></div><div class="asof" id="selectedLabel">—</div></div><div class="controls"><button class="btn" id="prev">◀</button><button class="btn" id="play">▶ Play</button><button class="btn" id="next">▶</button><input id="slider" class="slider" type="range" min="0" max="0" value="0"><input id="dateInput" type="date"><button class="btn" id="latest">↻ Latest</button></div><div class="range"><span id="startDate">—</span><span id="endDate">—</span></div></section>
 <section class="panel decision" id="decision"><div class="decision-top"><div><div class="label">Decision first</div><div class="decision-title" id="decisionTitle">Loading internal breadth…</div><div style="margin-top:6px"><span class="pill warn" id="riskPill">Waiting</span> <span class="pill" id="signalPill">—</span></div></div><div class="asof" id="asof">—</div></div><div class="metrics" id="metrics"></div><div class="guide" id="guidance">Building the institutional breadth conclusion…</div></section>
 
@@ -1301,34 +1253,24 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<script id="nowUnifiedTheme">
+<script id="nasiTheme">
 (function(){
   const KEY='now.dashboard.theme';
-  const root=document.documentElement;
-  function preferred(){
-    try{
-      const saved=localStorage.getItem(KEY);
-      if(saved==='light'||saved==='dark') return saved;
-    }catch(_){}
-    return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
-  }
   function apply(theme){
     theme=theme==='dark'?'dark':'light';
-    root.dataset.theme=theme;
+    document.documentElement.dataset.theme=theme;
     try{localStorage.setItem(KEY,theme)}catch(_){}
-    const light=document.getElementById('nowThemeLight');
-    const dark=document.getElementById('nowThemeDark');
-    if(light) light.classList.toggle('active',theme==='light');
-    if(dark) dark.classList.toggle('active',theme==='dark');
-    window.dispatchEvent(new CustomEvent('now-theme-change',{detail:{theme}}));
+    const l=document.getElementById('nasiLightBtn');
+    const d=document.getElementById('nasiDarkBtn');
+    if(l)l.classList.toggle('active',theme==='light');
+    if(d)d.classList.toggle('active',theme==='dark');
   }
-  window.NOW_THEME={apply,current:()=>root.dataset.theme||preferred()};
   document.addEventListener('DOMContentLoaded',()=>{
-    const light=document.getElementById('nowThemeLight');
-    const dark=document.getElementById('nowThemeDark');
-    if(light) light.addEventListener('click',()=>apply('light'));
-    if(dark) dark.addEventListener('click',()=>apply('dark'));
-    apply(preferred());
+    let theme='light';
+    try{theme=localStorage.getItem(KEY)||((matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light')}catch(_){}
+    document.getElementById('nasiLightBtn')?.addEventListener('click',()=>apply('light'));
+    document.getElementById('nasiDarkBtn')?.addEventListener('click',()=>apply('dark'));
+    apply(theme);
   });
 })();
 </script>
