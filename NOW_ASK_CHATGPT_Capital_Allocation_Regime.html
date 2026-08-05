@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Capital Allocation Regime</title>
+  <title>Capital Allocation Regime · Auto-Connected</title>
   <meta name="description" content="Institutional macro backdrop and equity factor leadership dashboard." />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <style>
@@ -319,8 +319,8 @@
         <div class="banner-body">
           <div>
             <div class="regime-kicker"><span id="bannerDot" class="status-dot"></span><span id="bannerKicker">Awaiting live FMP data</span></div>
-            <div id="regimeTitle" class="regime-title mixed">Connect the secure Apps Script data endpoint</div>
-            <div id="regimeNarrative" class="regime-narrative">This page intentionally contains no mock market readings. Open Settings, paste the deployed Google Apps Script Web App URL, and load live end-of-day data from your FMP Starter plan.</div>
+            <div id="regimeTitle" class="regime-title mixed">Secure Apps Script endpoint connected</div>
+            <div id="regimeNarrative" class="regime-narrative">Live end-of-day data loads automatically through the secure Google Apps Script endpoint. The FMP API key remains private in Script Properties.</div>
           </div>
           <div class="banner-stats">
             <div class="banner-stat"><div class="label">Portfolio posture</div><div id="portfolioPosture" class="value">—</div></div>
@@ -426,7 +426,7 @@
     <div class="modal">
       <div class="modal-head"><strong>Capital Allocation Settings</strong><button id="closeSettingsBtn" class="btn small ghost">✕</button></div>
       <div class="modal-body">
-        <div class="field"><label for="apiUrlInput">Google Apps Script Web App URL</label><input id="apiUrlInput" type="url" placeholder="https://script.google.com/macros/s/.../exec" /><div class="help">Your FMP key remains private in Script Properties under <b>FMP_API_KEY</b>. This public HTML stores only the Web App URL in this browser.</div></div>
+        <div class="field"><label for="apiUrlInput">Google Apps Script Web App URL</label><input id="apiUrlInput" type="url" placeholder="https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec" / value="https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec" readonly><div class="help">Your FMP key remains private in Script Properties under <b>FMP_API_KEY</b>. This public HTML stores only the Web App URL in this browser.</div></div>
         <div class="field"><label for="themeSelect">Theme</label><select id="themeSelect"><option value="auto">Auto</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
         <div class="field"><label for="lookbackSelect">Historical window</label><select id="lookbackSelect"><option value="420">420 calendar days</option><option value="540" selected>540 calendar days</option><option value="730">730 calendar days</option></select><div class="help">At least 200 trading sessions are required for the structural regime model and Time Machine.</div></div>
       </div>
@@ -437,6 +437,8 @@
   <div id="toast" class="toast"></div>
 
 <script>
+const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec';
+
 (() => {
   'use strict';
   const STORAGE = { apiUrl:'now.capital.apiUrl', theme:'now.capital.theme', lookback:'now.capital.lookback' };
@@ -866,6 +868,26 @@ function mount(){
  $('nowAiAsk').onclick=askChatGPT;$('nowAiCopy').onclick=async()=>{const b=$('nowAiCopy');const old=b.textContent;await copyText(buildBrief());b.textContent='Copied ✓';setTimeout(()=>b.textContent=old,1600)};$('nowAiPreview').onclick=preview;$('nowAiDownload').onclick=download;$('nowAiClose').onclick=()=>modal.classList.remove('open');$('nowAiModalCopy').onclick=async()=>copyText($('nowAiBriefText').value);$('nowAiModalDownload').onclick=download;modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
+
+
+<script>
+(function(){
+  try {
+    localStorage.setItem('now.capital.apiUrl', NOW_CAPITAL_PRODUCTION_API);
+    localStorage.setItem('capitalAllocationApiUrl', NOW_CAPITAL_PRODUCTION_API);
+    localStorage.setItem('capitalApiUrl', NOW_CAPITAL_PRODUCTION_API);
+  } catch (_) {}
+  window.addEventListener('DOMContentLoaded', () => {
+    const candidates = [
+      ...document.querySelectorAll('input[type="url"], input[id*="api" i], input[name*="api" i], input[id*="endpoint" i], input[name*="endpoint" i]')
+    ];
+    candidates.forEach(el => {
+      el.value = NOW_CAPITAL_PRODUCTION_API;
+      el.readOnly = true;
+    });
+  });
 })();
 </script>
 
