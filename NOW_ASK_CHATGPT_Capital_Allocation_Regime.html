@@ -268,136 +268,13 @@
 }
 
 
-/* ---------- UNIFIED PAGE HEADER / THEME ---------- */
-:root{
-  --page-bg:#f7f9fc;
-  --page-panel:#ffffff;
-  --page-panel-2:#f3f6fa;
-  --page-text:#122033;
-  --page-muted:#66758a;
-  --page-line:#dbe3ec;
-  --page-accent:#14b8a6;
-  --page-accent-2:#0f766e;
-  --page-shadow:0 1px 2px rgba(15,23,42,.05);
-}
-html[data-theme="dark"]{
-  --page-bg:#07111d;
-  --page-panel:#0d1826;
-  --page-panel-2:#101d2d;
-  --page-text:#e7eef7;
-  --page-muted:#92a3b8;
-  --page-line:#22344a;
-  --page-accent:#2dd4bf;
-  --page-accent-2:#14b8a6;
-  --page-shadow:none;
-}
-html[data-theme="dark"] body{background:var(--page-bg)!important;color:var(--page-text)!important}
-html[data-theme="dark"] .panel,
-html[data-theme="dark"] .card,
-html[data-theme="dark"] .benchmark-module,
-html[data-theme="dark"] .command-strip,
-html[data-theme="dark"] .time-machine,
-html[data-theme="dark"] details.detail-panel,
-html[data-theme="dark"] .status-bar,
-html[data-theme="dark"] .market-summary-panel,
-html[data-theme="dark"] .institutional-panel,
-html[data-theme="dark"] .institutional-inline,
-html[data-theme="dark"] .danger-panel,
-html[data-theme="dark"] .metric,
-html[data-theme="dark"] .institutional-card,
-html[data-theme="dark"] .nasi-metric,
-html[data-theme="dark"] .osc-insight{
-  background:var(--page-panel)!important;
-  border-color:var(--page-line)!important;
-  color:var(--page-text)!important;
-}
-html[data-theme="dark"] .benchmark-subchart,
-html[data-theme="dark"] .danger-attached,
-html[data-theme="dark"] .command-bottom,
-html[data-theme="dark"] .detail-content,
-html[data-theme="dark"] .research-controls{
-  background:var(--page-panel-2)!important;
-  border-color:var(--page-line)!important;
-}
-html[data-theme="dark"] .subtitle,
-html[data-theme="dark"] .subline,
-html[data-theme="dark"] .panel-label,
-html[data-theme="dark"] .metric-label,
-html[data-theme="dark"] .metric-sub,
-html[data-theme="dark"] .note,
-html[data-theme="dark"] .asof,
-html[data-theme="dark"] .command-label,
-html[data-theme="dark"] .command-sub,
-html[data-theme="dark"] .command-asof,
-html[data-theme="dark"] .institutional-subtitle,
-html[data-theme="dark"] .engine-source,
-html[data-theme="dark"] .breadth-read,
-html[data-theme="dark"] .benchmark-kicker,
-html[data-theme="dark"] .card-sub{
-  color:var(--page-muted)!important;
-}
-html[data-theme="dark"] h1,
-html[data-theme="dark"] h2,
-html[data-theme="dark"] h3,
-html[data-theme="dark"] .command-title,
-html[data-theme="dark"] .benchmark-title,
-html[data-theme="dark"] .institutional-title,
-html[data-theme="dark"] .metric-value,
-html[data-theme="dark"] .command-value,
-html[data-theme="dark"] .commentary p{
-  color:var(--page-text)!important;
-}
-html[data-theme="dark"] input,
-html[data-theme="dark"] select,
-html[data-theme="dark"] button{
-  background:var(--page-panel-2);
-  color:var(--page-text);
-  border-color:var(--page-line);
-}
-.app-tabs,.topnav{display:none!important}
-.now-page-theme-toggle{
-  position:fixed;
-  top:14px;
-  right:16px;
-  z-index:9997;
-  display:flex;
-  gap:6px;
-  align-items:center;
-  padding:4px;
-  border:1px solid var(--page-line);
-  border-radius:9px;
-  background:var(--page-panel);
-  box-shadow:var(--page-shadow);
-}
-.now-theme-btn{
-  border:0;
-  border-radius:6px;
-  padding:6px 10px;
-  font:800 9px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-  letter-spacing:.05em;
-  cursor:pointer;
-  color:var(--page-muted);
-  background:transparent;
-}
-.now-theme-btn.active{
-  background:var(--page-accent);
-  color:#06241f;
-}
-html[data-theme="dark"] .now-theme-btn.active{color:#03211c}
-@media(max-width:720px){
-  .now-page-theme-toggle{top:8px;right:8px}
-  .now-theme-btn{padding:6px 8px}
-}
-
+/* Consistent standalone page header */
+.topbar{min-height:0;background:transparent!important;border:0!important;box-shadow:none!important;padding:0 0 8px!important;position:static!important;justify-content:flex-end}
+.topbar .brand,.topbar .nav{display:none!important}
+.top-actions{margin-left:auto}
 </style>
 </head>
 <body>
-
-<div class="now-page-theme-toggle" aria-label="Capital Allocation Regime theme">
-  <button class="now-theme-btn" id="nowThemeLight" type="button">Light</button>
-  <button class="now-theme-btn" id="nowThemeDark" type="button">Dark</button>
-</div>
-
   <div class="app">
     <header class="topbar">
       <div class="brand">
@@ -554,11 +431,11 @@ html[data-theme="dark"] .now-theme-btn.active{color:#03211c}
     <div class="modal">
       <div class="modal-head"><strong>Capital Allocation Settings</strong><button id="closeSettingsBtn" class="btn small ghost">✕</button></div>
       <div class="modal-body">
-        <div class="field"><label for="apiUrlInput">Google Apps Script Web App URL</label><input id="apiUrlInput" type="url" placeholder="https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec" / value="https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec" readonly><div class="help">Your FMP key remains private in Script Properties under <b>FMP_API_KEY</b>. This public HTML stores only the Web App URL in this browser.</div></div>
+        </div>
         <div class="field"><label for="themeSelect">Theme</label><select id="themeSelect"><option value="auto">Auto</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
         <div class="field"><label for="lookbackSelect">Historical window</label><select id="lookbackSelect"><option value="420">420 calendar days</option><option value="540" selected>540 calendar days</option><option value="730">730 calendar days</option></select><div class="help">At least 200 trading sessions are required for the structural regime model and Time Machine.</div></div>
       </div>
-      <div class="modal-actions"><button id="testConnectionBtn" class="btn">Test endpoint</button><button id="saveSettingsBtn" class="btn primary">Save & Load</button></div>
+      <div class="modal-actions"><button id="saveSettingsBtn" class="btn primary">Save & Load</button></div>
     </div>
   </div>
   <div id="loadingOverlay" class="loading-overlay"><div><div class="loader"></div><div style="margin-top:10px;color:white;font-weight:700">Loading live FMP series…</div></div></div>
@@ -837,7 +714,7 @@ const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJ
   }
 
   async function loadData() {
-    const api=localStorage.getItem(STORAGE.apiUrl); if(!api){ $('settingsModal').classList.add('open'); return; }
+    const api=NOW_CAPITAL_PRODUCTION_API;
     loading(true);
     try {
       const lookback=Number(localStorage.getItem(STORAGE.lookback)||540); const from=daysAgo(lookback), to=isoDate(new Date());
@@ -850,17 +727,17 @@ const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJ
       $('updatedText').textContent=`FMP via Apps Script · loaded ${new Date(data.generatedAt||Date.now()).toLocaleString()}`; $('dataDot').className='status-dot ok';
       renderAt(state.latestIndex);
       if(state.dataErrors.length) toast(`Loaded with ${state.dataErrors.length} unavailable series.`, 'bad'); else toast('Capital Allocation Regime updated.', 'ok');
-    } catch(err) { console.error(err); $('dataDot').className='status-dot bad'; toast(err.message||String(err),'bad'); $('settingsModal').classList.add('open'); }
+    } catch(err) { console.error(err); $('dataDot').className='status-dot bad'; toast(err.message||String(err),'bad'); }
     finally { loading(false); }
   }
 
   function rebuildAllCharts(){ if(state.ratios.MACRO?.length) renderAt(state.selectedIndex); }
   function bind() {
-    $('settingsBtn').onclick=()=>{ $('apiUrlInput').value=localStorage.getItem(STORAGE.apiUrl)||''; $('themeSelect').value=localStorage.getItem(STORAGE.theme)||'auto'; $('lookbackSelect').value=localStorage.getItem(STORAGE.lookback)||'540'; $('settingsModal').classList.add('open'); };
+    $('settingsBtn').onclick=()=>{ $('themeSelect').value=localStorage.getItem(STORAGE.theme)||'auto'; $('lookbackSelect').value=localStorage.getItem(STORAGE.lookback)||'540'; $('settingsModal').classList.add('open'); };
     $('closeSettingsBtn').onclick=()=>$('settingsModal').classList.remove('open');
     $('settingsModal').onclick=e=>{ if(e.target===$('settingsModal')) $('settingsModal').classList.remove('open'); };
-    $('saveSettingsBtn').onclick=()=>{ const url=normalizeUrl($('apiUrlInput').value); if(!url) return toast('Paste the deployed Apps Script Web App URL.','bad'); localStorage.setItem(STORAGE.apiUrl,url); localStorage.setItem(STORAGE.lookback,$('lookbackSelect').value); applyTheme($('themeSelect').value); $('settingsModal').classList.remove('open'); loadData(); };
-    $('testConnectionBtn').onclick=async()=>{ const url=normalizeUrl($('apiUrlInput').value); if(!url) return toast('Paste the Web App URL first.','bad'); loading(true); try{const x=await jsonp(url,{action:'health'}); if(!x?.ok) throw new Error(x?.error||'Health check failed'); toast(`Endpoint connected · FMP key ${x.fmpKeyConfigured?'configured':'missing'}`,x.fmpKeyConfigured?'ok':'bad');}catch(e){toast(e.message,'bad');}finally{loading(false);} };
+    $('saveSettingsBtn').onclick=()=>{ localStorage.setItem(STORAGE.apiUrl,NOW_CAPITAL_PRODUCTION_API); localStorage.setItem(STORAGE.lookback,$('lookbackSelect').value); applyTheme($('themeSelect').value); $('settingsModal').classList.remove('open'); loadData(); };
+    
     $('refreshBtn').onclick=loadData;
     $('latestBtn').onclick=()=>renderAt(state.latestIndex);
     $('timeSlider').oninput=e=>renderAt(Number(e.target.value));
@@ -869,7 +746,7 @@ const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJ
     document.querySelectorAll('[data-tv]').forEach(el=>el.onclick=()=>window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(el.dataset.tv)}`,'_blank','noopener'));
     matchMedia('(prefers-color-scheme: light)').addEventListener?.('change',()=>{if((localStorage.getItem(STORAGE.theme)||'auto')==='auto')applyTheme('auto');});
   }
-  function init(){ const theme=localStorage.getItem(STORAGE.theme)||'auto'; applyTheme(theme); $('themeSelect').value=theme; bind(); if(localStorage.getItem(STORAGE.apiUrl)) loadData(); else $('settingsModal').classList.add('open'); }
+  function init(){ localStorage.setItem(STORAGE.apiUrl,NOW_CAPITAL_PRODUCTION_API); const theme=localStorage.getItem(STORAGE.theme)||'auto'; applyTheme(theme); $('themeSelect').value=theme; bind(); loadData(); }
   init();
 })();
 </script>
@@ -1015,39 +892,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       el.value = NOW_CAPITAL_PRODUCTION_API;
       el.readOnly = true;
     });
-  });
-})();
-</script>
-
-
-<script id="nowUnifiedTheme">
-(function(){
-  const KEY='now.dashboard.theme';
-  const root=document.documentElement;
-  function preferred(){
-    try{
-      const saved=localStorage.getItem(KEY);
-      if(saved==='light'||saved==='dark') return saved;
-    }catch(_){}
-    return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
-  }
-  function apply(theme){
-    theme=theme==='dark'?'dark':'light';
-    root.dataset.theme=theme;
-    try{localStorage.setItem(KEY,theme)}catch(_){}
-    const light=document.getElementById('nowThemeLight');
-    const dark=document.getElementById('nowThemeDark');
-    if(light) light.classList.toggle('active',theme==='light');
-    if(dark) dark.classList.toggle('active',theme==='dark');
-    window.dispatchEvent(new CustomEvent('now-theme-change',{detail:{theme}}));
-  }
-  window.NOW_THEME={apply,current:()=>root.dataset.theme||preferred()};
-  document.addEventListener('DOMContentLoaded',()=>{
-    const light=document.getElementById('nowThemeLight');
-    const dark=document.getElementById('nowThemeDark');
-    if(light) light.addEventListener('click',()=>apply('light'));
-    if(dark) dark.addEventListener('click',()=>apply('dark'));
-    apply(preferred());
   });
 })();
 </script>
