@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Leadership Rotation Command Center 4.0.3</title>
+<style>
+:root{--bg:#f3f6fa;--panel:#fff;--panel2:#f7f9fc;--line:#d9e2ee;--line2:#e9eef5;--ink:#132238;--muted:#68778e;--teal:#008f83;--green:#0a9c75;--blue:#137cc1;--amber:#c67a00;--red:#d43c53;--purple:#7459c7;--shadow:0 1px 3px rgba(18,34,56,.06);--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+html[data-theme="dark"]{--bg:#0c1420;--panel:#121d2b;--panel2:#172435;--line:#2b3b50;--line2:#223247;--ink:#e9f0fa;--muted:#9aabc0;--teal:#2bc1b2;--green:#35c795;--blue:#52a9e2;--amber:#efad3d;--red:#f16478;--purple:#9d87e3;--shadow:none}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:12px}.app{min-width:1180px}.topnav{height:34px;display:flex;align-items:center;gap:18px;padding:0 12px;background:var(--panel);border-bottom:1px solid var(--line);white-space:nowrap;overflow:hidden}.topnav a{font:600 9px var(--mono);letter-spacing:.04em;color:var(--muted);text-decoration:none}.topnav a.active{color:var(--teal);border-bottom:2px solid var(--teal);height:34px;display:flex;align-items:center}.header{padding:12px 14px 9px;background:var(--panel);border-bottom:1px solid var(--line)}.eyebrow{font:700 9px var(--mono);letter-spacing:.17em;color:var(--teal);text-transform:uppercase}.headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.title{font-size:22px;font-weight:800;line-height:1.05;margin:4px 0}.subtitle{color:var(--muted);font:10px var(--mono)}.actions{display:flex;gap:7px;align-items:center}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:6px;padding:7px 10px;font:700 9px var(--mono);cursor:pointer}.btn:hover{border-color:var(--teal)}.btn.primary{background:var(--teal);border-color:var(--teal);color:white}.btn.active{background:var(--teal);color:white;border-color:var(--teal)}.statusbar{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:var(--panel2);border-bottom:1px solid var(--line);font:9px var(--mono);color:var(--muted)}.statusbar .ok{color:var(--green)}.statusbar .warn{color:var(--amber)}.statusbar .bad{color:var(--red)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;padding:8px}.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}.span5{grid-column:span 5}.span4{grid-column:span 4}.card{background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden}.card-head{min-height:44px;padding:9px 11px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.card-title{font:800 10px var(--mono);letter-spacing:.12em;text-transform:uppercase}.card-sub{font-size:9px;color:var(--muted);margin-top:3px}.card-body{padding:10px}.pill{border:1px solid var(--line);border-radius:999px;padding:3px 7px;font:700 8px var(--mono);color:var(--muted);white-space:nowrap}.pill.good{color:var(--green);background:color-mix(in srgb,var(--green) 10%,transparent);border-color:color-mix(in srgb,var(--green) 30%,var(--line))}.pill.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 11%,transparent)}.pill.bad{color:var(--red);background:color-mix(in srgb,var(--red) 10%,transparent)}.tape{display:grid;grid-template-columns:1.25fr repeat(7,1fr);gap:1px;background:var(--line)}.tape-item{background:var(--panel);padding:10px 11px;min-height:78px}.tape-label{font:700 8px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.tape-value{font-size:18px;font-weight:800;margin-top:6px;line-height:1}.tape-value.small{font-size:14px}.tape-note{font-size:8px;color:var(--muted);margin-top:6px}.funnel{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr;gap:8px;align-items:stretch}.funnel-step{border:1px solid var(--line);border-radius:8px;padding:11px;background:var(--panel2);min-height:98px}.funnel-label{font:700 8px var(--mono);color:var(--muted);letter-spacing:.12em}.funnel-name{font-size:15px;font-weight:800;margin-top:7px}.funnel-meta{font-size:9px;color:var(--muted);margin-top:7px;line-height:1.45}.funnel-arrow{display:flex;align-items:center;justify-content:center;color:var(--teal);font-size:22px}.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.toolbar input,.toolbar select{height:28px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:6px;padding:0 8px;font-size:10px}.toolbar input{width:210px}.rrg-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(330px,.8fr);gap:8px}.canvas-box{position:relative;height:430px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.canvas-box canvas{width:100%;height:100%}.quadrants{display:grid;grid-template-columns:1fr 1fr;gap:6px}.quad{border:1px solid var(--line);border-radius:7px;background:var(--panel2);padding:8px;min-height:208px}.quad h4{margin:0 0 7px;font:800 8px var(--mono);letter-spacing:.08em}.rrg-row{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line2);font-size:9px}.rrg-row:last-child{border-bottom:0}.rrg-row button{border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-align:left;font-size:9px}.rrg-row small{color:var(--muted)}.metric-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px}.metric{border:1px solid var(--line);border-radius:7px;background:var(--panel2);padding:8px}.metric span{display:block;font:700 8px var(--mono);color:var(--muted)}.metric b{display:block;font-size:15px;margin-top:5px}.trend-box{height:330px;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}.trend-box canvas{width:100%;height:100%}.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:9px;color:var(--muted)}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}.table-wrap.tall{max-height:520px}.table-wrap.medium{max-height:390px}table{width:100%;border-collapse:collapse;font-size:9px}thead th{position:sticky;top:0;z-index:2;background:var(--panel2);color:var(--muted);font:700 8px var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:8px 7px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}thead th:first-child,tbody td:first-child{text-align:left}tbody td{padding:7px;border-bottom:1px solid var(--line2);text-align:right;white-space:nowrap}tbody tr{cursor:pointer}tbody tr:hover{background:color-mix(in srgb,var(--teal) 7%,transparent)}tbody tr.selected{background:color-mix(in srgb,var(--teal) 13%,transparent)}.positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--muted)}.tag{display:inline-block;border-radius:999px;padding:2px 6px;font:700 7px var(--mono);border:1px solid var(--line)}.tag.leading,.tag.actionable{color:var(--green);background:color-mix(in srgb,var(--green) 10%,transparent)}.tag.improving,.tag.watch{color:var(--blue);background:color-mix(in srgb,var(--blue) 10%,transparent)}.tag.weakening,.tag.leader{color:var(--amber);background:color-mix(in srgb,var(--amber) 10%,transparent)}.tag.lagging,.tag.avoid{color:var(--red);background:color-mix(in srgb,var(--red) 10%,transparent)}.checks{display:flex;justify-content:flex-end;gap:3px}.check{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:10px}.check.on{background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--green);border-color:color-mix(in srgb,var(--green) 35%,var(--line))}.heat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.heat-panel{border:1px solid var(--line);border-radius:8px;overflow:hidden}.heat-title{padding:8px 9px;background:var(--panel2);font:800 9px var(--mono);display:flex;justify-content:space-between}.heat-row{display:grid;grid-template-columns:minmax(150px,1.8fr) repeat(4,.7fr);align-items:center;border-top:1px solid var(--line2);min-height:31px}.heat-row>div{padding:6px 7px;text-align:right;font-size:9px}.heat-row>div:first-child{text-align:left}.score-cell{font-weight:800}.profile-grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:8px}.profile-side{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:10px}.profile-ticker{font:800 28px var(--mono)}.profile-name{font-weight:700;margin-top:2px}.profile-parent{color:var(--muted);font-size:9px;margin-top:4px}.score-ring{width:118px;height:118px;margin:12px auto;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--teal) 0deg,var(--line) 0)}.score-ring-inner{width:88px;height:88px;border-radius:50%;background:var(--panel2);display:grid;place-items:center;text-align:center}.score-ring b{font-size:25px}.score-ring span{font:700 7px var(--mono);color:var(--muted)}.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px}.profile-stat{border:1px solid var(--line);border-radius:6px;padding:7px}.profile-stat span{display:block;font:700 7px var(--mono);color:var(--muted)}.profile-stat b{display:block;margin-top:4px;font-size:11px}.band-list{margin-top:9px;display:grid;gap:4px}.band{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:5px;padding:6px;font-size:8px}.band .dot{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:5px}.band.on .dot{background:var(--green)}.charts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tv-frame{height:515px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel2)}.tv-frame iframe{width:100%;height:100%;border:0}.short-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.short-card{border:1px solid var(--line);border-radius:8px;overflow:hidden}.short-head{padding:8px;background:var(--panel2);font:800 9px var(--mono);display:flex;justify-content:space-between}.short-row{padding:7px 8px;border-top:1px solid var(--line2);display:flex;justify-content:space-between;gap:8px;font-size:9px;cursor:pointer}.short-row:hover{background:color-mix(in srgb,var(--teal) 7%,transparent)}.note{padding:8px;border-radius:7px;background:color-mix(in srgb,var(--amber) 11%,transparent);color:var(--amber);font-size:9px;line-height:1.45}
+.rotation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.perf-panel,.flow-panel{border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.perf-head{padding:8px 9px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font:800 9px var(--mono)}.bar-list{padding:7px}.bar-row{display:grid;grid-template-columns:155px 1fr 52px;gap:7px;align-items:center;min-height:23px;font-size:9px;cursor:pointer}.bar-row:hover{background:color-mix(in srgb,var(--teal) 6%,transparent)}.bar-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar-track{height:9px;border-radius:999px;background:var(--line);overflow:hidden;position:relative}.bar-fill{height:100%;border-radius:999px;background:var(--green)}.bar-fill.neg{background:var(--red)}.bar-value{text-align:right;font:700 8px var(--mono)}.flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.flow-col{border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.flow-title{padding:8px 9px;border-bottom:1px solid var(--line);font:800 8px var(--mono);display:flex;justify-content:space-between}.flow-row{display:flex;justify-content:space-between;gap:8px;padding:7px 8px;border-top:1px solid var(--line2);font-size:9px;cursor:pointer}.flow-row:first-child{border-top:0}.flow-row:hover{background:color-mix(in srgb,var(--teal) 7%,transparent)}.mover-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mover-card{border:1px solid var(--line);border-radius:8px;overflow:hidden}.mover-head{padding:8px;background:var(--panel2);font:800 8px var(--mono);display:flex;justify-content:space-between}.mover-row{display:grid;grid-template-columns:minmax(170px,1fr) 60px 60px;gap:8px;padding:7px 8px;border-top:1px solid var(--line2);font-size:9px;cursor:pointer}.persistence-engine{display:grid;grid-template-columns:330px 1fr;gap:10px}.persistence-summary{border:1px solid var(--line);border-radius:8px;background:var(--panel2);overflow:hidden}.persist-summary-head{display:grid;grid-template-columns:minmax(0,1fr) 58px 62px 52px;gap:8px;padding:8px 9px;border-bottom:1px solid var(--line);font:800 7px var(--mono);color:var(--muted)}.persist-summary-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 62px 52px;gap:8px;align-items:center;padding:7px 9px;border-top:1px solid var(--line2);font-size:8px;cursor:pointer}.persist-summary-row:first-of-type{border-top:0}.persist-summary-row:hover{background:color-mix(in srgb,var(--teal) 7%,transparent)}.persist-name{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.persist-bar{height:7px;border-radius:999px;background:var(--line);overflow:hidden}.persist-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--amber),var(--green))}.persist-age{text-align:right;font:800 7px var(--mono)}.persist-stars{letter-spacing:1px;color:var(--amber);white-space:nowrap}.timeline-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}.timeline{min-width:900px}.timeline-head,.timeline-row{display:grid;grid-template-columns:190px repeat(30,minmax(18px,1fr));align-items:center}.timeline-head{background:var(--panel2);position:sticky;top:0;z-index:2}.timeline-head div,.timeline-row div{padding:5px 2px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);text-align:center;font:700 6px var(--mono)}.timeline-head div:first-child,.timeline-row div:first-child{text-align:left;padding-left:8px;position:sticky;left:0;background:var(--panel2);z-index:1}.timeline-cell{display:block;height:17px;margin:2px;border-radius:3px;background:color-mix(in srgb,var(--line) 85%,transparent);position:relative}.timeline-cell.empty{background:transparent;border:1px dashed color-mix(in srgb,var(--line) 75%,transparent)}.timeline-cell.c1{background:color-mix(in srgb,var(--amber) 62%,var(--panel2))}.timeline-cell.c2{background:color-mix(in srgb,var(--green) 72%,var(--panel2))}.timeline-cell.current{outline:1px solid var(--teal);outline-offset:1px}.timeline-legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px;font:700 7px var(--mono);color:var(--muted)}.timeline-legend span{display:flex;gap:5px;align-items:center}.legend-swatch{width:10px;height:10px;border-radius:2px;background:var(--line)}.legend-swatch.leading{background:color-mix(in srgb,var(--green) 72%,var(--panel2))}.legend-swatch.constructive{background:color-mix(in srgb,var(--amber) 62%,var(--panel2))}.legend-swatch.untracked{background:transparent;border:1px dashed var(--line)}@media(max-width:980px){.persistence-engine{grid-template-columns:1fr}}.delta-up{color:var(--green)}.delta-down{color:var(--red)}
+.footer{padding:14px;text-align:center;color:var(--muted);font:8px var(--mono)}.modal{position:fixed;inset:0;background:rgba(10,18,29,.45);display:none;align-items:center;justify-content:center;z-index:20}.modal.open{display:flex}.modal-box{width:520px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 15px 45px rgba(0,0,0,.25)}.modal-head{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.modal-body{padding:12px}.field{margin-bottom:12px}.field label{display:block;font:700 8px var(--mono);color:var(--muted);margin-bottom:5px}.field input{width:100%;height:34px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:6px;padding:0 9px}.modal-actions{padding:12px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:7px}@media(max-width:1300px){.app{min-width:1050px}.tape{grid-template-columns:repeat(4,1fr)}.heat-grid{grid-template-columns:1fr}.rrg-layout{grid-template-columns:1fr}.profile-grid{grid-template-columns:1fr}.short-grid{grid-template-columns:1fr 1fr}}
+
+.source-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.source-card{border:1px solid var(--line);border-radius:8px;background:var(--panel2);padding:9px}.source-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.source-name{font:800 8px var(--mono);letter-spacing:.08em;text-transform:uppercase}.source-state{font:800 8px var(--mono)}.source-state.live{color:var(--green)}.source-state.partial{color:var(--amber)}.source-state.failed{color:var(--red)}.source-meta{margin-top:6px;color:var(--muted);font-size:8px;line-height:1.45}.decision-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.decision-cell{border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:8px}.decision-cell span{display:block;font:700 7px var(--mono);color:var(--muted)}.decision-cell b{display:block;margin-top:4px;font-size:11px}
+
+.workspace-tabs{grid-column:1/-1;display:flex;gap:6px;position:sticky;top:0;z-index:15;
+  background:var(--bg);padding:2px 0 6px}
+.workspace-tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);
+  border-radius:7px;padding:9px 13px;font:800 9px var(--mono);letter-spacing:.07em;cursor:pointer}
+.workspace-tab:hover{color:var(--ink);border-color:var(--teal)}
+.workspace-tab.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.workspace-panel{display:none;grid-column:1/-1;grid-template-columns:repeat(12,1fr);gap:8px}
+.workspace-panel.active{display:grid}
+.workspace-panel>.card{min-width:0}
+@media(max-width:1300px){.workspace-tabs{position:static}}
+
+/* 4.0.2 large-monitor readability */
+@media(min-width:1500px){
+  body{font-size:13px}
+  .card-title{font-size:11px}
+  .card-sub{font-size:10px}
+  .tape-value{font-size:20px}
+  table{font-size:10px}
+  thead th{font-size:9px}
+  tbody td{padding:8px}
+  .workspace-tab{font-size:10px;padding:10px 15px}
+  .rrg-row,.flow-row,.mover-row,.short-row{font-size:10px}
+}
+
+/* 4.0.3 Research Workbench */
+.research-workbench{overflow:visible}
+.research-head{position:sticky;top:42px;z-index:8;background:var(--panel)}
+.research-controls{display:grid;grid-template-columns:minmax(260px,1.4fr) 170px 160px 190px auto;gap:8px;padding:10px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.research-controls input,.research-controls select{height:34px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);font:700 10px var(--mono);padding:0 10px}
+.research-layout{display:grid;grid-template-columns:430px minmax(0,1fr);gap:10px;padding:10px}
+.research-queue{border:1px solid var(--line);border-radius:9px;background:var(--panel2);min-width:0;overflow:hidden}
+.research-queue-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);font:800 9px var(--mono);letter-spacing:.08em;color:var(--muted)}
+.research-card-grid{display:grid;grid-template-columns:1fr;gap:7px;padding:8px;max-height:calc(100vh - 205px);min-height:760px;overflow:auto}
+.research-card{display:grid;grid-template-columns:94px minmax(0,1fr) 130px;gap:9px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer;transition:.15s}
+.research-card:hover{border-color:var(--teal);transform:translateY(-1px)}
+.research-card.selected{border-color:var(--teal);box-shadow:0 0 0 2px color-mix(in srgb,var(--teal) 18%,transparent);background:color-mix(in srgb,var(--teal) 6%,var(--panel))}
+.research-card-rank{font:800 9px var(--mono);color:var(--muted)}
+.research-card-ticker{font:900 15px var(--mono);color:var(--ink)}
+.research-card-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:750}
+.research-card-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;font:700 8px var(--mono);color:var(--muted)}
+.research-card-score{text-align:right}
+.research-card-score b{display:block;font:900 16px var(--mono)}
+.research-card-score span{font:800 8px var(--mono);color:var(--muted)}
+.research-spark{width:130px;height:54px;display:block}
+.research-detail{min-width:0}
+.research-detail .profile-grid{grid-template-columns:170px minmax(0,1fr)}
+.research-detail .charts{min-height:760px}
+.research-detail .tv-frame{min-height:760px}
+.research-empty{padding:30px;text-align:center;color:var(--muted);font:700 10px var(--mono)}
+@media(max-width:1500px){
+  .research-layout{grid-template-columns:360px minmax(0,1fr)}
+  .research-card{grid-template-columns:80px minmax(0,1fr) 105px}
+  .research-spark{width:105px}
+}
+
+.now-ai-chat-note{
+  margin:0 0 10px;
+  padding:9px 11px;
+  border:1px solid rgba(16,185,129,.28);
+  border-radius:8px;
+  background:rgba(16,185,129,.08);
+  color:inherit;
+  font:700 10px/1.45 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+<div class="eyebrow">SECTOR → INDUSTRY → GROUP/THEME → ACTIONABLE ETF</div>
+<div class="headrow"><div><h1 class="title">Leadership Rotation Command Center 4.0.3</h1><div class="subtitle" id="subtitle">Canonical FMP leadership workspace · command → rotation → momentum → persistence → research</div></div><div class="actions"><a class="btn" href="Market_Breadth_Institutional_Command.html">Breadth Command</a><button class="btn primary" id="refreshBtn">↻ Refresh Live Data</button><button class="btn" id="settingsBtn">Settings</button><button class="btn active" id="lightBtn">Light</button><button class="btn" id="darkBtn">Dark</button></div></div>
+</header>
+<div class="statusbar"><span id="statusText">Loading saved rotation payload…</span><span id="statusRight">—</span></div>
+<main class="grid"><div aria-label="Leadership workspace" class="workspace-tabs" role="tablist"><button aria-selected="true" class="workspace-tab active" data-tab="command" role="tab">1 · COMMAND</button><button aria-selected="false" class="workspace-tab" data-tab="rotation" role="tab">2 · ROTATION</button><button aria-selected="false" class="workspace-tab" data-tab="momentum" role="tab">3 · MOMENTUM</button><button aria-selected="false" class="workspace-tab" data-tab="persistence" role="tab">4 · PERSISTENCE</button><button aria-selected="false" class="workspace-tab" data-tab="research" role="tab">5 · RESEARCH</button></div>
+<div class="workspace-panel active" data-workspace="command"><section class="card span12"><div class="tape">
+<div class="tape-item"><div class="tape-label">Leadership Regime</div><div class="tape-value small" id="regimeLabel">—</div><div class="tape-note" id="regimeNote">Broad, selective, narrow or defensive</div></div>
+<div class="tape-item"><div class="tape-label">Leadership Score</div><div class="tape-value" id="regimeScore">—</div><div class="tape-note">Cross-universe breadth</div></div>
+<div class="tape-item"><div class="tape-label">Best Sector</div><div class="tape-value small" id="bestSector">—</div><div class="tape-note" id="bestSectorNote">—</div></div>
+<div class="tape-item"><div class="tape-label">Best Industry</div><div class="tape-value small" id="bestIndustry">—</div><div class="tape-note" id="bestIndustryNote">—</div></div>
+<div class="tape-item"><div class="tape-label">Best Theme</div><div class="tape-value small" id="bestTheme">—</div><div class="tape-note" id="bestThemeNote">—</div></div>
+<div class="tape-item"><div class="tape-label">Confirmed Groups</div><div class="tape-value" id="confirmedGroups">—</div><div class="tape-note">4+ timeframe confirmations</div></div>
+<div class="tape-item"><div class="tape-label">Momentum Trend</div><div class="tape-value small" id="momentumTrend">—</div><div class="tape-note">Theme impulse direction</div></div>
+<div class="tape-item"><div class="tape-label">Actionable Setups</div><div class="tape-value" id="actionableCount">—</div><div class="tape-note">Leadership + Stage 2 quality</div></div>
+</div></section><section class="card span12"><div class="card-head"><div><div class="card-title">Source Health &amp; Freshness</div><div class="card-sub">Every ranking is traceable to the Market Intelligence cache, Group Momentum sheet and private FMP history</div></div><span class="pill" id="sourcePill">VERIFYING</span></div><div class="card-body"><div class="source-grid"><div class="source-card"><div class="source-top"><span class="source-name">Market Intelligence</span><span class="source-state" id="sourceMiState">—</span></div><div class="source-meta" id="sourceMiMeta">Awaiting API payload</div></div><div class="source-card"><div class="source-top"><span class="source-name">Group Momentum</span><span class="source-state" id="sourceGmState">—</span></div><div class="source-meta" id="sourceGmMeta">Awaiting sheet confirmation</div></div><div class="source-card"><div class="source-top"><span class="source-name">FMP Price History</span><span class="source-state" id="sourceFmpState">—</span></div><div class="source-meta" id="sourceFmpMeta">Awaiting private price bridge</div></div><div class="source-card"><div class="source-top"><span class="source-name">Rotation Cache</span><span class="source-state" id="sourceCacheState">—</span></div><div class="source-meta" id="sourceCacheMeta">Awaiting persistent payload</div></div></div></div></section><section class="card span12"><div class="card-head"><div><div class="card-title">Leadership Funnel</div><div class="card-sub">Allocation context → industry confirmation → persistent group → timing handoff</div></div><span class="pill" id="funnelPill">CANONICAL PATH</span></div><div class="card-body"><div class="funnel">
+<div class="funnel-step"><div class="funnel-label">1 · SECTOR</div><div class="funnel-name" id="funnelSector">—</div><div class="funnel-meta" id="funnelSectorMeta">Highest broad-sector leadership score</div></div><div class="funnel-arrow">→</div>
+<div class="funnel-step"><div class="funnel-label">2 · INDUSTRY</div><div class="funnel-name" id="funnelIndustry">—</div><div class="funnel-meta" id="funnelIndustryMeta">Best confirmed industry within leadership</div></div><div class="funnel-arrow">→</div>
+<div class="funnel-step"><div class="funnel-label">3 · GROUP / THEME</div><div class="funnel-name" id="funnelTheme">—</div><div class="funnel-meta" id="funnelThemeMeta">Persistent multi-timeframe theme</div></div><div class="funnel-arrow">→</div>
+<div class="funnel-step"><div class="funnel-label">4 · SELECTED ETF</div><div class="funnel-name" id="funnelSelected">—</div><div class="funnel-meta" id="funnelSelectedMeta">Click any row or bubble to inspect timing</div></div>
+</div></div></section><section class="card span5"><div class="card-head"><div><div class="card-title">Swing-Trading Shortlist</div><div class="card-sub">Small outputs for deployment, pullbacks and early rotation</div></div><span class="pill good" id="shortPill">RANKED</span></div><div class="card-body"><div class="short-grid" style="grid-template-columns:1fr"><div class="short-card"><div class="short-head"><span>TOP THEMES</span><span id="topThemeCount">—</span></div><div id="shortTop"></div></div><div class="short-card"><div class="short-head"><span>CONSTRUCTIVE PULLBACKS</span><span id="pullbackCount">—</span></div><div id="shortPullbacks"></div></div><div class="short-card"><div class="short-head"><span>EMERGING ROTATIONS</span><span id="emergingCount">—</span></div><div id="shortEmerging"></div></div></div></div></section><section class="card span7">
+<div class="card-head">
+<div>
+<div class="card-title">Leadership Changes &amp; Movers</div>
+<div class="card-sub">New entrants, score upgrades and deterioration from the canonical rotation history</div>
+</div>
+<span class="pill" id="commandMoverPill">SESSION CHANGE</span>
+</div>
+<div class="card-body">
+<div class="mover-grid">
+<div class="mover-card">
+<div class="mover-head"><span>NEW / IMPROVING LEADERS</span><span>SCORE Δ</span></div>
+<div id="commandImprovers"></div>
+</div>
+<div class="mover-card">
+<div class="mover-head"><span>FADING / DOWNGRADED</span><span>SCORE Δ</span></div>
+<div id="commandDeteriorators"></div>
+</div>
+</div>
+<div class="decision-strip">
+<div class="decision-cell"><span>LEADERSHIP BREADTH</span><b id="commandBreadth">—</b></div>
+<div class="decision-cell"><span>TOP-QUARTILE PERSISTENCE</span><b id="commandPersistence">—</b></div>
+<div class="decision-cell"><span>NEW ACTIONABLE</span><b id="commandActionable">—</b></div>
+<div class="decision-cell"><span>CONCENTRATION</span><b id="commandConcentration">—</b></div>
+</div>
+</div>
+</section><section class="card span12"><div class="card-head"><div><div class="card-title">Hierarchy Heatmap</div><div class="card-sub">Broad sectors define allocation context; industries confirm; themes identify actionable vehicles</div></div><span class="pill" id="heatPill">3-LEVEL HIERARCHY</span></div><div class="card-body"><div class="heat-grid"><div class="heat-panel"><div class="heat-title"><span>SECTORS</span><span>TOP 11</span></div><div id="heatSectors"></div></div><div class="heat-panel"><div class="heat-title"><span>INDUSTRIES</span><span>TOP 12</span></div><div id="heatIndustries"></div></div><div class="heat-panel"><div class="heat-title"><span>GROUPS / THEMES</span><span>TOP 15</span></div><div id="heatThemes"></div></div></div></div></section></div><div class="workspace-panel" data-workspace="rotation"><section class="card span12"><div class="card-head"><div><div class="card-title">Market Rotation Summary · Finviz-Style Performance View</div><div class="card-sub">Raw performance first, then institutional quality: 1D, 5D and 20D sector rotation plus industry winners and losers</div></div><span class="pill" id="rotationSnapshotPill">PRICE PERFORMANCE</span></div><div class="card-body"><div class="rotation-grid"><div class="perf-panel"><div class="perf-head"><span>SECTORS · 1 DAY</span><span id="sector1dLead">—</span></div><div class="bar-list" id="sector1dBars"></div></div><div class="perf-panel"><div class="perf-head"><span>SECTORS · 5 DAY</span><span id="sector5dLead">—</span></div><div class="bar-list" id="sector5dBars"></div></div><div class="perf-panel"><div class="perf-head"><span>SECTORS · 20 DAY</span><span id="sector20dLead">—</span></div><div class="bar-list" id="sector20dBars"></div></div></div><div class="mover-grid"><div class="mover-card"><div class="mover-head"><span>INDUSTRY WINNERS · 1D</span><span>RAW RETURN</span></div><div id="industryWinners"></div></div><div class="mover-card"><div class="mover-head"><span>INDUSTRY LOSERS · 1D</span><span>RAW RETURN</span></div><div id="industryLosers"></div></div></div></div></section><section class="card span12"><div class="card-head"><div><div class="card-title">Multi-Universe Relative Rotation Matrix</div><div class="card-sub">X = cross-sectional relative strength · Y = five-day relative momentum · bubble size = leadership quality</div></div><div class="toolbar"><button class="btn active universeBtn" data-universe="themes">Themes</button><button class="btn universeBtn" data-universe="industries">Industries</button><button class="btn universeBtn" data-universe="sectors">Sectors</button><input id="rrgSearch" placeholder="Search ticker or group…"/><select id="rrgLimit"><option value="20">Top 20</option><option value="35">Top 35</option><option value="60">All</option></select></div></div><div class="card-body rrg-layout"><div class="canvas-box"><canvas id="rrgCanvas"></canvas></div><div class="quadrants"><div class="quad"><h4 style="color:var(--green)">LEADING / EXPANDING</h4><div id="qLeading"></div></div><div class="quad"><h4 style="color:var(--blue)">IMPROVING / EMERGING</h4><div id="qImproving"></div></div><div class="quad"><h4 style="color:var(--amber)">STRONG / DETERIORATING</h4><div id="qWeakening"></div></div><div class="quad"><h4 style="color:var(--red)">WEAK / DETERIORATING</h4><div id="qLagging"></div></div></div></div></section><section class="card span12"><div class="card-head"><div><div class="card-title">Rotation Dashboard · Money Flow &amp; Change</div><div class="card-sub">Separates raw performance leadership from changes in the canonical institutional score</div></div><span class="pill" id="changeDatePill">CHANGE ENGINE</span></div><div class="card-body"><div class="flow-grid"><div class="flow-col"><div class="flow-title"><span>TODAY</span><span>1D</span></div><div id="flow1d"></div></div><div class="flow-col"><div class="flow-title"><span>THIS WEEK</span><span>5D</span></div><div id="flow5d"></div></div><div class="flow-col"><div class="flow-title"><span>THIS MONTH</span><span>20D</span></div><div id="flow20d"></div></div><div class="flow-col"><div class="flow-title"><span>PERSISTENT</span><span>60D + MTF</span></div><div id="flowPersistent"></div></div></div><div class="mover-grid"><div class="mover-card"><div class="mover-head"><span>BIGGEST IMPROVERS</span><span>SCORE Δ</span></div><div id="scoreImprovers"></div></div><div class="mover-card"><div class="mover-head"><span>BIGGEST DETERIORATION</span><span>SCORE Δ</span></div><div id="scoreDeteriorators"></div></div></div></div></section><section class="card span7"><div class="card-head"><div><div class="card-title">Relative Performance Trend</div><div class="card-sub">Top leaders indexed versus SPY over the latest 65 sessions</div></div><span class="pill" id="trendPill">TOP 10</span></div><div class="card-body"><div class="metric-strip"><div class="metric"><span>LEADER</span><b id="trendLeader">—</b></div><div class="metric"><span>60D RS</span><b id="trendRs">—</b></div><div class="metric"><span>5D RELATIVE</span><b id="trendMomentum">—</b></div><div class="metric"><span>STAGE</span><b id="trendStage">—</b></div><div class="metric"><span>MANSFIELD</span><b id="trendMansfield">—</b></div><div class="metric"><span>SATA</span><b id="trendSata">—</b></div></div><div class="trend-box"><canvas id="trendCanvas"></canvas></div><div class="legend" id="trendLegend"></div></div></section></div><div class="workspace-panel" data-workspace="momentum"><section class="card span12"><div class="card-head"><div><div class="card-title">Multi-Timeframe Momentum Matrix</div><div class="card-sub">Actual Group Momentum sheet confirmations: 120D, 60D, 30D, 20D, 10D and 5D</div></div><div class="toolbar"><input id="matrixSearch" placeholder="Search Group Momentum…"/><select id="matrixFilter"><option value="all">All groups</option><option value="persistent">Persistent leaders</option><option value="emerging">Emerging</option><option value="fading">Fading</option></select></div></div><div class="card-body"><div class="table-wrap tall"><table><thead><tr><th>Rank / Group</th><th>120D</th><th>60D</th><th>30D</th><th>20D</th><th>10D</th><th>5D</th><th>Confirm</th><th>RS Score</th><th>5D Rel</th><th>Stage</th><th>Leadership</th><th>State</th></tr></thead><tbody id="matrixBody"></tbody></table></div></div></section><section class="card span12"><div class="card-head"><div><div class="card-title">Canonical Leadership Tables</div><div class="card-sub">Sortable by the unified score; click any row to update RRG, trend metrics and drill-down</div></div><div class="toolbar"><select id="tableSort"><option value="leadershipScore">Score</option><option value="daily">1D</option><option value="return5">5D</option><option value="return20">20D</option><option value="return60">60D</option><option value="rsScore">RS</option><option value="scoreDelta1">Score Change</option><option value="persistencePct">Persistence</option></select><select id="tableUniverse"><option value="themes">Themes</option><option value="industries">Industries</option><option value="sectors">Sectors</option></select><select id="tableState"><option value="all">All states</option><option value="ACTIONABLE">Actionable</option><option value="LEADER">Leaders</option><option value="WATCH">Watch</option><option value="AVOID">Avoid</option></select><input id="tableSearch" placeholder="Search table…"/></div></div><div class="card-body"><div class="table-wrap tall"><table><thead><tr><th>Rank / Ticker / Name</th><th>Score</th><th>Δ Score</th><th>Persist</th><th>1D</th><th>5D</th><th>20D</th><th>60D</th><th>RS</th><th>5D Rel</th><th>Confirm</th><th>Stage</th><th>SATA</th><th>Off 52W</th><th>Quadrant</th><th>Action</th></tr></thead><tbody id="canonicalBody"></tbody></table></div></div></section></div><div class="workspace-panel" data-workspace="persistence"><section class="card span12"><div class="card-head"><div><div class="card-title">Leadership Persistence Engine</div><div class="card-sub">Persistence bars show durability; the fixed 30-session heatmap shows when leadership appeared, strengthened or faded. History fills automatically after each completed-session rebuild.</div></div><div class="toolbar"><button class="btn active persistenceBtn" data-persistence="themes">Themes</button><button class="btn persistenceBtn" data-persistence="industries">Industries</button><button class="btn persistenceBtn" data-persistence="sectors">Sectors</button></div><span class="pill" id="persistenceSessionPill">0 SESSIONS STORED</span></div><div class="card-body"><div class="persistence-engine"><div class="persistence-summary" id="persistenceSummary"></div><div><div class="timeline-wrap"><div class="timeline" id="persistenceTimeline"></div></div><div class="timeline-legend"><span><i class="legend-swatch leading"></i>Leading / top-quartile</span><span><i class="legend-swatch constructive"></i>Constructive</span><span><i class="legend-swatch"></i>Weak / unconfirmed</span><span><i class="legend-swatch untracked"></i>History not yet available</span></div></div></div></div></section></div><div class="workspace-panel" data-workspace="research"><section class="card span12 research-workbench">
+<div class="card-head research-head">
+<div>
+<div class="card-title">Leadership Research Workbench</div>
+<div class="card-sub">Ranked lightweight chart queue → selected group evidence → daily/weekly chart handoff</div>
+</div>
+<div class="toolbar">
+<button class="btn" id="researchPrevBtn">← Previous</button>
+<button class="btn" id="researchNextBtn">Next →</button>
+<button class="btn" id="openSataBtn">Open SATA Page</button>
+<button class="btn" id="openTvBtn">Open TradingView</button>
+</div>
+</div>
+<div class="research-controls">
+<input id="researchSearch" placeholder="Search ticker, group or sector…" type="search"/>
+<select id="researchUniverse">
+<option value="all">All universes</option>
+<option value="themes">Themes</option>
+<option value="industries">Industries</option>
+<option value="sectors">Sectors</option>
+</select>
+<select id="researchState">
+<option value="all">All states</option>
+<option value="ACTIONABLE">Actionable</option>
+<option value="LEADER">Leaders</option>
+<option value="IMPROVING">Improving</option>
+<option value="PULLBACK">Pullbacks</option>
+<option value="EMERGING">Emerging</option>
+</select>
+<select id="researchSort">
+<option value="leadershipScore">Leadership score</option>
+<option value="relative5">5D relative strength</option>
+<option value="rsScore">RS score</option>
+<option value="confirmationCount">MTF confirmation</option>
+<option value="persistencePct">Persistence</option>
+<option value="return20">20D return</option>
+</select>
+<span class="pill" id="researchCount">0 GROUPS</span>
+</div>
+<div class="research-layout">
+<aside class="research-queue">
+<div class="research-queue-head">
+<span>RANKED RESEARCH QUEUE</span>
+<span>CLICK ANY CARD</span>
+</div>
+<div class="research-card-grid" id="researchQueue"></div>
+</aside>
+<div class="research-detail">
+<div class="profile-grid">
+<aside class="profile-side">
+<div class="profile-ticker" id="profileTicker">—</div>
+<div class="profile-name" id="profileName">Select a group</div>
+<div class="profile-parent" id="profileParent">—</div>
+<div class="score-ring" id="scoreRing">
+<div class="score-ring-inner"><div><b id="profileScore">—</b><span>LEADERSHIP SCORE</span></div></div>
+</div>
+<div class="profile-stats">
+<div class="profile-stat"><span>RRG</span><b id="profileQuadrant">—</b></div>
+<div class="profile-stat"><span>STAGE</span><b id="profileStage">—</b></div>
+<div class="profile-stat"><span>RS SCORE</span><b id="profileRs">—</b></div>
+<div class="profile-stat"><span>5D REL</span><b id="profileRel5">—</b></div>
+<div class="profile-stat"><span>MANSFIELD</span><b id="profileMansfield">—</b></div>
+<div class="profile-stat"><span>OFF 52W</span><b id="profileOff52">—</b></div>
+<div class="profile-stat"><span>MTF CONFIRM</span><b id="profileConfirm">—</b></div>
+<div class="profile-stat"><span>ACTION</span><b id="profileAction">—</b></div>
+</div>
+<div class="band-list" id="bandList"></div>
+</aside>
+<div class="charts">
+<div class="tv-frame" id="dailyFrame"></div>
+<div class="tv-frame" id="weeklyFrame"></div>
+</div>
+</div>
+</div>
+</div>
+</section><section class="card span12"><div class="card-head"><div><div class="card-title">Methodology &amp; Handoff</div><div class="card-sub">This page ranks where to deploy risk; Breadth Command decides how much risk; SATA/Price Structure decides entry timing</div></div><span class="pill">TRANSPARENT</span></div><div class="card-body"><div class="note">Leadership Score = 25% relative strength vs SPY + 25% multi-timeframe confirmation + 15% short-term RS momentum + 15% stage quality + 10% proximity to highs + 5% published RS thrust/participation + 5% liquidity. Group Momentum confirmations come from the dedicated Google Sheet. Price, stage and Mansfield metrics come from the private FMP bridge. No other HTML page is scraped.</div></div></section></div></main>
+<div class="footer">Leadership Rotation Command Center 4.0.3 · tabbed institutional workspace · canonical FMP Rotation Engine</div>
+</div>
+<div class="modal" id="settingsModal"><div class="modal-box"><div class="modal-head"><strong>Leadership Rotation Settings</strong><button class="btn" id="closeSettings">×</button></div><div class="modal-body"><div class="field"><label>Apps Script Web App URL</label><input id="apiInput" type="url"/></div><div class="field"><label>Normal request timeout (seconds)</label><input id="timeoutInput" max="90" min="15" step="5" type="number"/></div></div><div class="modal-actions"><button class="btn" id="defaultApi">Use Production URL</button><button class="btn" id="testApi">Test Endpoint</button><button class="btn primary" id="saveSettings">Save &amp; Reload</button></div></div></div>
+<script>
+'use strict';
+const DEFAULT_API='https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec';
+const STORAGE={api:'now.rotation.api',theme:'now.rotation.theme',timeout:'now.rotation.timeout',payload:'now.rotation.payload.v3'};
+const state={data:null,universe:'themes',persistenceUniverse:'themes',selected:null,rrgPoints:[],trendHover:-1};
+const $=id=>document.getElementById(id),finite=v=>v!==null&&v!==''&&Number.isFinite(Number(v)),num=v=>finite(v)?Number(v):null,clamp=(v,a=0,b=100)=>Math.max(a,Math.min(b,Number(v)||0));
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt=(v,d=0)=>finite(v)?Number(v).toFixed(d):'—',pct=(v,d=1,sign=false)=>finite(v)?`${sign&&Number(v)>0?'+':''}${Number(v).toFixed(d)}%`:'—';
+function toneClass(v){return !finite(v)?'neutral':Number(v)>0?'positive':Number(v)<0?'negative':'neutral'}
+function apiUrl(){return (localStorage.getItem(STORAGE.api)||DEFAULT_API).replace(/\?.*$/,'')}
+function timeout(refresh){return refresh?180000:Math.max(15000,Number(localStorage.getItem(STORAGE.timeout)||35)*1000)}
+function jsonpOnce(url,params,ms,callbackName){return new Promise((resolve,reject)=>{const cb=callbackName||('__rotcb'+Date.now()+Math.random().toString(36).slice(2)),s=document.createElement('script'),timer=setTimeout(()=>done(new Error(`Endpoint timed out after ${Math.round(ms/1000)} seconds.`)),ms);function done(err,val){clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}s.remove();err?reject(err):resolve(val)}window[cb]=x=>done(null,x);const q=Object.assign({},params,{callback:cb,cb:Date.now()});s.src=url+'?'+new URLSearchParams(q);s.async=true;s.onerror=()=>done(new Error('Rotation JSONP script failed to load.'));document.head.appendChild(s)})}
+async function jsonp(url,params,ms){const attempts=[
+  {cb:'__LEADERSHIP_ROTATION_CALLBACK__',delay:0},
+  {cb:'__LEADERSHIP_ROTATION_RETRY__',delay:900},
+  {cb:'__LEADERSHIP_ROTATION_FINAL__',delay:1800}
+];const errors=[];for(const a of attempts){if(a.delay)await new Promise(r=>setTimeout(r,a.delay));try{return await jsonpOnce(url,params,Math.min(ms,60000),a.cb)}catch(e){errors.push(e&&e.message?e.message:String(e))}}throw new Error(errors.join(' | '))}
+function setStatus(text,tone=''){const el=$('statusText');el.textContent=text;el.className=tone}
+function setTheme(theme){theme=theme==='dark'?'dark':'light';document.documentElement.dataset.theme=theme;localStorage.setItem(STORAGE.theme,theme);$('lightBtn').classList.toggle('active',theme==='light');$('darkBtn').classList.toggle('active',theme==='dark');if(state.data){renderRRG();renderTrend();renderResearchQueue();renderProfile()}}
+function savePayload(data){try{localStorage.setItem(STORAGE.payload,JSON.stringify({savedAt:Date.now(),data}))}catch(_){}}
+function readPayload(){try{return JSON.parse(localStorage.getItem(STORAGE.payload)||'null')}catch(_){return null}}
+function validate(d){if(!d||!d.ok||!d.universes||!Array.isArray(d.universes.themes))throw new Error(d&&d.error||'Not a Leadership Rotation payload.');return d}
+async function loadData(refresh=false){setStatus(refresh?'Refreshing the canonical Rotation cache…':'Checking the canonical Rotation cache…','warn');try{const d=validate(await jsonp(apiUrl(),{action:'rotation',refresh:refresh?'1':'0'},timeout(refresh)));state.data=d;savePayload(d);if(!state.selected){const requestedTicker=new URLSearchParams(location.search).get('ticker');const savedTicker=localStorage.getItem('leadership-selected-ticker');state.selected=(requestedTicker&&rowByTicker(requestedTicker))||(savedTicker&&rowByTicker(savedTicker))||(d.shortlists?.topThemes||d.universes.themes||[])[0]||d.universes.industries[0]||d.universes.sectors[0];}renderAll();setStatus(`FMP LIVE · ${d.asOf} · ${d.regime.label} · ${d.universes.sectors.length} sectors · ${d.universes.industries.length} industries · ${d.universes.themes.length} themes`,'ok');$('statusRight').textContent=`ROTATION ${d.version} · ${d.servedFrom||'live'} · ${fmt(d.elapsedMs,0)}ms`}catch(e){const cached=state.data?{data:state.data}:readPayload();if(cached?.data){if(!state.data){state.data=validate(cached.data);state.selected=(state.data.shortlists?.topThemes||[])[0]||state.data.universes.themes[0];renderAll()}setStatus(`FMP CACHE ACTIVE · ${state.data.asOf} · live transport retry unavailable`,'warn');$('statusRight').textContent=`ROTATION ${state.data.version||'cached'} · LAST VALID CACHE`;return}setStatus(`ROTATION UNAVAILABLE · ${e.message}`,'bad')}}
+function universeRows(name=state.universe){return state.data?.universes?.[name]||[]}
+function rowByTicker(t){for(const k of ['themes','industries','sectors']){const x=(state.data?.universes?.[k]||[]).find(r=>r.ticker===t);if(x)return x}return null}
+function scoreTone(v){return !finite(v)?'var(--muted)':v>=70?'var(--green)':v>=50?'var(--amber)':'var(--red)'}
+function tag(stateName){const c=String(stateName||'').toLowerCase().replace(/\s+/g,'');return `<span class="tag ${c}">${esc(stateName||'—')}</span>`}
+function setSource(id,state,meta){const el=$(id+'State'),m=$(id+'Meta');const label=state===true?'LIVE':state===false?'FAILED':'PARTIAL';el.textContent=label;el.className='source-state '+(state===true?'live':state===false?'failed':'partial');m.textContent=meta||'—'}
+function renderSources(){const d=state.data||{},s=d.sources||{};setSource('sourceMi',s.marketIntelligence?.ok===true,`As of ${s.marketIntelligence?.asOf||d.intelligenceAsOf||'—'} · ${fmt(d.completeness,0)}% complete`);setSource('sourceGm',s.groupMomentum?.ok===true,`${fmt(s.groupMomentum?.rows,0)} rows · ${s.groupMomentum?.asOf||'live sheet snapshot'}`);setSource('sourceFmp',s.fmpPriceHistory?.ok===true,`${fmt(s.fmpPriceHistory?.requested,0)} symbols · ${fmt(s.fmpPriceHistory?.errors,0)} errors`);setSource('sourceCache',d.servedFrom==='persistent-cache'||d.servedFrom==='fresh-build',`${d.servedFrom||'live'} · generated ${d.generatedAt?new Date(d.generatedAt).toLocaleString():'—'}`);$('sourcePill').textContent=(d.mode||'PARTIAL')+' · '+(d.asOf||'—');$('sourcePill').className='pill '+(d.mode==='LIVE'?'good':'warn')}
+function renderTape(){const r=state.data.regime||{},bs=r.bestSector||{},bi=r.bestIndustry||{},bt=r.bestTheme||{};$('regimeLabel').textContent=r.label||'—';$('regimeLabel').style.color=scoreTone(r.score);$('regimeScore').textContent=fmt(r.score,0);$('bestSector').textContent=bs.ticker||'—';$('bestSectorNote').textContent=bs.name?`${bs.name} · ${fmt(bs.leadershipScore,0)}`:'—';$('bestIndustry').textContent=bi.ticker||'—';$('bestIndustryNote').textContent=bi.name?`${bi.name} · ${fmt(bi.leadershipScore,0)}`:'—';$('bestTheme').textContent=bt.ticker||'—';$('bestThemeNote').textContent=bt.name?`${bt.name} · ${fmt(bt.leadershipScore,0)}`:'—';$('confirmedGroups').textContent=fmt(r.confirmedGroups,0);$('momentumTrend').textContent=r.momentumTrend||'—';$('momentumTrend').style.color=r.momentumTrend==='EXPANDING'?'var(--green)':'var(--red)';$('actionableCount').textContent=fmt((state.data.universes.themes||[]).filter(x=>x.state==='ACTIONABLE').length,0)}
+
+function perfBarRows(rows,key){const valid=(rows||[]).filter(r=>finite(r[key])).slice().sort((a,b)=>b[key]-a[key]),max=Math.max(1,...valid.map(r=>Math.abs(r[key])));return valid.map(r=>`<div class="bar-row" data-ticker="${esc(r.ticker)}"><div class="bar-name"><b>${esc(r.ticker)}</b> · ${esc(r.name)}</div><div class="bar-track"><div class="bar-fill ${r[key]<0?'neg':''}" style="width:${Math.max(2,Math.abs(r[key])/max*100)}%"></div></div><div class="bar-value ${toneClass(r[key])}">${pct(r[key],2,true)}</div></div>`).join('')}
+function moverRows(rows,key,limit,ascending=false){const x=(rows||[]).filter(r=>finite(r[key])).slice().sort((a,b)=>ascending?a[key]-b[key]:b[key]-a[key]).slice(0,limit);return x.map(r=>`<div class="mover-row" data-ticker="${esc(r.ticker)}"><span><b>${esc(r.ticker)}</b> · ${esc(r.name)}</span><span class="${toneClass(r[key])}">${pct(r[key],2,true)}</span><span>${esc(r.parentSector||r.type||'')}</span></div>`).join('')||'<div class="mover-row"><span>No verified rows</span><span>—</span><span>—</span></div>'}
+function renderPerformance(){const u=state.data.universes,s=u.sectors||[];$('sector1dBars').innerHTML=perfBarRows(s,'daily');$('sector5dBars').innerHTML=perfBarRows(s,'return5');$('sector20dBars').innerHTML=perfBarRows(s,'return20');const a=s.slice().sort((x,y)=>(y.daily||-999)-(x.daily||-999))[0],b=s.slice().sort((x,y)=>(y.return5||-999)-(x.return5||-999))[0],c=s.slice().sort((x,y)=>(y.return20||-999)-(x.return20||-999))[0];$('sector1dLead').textContent=a?`${a.ticker} ${pct(a.daily,1,true)}`:'—';$('sector5dLead').textContent=b?`${b.ticker} ${pct(b.return5,1,true)}`:'—';$('sector20dLead').textContent=c?`${c.ticker} ${pct(c.return20,1,true)}`:'—';$('industryWinners').innerHTML=moverRows(u.industries,'daily',8,false);$('industryLosers').innerHTML=moverRows(u.industries,'daily',8,true);document.querySelectorAll('.bar-row[data-ticker],.mover-row[data-ticker]').forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker))}
+function flowRows(rows,key,limit=6){return(rows||[]).filter(r=>finite(r[key])).slice().sort((a,b)=>b[key]-a[key]).slice(0,limit).map(r=>`<div class="flow-row" data-ticker="${esc(r.ticker)}"><span><b>${esc(r.ticker)}</b> · ${esc(r.name)}</span><span class="${toneClass(r[key])}">${key==='leadershipScore'?fmt(r[key],0):pct(r[key],1,true)}</span></div>`).join('')}
+function changeRows(rows,positive){return(rows||[]).slice(0,8).map(r=>`<div class="mover-row" data-ticker="${esc(r.ticker)}"><span><b>${esc(r.ticker)}</b> · ${esc(r.name)} <small>${esc(r.type||'')}</small></span><span class="${positive?'delta-up':'delta-down'}">${finite(r.scoreDelta1)?(r.scoreDelta1>0?'+':'')+fmt(r.scoreDelta1,1):'—'}</span><span class="${finite(r.rankDelta1)&&r.rankDelta1>=0?'delta-up':'delta-down'}">${finite(r.rankDelta1)?(r.rankDelta1>0?'▲ ':'▼ ')+Math.abs(r.rankDelta1):'—'}</span></div>`).join('')||'<div class="mover-row"><span>History starts after the next distinct session rebuild.</span><span>—</span><span>—</span></div>'}
+function renderRotationChange(){const all=[...(state.data.universes.sectors||[]),...(state.data.universes.industries||[]),...(state.data.universes.themes||[])];$('flow1d').innerHTML=flowRows(all,'daily');$('flow5d').innerHTML=flowRows(all,'return5');$('flow20d').innerHTML=flowRows(all,'return20');const persistent=all.slice().sort((a,b)=>((b.persistencePct||0)*.45+b.leadershipScore*.55)-((a.persistencePct||0)*.45+a.leadershipScore*.55));$('flowPersistent').innerHTML=persistent.slice(0,6).map(r=>`<div class="flow-row" data-ticker="${esc(r.ticker)}"><span><b>${esc(r.ticker)}</b> · ${esc(r.name)}</span><span>${fmt(r.persistencePct,0)}% · ${fmt(r.leadershipScore,0)}</span></div>`).join('');const ch=state.data.rotationChange||{};$('scoreImprovers').innerHTML=changeRows(ch.improvers,true);$('scoreDeteriorators').innerHTML=changeRows(ch.deteriorators,false);$('changeDatePill').textContent=ch.priorDate?`VS ${ch.priorDate}`:'BUILDING HISTORY';document.querySelectorAll('.flow-row[data-ticker],#scoreImprovers .mover-row[data-ticker],#scoreDeteriorators .mover-row[data-ticker]').forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker))}
+function renderPersistence(){const p=state.data.persistence||{},dates=p.dates||[],rows=p.universes?.[state.persistenceUniverse]||[],el=$('persistenceTimeline'),summary=$('persistenceSummary');const ps=$('persistenceSessionPill');if(ps)ps.textContent=`${dates.length} CANONICAL SESSIONS STORED · 30-SESSION MAP BUILDS DAILY`;if(!dates.length||!rows.length){el.innerHTML='<div class="note">Persistence history begins with Rotation Engine 1.2. Each distinct market session adds one snapshot automatically.</div>';summary.innerHTML='<div class="note">No persistence history yet.</div>';return}const slots=30,pad=Math.max(0,slots-dates.length),shownDates=Array(pad).fill('').concat(dates.slice(-slots));function stats(r){const vals=(r.values||[]).slice(-slots),tracked=vals.length,leading=vals.filter(v=>v===2).length,constructive=vals.filter(v=>v>=1).length,pct=tracked?Math.round(constructive/tracked*100):0;let age=0;for(let i=vals.length-1;i>=0;i--){if(vals[i]>=1)age++;else break}const stars=Math.max(1,Math.min(5,Math.round(pct/20)));return{vals,tracked,leading,constructive,pct,age,stars}}const ranked=rows.map(r=>({r,s:stats(r)})).sort((a,b)=>(b.s.pct-a.s.pct)||(b.s.age-a.s.age)).slice(0,18);summary.innerHTML=`<div class="persist-summary-head"><div>${state.persistenceUniverse.toUpperCase()}</div><div>QUALITY</div><div>AGE</div><div>RATING</div></div>`+ranked.map(({r,s})=>`<div class="persist-summary-row" data-ticker="${esc(r.ticker)}"><div class="persist-name"><b>${esc(r.ticker)}</b> · ${esc(r.name)}<div class="persist-bar"><div class="persist-bar-fill" style="width:${s.pct}%"></div></div></div><div class="persist-age">${s.pct}%</div><div class="persist-age">${s.age} sess</div><div class="persist-stars">${'★'.repeat(s.stars)}${'☆'.repeat(5-s.stars)}</div></div>`).join('');el.innerHTML=`<div class="timeline-head"><div>LAST 30 SESSIONS</div>${shownDates.map(d=>`<div>${d?d.slice(5):'·'}</div>`).join('')}</div>`+ranked.map(({r,s})=>{const vals=Array(Math.max(0,slots-s.vals.length)).fill(null).concat(s.vals).slice(-slots);return`<div class="timeline-row" data-ticker="${esc(r.ticker)}"><div><b>${esc(r.ticker)}</b> · ${esc(r.name)}</div>${vals.map((v,i)=>`<div><span class="timeline-cell ${v==null?'empty':'c'+v} ${i===slots-1&&v!=null?'current':''}" title="${shownDates[i]||'History not yet available'}${v==null?'':' · '+(v===2?'Leading':v===1?'Constructive':'Weak / unconfirmed')}"></span></div>`).join('')}</div>`}).join('');document.querySelectorAll('.persist-summary-row[data-ticker],#persistenceTimeline .timeline-row[data-ticker]').forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker))}
+
+function renderCommandMovers(){
+  const d=state.data||{}, ch=d.rotationChange||{};
+  const improvers=(ch.improvers||[]).slice(0,7);
+  const deteriorators=(ch.deteriorators||[]).slice(0,7);
+  const rows=(arr,positive)=>arr.map(r=>`<div class="mover-row" data-ticker="${esc(r.ticker)}"><span><b>${esc(r.ticker)}</b> · ${esc(r.name)}</span><span class="${positive?'delta-up':'delta-down'}">${finite(r.scoreDelta1)?(r.scoreDelta1>0?'+':'')+fmt(r.scoreDelta1,1):'—'}</span><span>${esc(r.type||'')}</span></div>`).join('')||'<div class="mover-row"><span>History will populate after distinct daily rebuilds.</span><span>—</span><span>—</span></div>';
+  $('commandImprovers').innerHTML=rows(improvers,true);
+  $('commandDeteriorators').innerHTML=rows(deteriorators,false);
+  document.querySelectorAll('#commandImprovers [data-ticker],#commandDeteriorators [data-ticker]').forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker));
+  const all=[...(d.universes?.sectors||[]),...(d.universes?.industries||[]),...(d.universes?.themes||[])];
+  const leaders=all.filter(x=>x.state==='ACTIONABLE'||x.state==='LEADER').length;
+  const persistent=all.filter(x=>(x.persistencePct||0)>=60).length;
+  const actionable=(d.universes?.themes||[]).filter(x=>x.state==='ACTIONABLE').length;
+  $('commandBreadth').textContent=`${leaders}/${all.length}`;
+  $('commandPersistence').textContent=`${persistent} groups`;
+  $('commandActionable').textContent=String(actionable);
+  $('commandConcentration').textContent=d.regime?.label||'—';
+  $('commandMoverPill').textContent=ch.priorDate?`VS ${ch.priorDate}`:'BUILDING HISTORY';
+}
+
+function renderFunnel(){const r=state.data.regime||{},s=r.bestSector||{},i=r.bestIndustry||{},t=r.bestTheme||{},x=state.selected||{};$('funnelSector').textContent=s.ticker?`${s.ticker} · ${s.name}`:'—';$('funnelSectorMeta').textContent=s.ticker?`Score ${fmt(s.leadershipScore,0)} · RS ${fmt(s.rsScore,0)} · ${s.stage}`:'Highest broad-sector leadership score';$('funnelIndustry').textContent=i.ticker?`${i.ticker} · ${i.name}`:'—';$('funnelIndustryMeta').textContent=i.ticker?`${i.parentSector||'Cross-sector'} · Score ${fmt(i.leadershipScore,0)} · ${i.quadrant}`:'Best confirmed industry';$('funnelTheme').textContent=t.ticker?`${t.ticker} · ${t.name}`:'—';$('funnelThemeMeta').textContent=t.ticker?`${t.parentSector||'Cross-sector'} · ${fmt(t.confirmationCount,0)}/6 confirmations · ${t.stage}`:'Persistent theme';$('funnelSelected').textContent=x.ticker?`${x.ticker} · ${x.name}`:'—';$('funnelSelectedMeta').textContent=x.ticker?`Score ${fmt(x.leadershipScore,0)} · ${x.state} · ${x.quadrant}`:'Click any row or bubble'}
+function rrgFilteredRows(){const q=$('rrgSearch').value.trim().toLowerCase(),limit=Number($('rrgLimit').value||20);return universeRows().filter(x=>!q||`${x.ticker} ${x.name}`.toLowerCase().includes(q)).slice(0,limit)}
+function prepCanvas(canvas){const dpr=devicePixelRatio||1,r=canvas.getBoundingClientRect();canvas.width=Math.max(1,Math.floor(r.width*dpr));canvas.height=Math.max(1,Math.floor(r.height*dpr));const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return{ctx,w:r.width,h:r.height}}
+function colors(){const cs=getComputedStyle(document.documentElement);return{panel2:cs.getPropertyValue('--panel2'),line:cs.getPropertyValue('--line'),ink:cs.getPropertyValue('--ink'),muted:cs.getPropertyValue('--muted'),green:cs.getPropertyValue('--green'),blue:cs.getPropertyValue('--blue'),amber:cs.getPropertyValue('--amber'),red:cs.getPropertyValue('--red'),teal:cs.getPropertyValue('--teal'),purple:cs.getPropertyValue('--purple')}}
+function renderRRG(){if(!state.data)return;const rows=rrgFilteredRows(),b={LEADING:[],IMPROVING:[],WEAKENING:[],LAGGING:[]};rows.forEach(x=>(b[x.quadrant]||(b[x.quadrant]=[])).push(x));for(const [k,id] of Object.entries({LEADING:'qLeading',IMPROVING:'qImproving',WEAKENING:'qWeakening',LAGGING:'qLagging'})){$(id).innerHTML=(b[k]||[]).slice(0,9).map(x=>`<div class="rrg-row"><button data-ticker="${esc(x.ticker)}"><b>${esc(x.ticker)}</b> · ${esc(x.name)}</button><small>${fmt(x.rsScore,0)} / ${pct(x.relative5,1,true)}</small></div>`).join('')||'<div class="rrg-row"><span>No qualifying groups</span><small>—</small></div>'}document.querySelectorAll('.rrg-row button').forEach(b=>b.onclick=()=>selectTicker(b.dataset.ticker));drawRRG(rows)}
+function drawRRG(rows){const canvas=$('rrgCanvas'),{ctx,w,h}=prepCanvas(canvas),c=colors(),pad={l:48,r:26,t:24,b:38},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,x=v=>pad.l+clamp(v)/100*pw,maxAbs=Math.max(4,...rows.map(r=>Math.abs(Number(r.relative5)||0))),y=v=>pad.t+(maxAbs-Number(v))/(2*maxAbs)*ph;ctx.fillStyle=c.panel2;ctx.fillRect(0,0,w,h);ctx.fillStyle='rgba(10,156,117,.045)';ctx.fillRect(x(50),pad.t,pw/2,ph/2);ctx.fillStyle='rgba(19,124,193,.04)';ctx.fillRect(pad.l,pad.t,pw/2,ph/2);ctx.fillStyle='rgba(198,122,0,.045)';ctx.fillRect(x(50),y(0),pw/2,ph/2);ctx.fillStyle='rgba(212,60,83,.035)';ctx.fillRect(pad.l,y(0),pw/2,ph/2);ctx.strokeStyle=c.line;ctx.beginPath();ctx.moveTo(x(50),pad.t);ctx.lineTo(x(50),pad.t+ph);ctx.moveTo(pad.l,y(0));ctx.lineTo(pad.l+pw,y(0));ctx.stroke();ctx.fillStyle=c.muted;ctx.font='9px '+getComputedStyle(document.documentElement).getPropertyValue('--mono');ctx.fillText('IMPROVING',pad.l+6,pad.t+13);ctx.fillText('LEADING',x(50)+6,pad.t+13);ctx.fillText('LAGGING',pad.l+6,pad.t+ph-7);ctx.fillText('WEAKENING',x(50)+6,pad.t+ph-7);ctx.textAlign='center';ctx.fillText('RELATIVE STRENGTH SCORE →',pad.l+pw/2,h-10);ctx.save();ctx.translate(12,pad.t+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('5-DAY RELATIVE MOMENTUM →',0,0);ctx.restore();state.rrgPoints=[];rows.forEach(r=>{const col=r.quadrant==='LEADING'?c.green:r.quadrant==='IMPROVING'?c.blue:r.quadrant==='WEAKENING'?c.amber:c.red,xx=x(r.rsScore),yy=y(r.relative5),rad=5+clamp(r.leadershipScore-35,0,65)/14;ctx.globalAlpha=.83;ctx.fillStyle=col;ctx.beginPath();ctx.arc(xx,yy,rad,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle=c.ink;ctx.font='8px '+getComputedStyle(document.documentElement).getPropertyValue('--mono');ctx.textAlign='left';ctx.fillText(r.ticker,xx+rad+2,yy+3);state.rrgPoints.push({x:xx,y:yy,r:Math.max(9,rad+4),ticker:r.ticker})})}
+function renderTrend(){const series=state.data?.trendSeries||[],canvas=$('trendCanvas'),{ctx,w,h}=prepCanvas(canvas),c=colors(),pad={l:42,r:15,t:18,b:27},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;ctx.fillStyle=c.panel2;ctx.fillRect(0,0,w,h);const all=series.flatMap(s=>s.points.map(p=>p.value)).filter(finite),min=Math.min(94,...all),max=Math.max(106,...all),x=i=>pad.l+i/Math.max(1,64)*pw,y=v=>pad.t+(max-v)/(max-min)*ph;ctx.strokeStyle=c.line;ctx.lineWidth=1;for(let q=0;q<=4;q++){const yy=pad.t+ph*q/4;ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(pad.l+pw,yy);ctx.stroke();ctx.fillStyle=c.muted;ctx.font='8px var(--mono)';ctx.textAlign='right';ctx.fillText((max-(max-min)*q/4).toFixed(0),pad.l-5,yy+3)}const palette=[c.teal,c.blue,c.purple,c.green,c.amber,c.red,'#579e9a','#8b7ab8','#6583aa','#a68a55'];series.forEach((s,si)=>{if(!s.points.length)return;ctx.strokeStyle=palette[si%palette.length];ctx.lineWidth=s.ticker===state.selected?.ticker?3:1.5;ctx.globalAlpha=s.ticker===state.selected?.ticker?1:.72;ctx.beginPath();s.points.forEach((p,i)=>{const xx=x(i),yy=y(p.value);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();ctx.globalAlpha=1});$('trendLegend').innerHTML=series.map((s,i)=>`<span><i style="background:${palette[i%palette.length]}"></i>${esc(s.ticker)}</span>`).join('');const xrow=state.selected||series[0]&&rowByTicker(series[0].ticker)||{};$('trendLeader').textContent=xrow.ticker||'—';$('trendRs').textContent=fmt(xrow.rsScore,0);$('trendMomentum').textContent=pct(xrow.relative5,1,true);$('trendStage').textContent=xrow.stage||'—';$('trendMansfield').textContent=pct(xrow.mansfield,1,true);$('trendSata').textContent=finite(xrow.sataScore)?`${xrow.sataScore}/10`:'—'}
+function gmFlags(row){return row?.momentumFlags||{d120:false,d60:false,d30:false,d20:false,d10:false,d5:false}}
+function check(v){return `<span class="check ${v?'on':''}">${v?'✓':'·'}</span>`}
+function momentumState(r){const f=gmFlags(r),long=[f.d120,f.d60,f.d30].filter(Boolean).length,short=[f.d20,f.d10,f.d5].filter(Boolean).length;if(long>=2&&short>=2)return'PERSISTENT';if(long<=1&&short>=2)return'EMERGING';if(long>=2&&short<=1)return'FADING';return'MIXED'}
+function renderMatrix(){let rows=state.data?.universes?.themes||[],q=$('matrixSearch').value.trim().toLowerCase(),filter=$('matrixFilter').value;rows=rows.filter(r=>(!q||`${r.ticker} ${r.name}`.toLowerCase().includes(q))&&(filter==='all'||momentumState(r).toLowerCase()===filter));$('matrixBody').innerHTML=rows.map(r=>{const f=gmFlags(r);return`<tr data-ticker="${esc(r.ticker)}" class="${state.selected?.ticker===r.ticker?'selected':''}"><td><b>${r.rank}. ${esc(r.ticker)}</b> · ${esc(r.name)}</td><td><div class="checks">${check(f.d120)}</div></td><td><div class="checks">${check(f.d60)}</div></td><td><div class="checks">${check(f.d30)}</div></td><td><div class="checks">${check(f.d20)}</div></td><td><div class="checks">${check(f.d10)}</div></td><td><div class="checks">${check(f.d5)}</div></td><td><b>${fmt(r.confirmationCount,0)}/6</b></td><td>${fmt(r.rsScore,0)}</td><td class="${toneClass(r.relative5)}">${pct(r.relative5,1,true)}</td><td>${esc(r.stage)}</td><td>${fmt(r.leadershipScore,0)}</td><td>${tag(momentumState(r))}</td></tr>`}).join('')||'<tr><td colspan="13">No matching Group Momentum rows.</td></tr>';bindRows('matrixBody')}
+function heatRows(rows,limit){return rows.slice(0,limit).map(r=>`<div class="heat-row" data-ticker="${esc(r.ticker)}"><div><b>${esc(r.ticker)}</b> · ${esc(r.name)}</div><div class="score-cell" style="color:${scoreTone(r.leadershipScore)}">${fmt(r.leadershipScore,0)}</div><div class="${toneClass(r.return5)}">${pct(r.return5,1,true)}</div><div>${fmt(r.rsScore,0)}</div><div>${esc(r.stage.replace('STAGE ', 'S'))}</div></div>`).join('')}
+function renderHeat(){const u=state.data.universes;$('heatSectors').innerHTML=heatRows(u.sectors,11);$('heatIndustries').innerHTML=heatRows(u.industries,12);$('heatThemes').innerHTML=heatRows(u.themes,15);document.querySelectorAll('.heat-row').forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker))}
+function shortRows(rows){return(rows||[]).map(r=>`<div class="short-row" data-ticker="${esc(r.ticker)}"><span><b>${esc(r.ticker)}</b> · ${esc(r.name)}</span><span>${fmt(r.leadershipScore,0)} · ${r.confirmationCount}/6</span></div>`).join('')||'<div class="short-row"><span>No qualifying groups</span><span>—</span></div>'}
+function renderShortlists(){const s=state.data.shortlists||{};$('shortTop').innerHTML=shortRows((s.topThemes||[]).slice(0,6));$('shortPullbacks').innerHTML=shortRows((s.pullbacks||[]).slice(0,6));$('shortEmerging').innerHTML=shortRows((s.emerging||[]).slice(0,6));$('topThemeCount').textContent=(s.topThemes||[]).length;$('pullbackCount').textContent=(s.pullbacks||[]).length;$('emergingCount').textContent=(s.emerging||[]).length;document.querySelectorAll('.short-row[data-ticker]').forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker))}
+function canonicalRows(){let rows=state.data?.universes?.[$('tableUniverse').value]||[],q=$('tableSearch').value.trim().toLowerCase(),st=$('tableState').value,key=$('tableSort').value;return rows.filter(r=>(st==='all'||r.state===st)&&(!q||`${r.ticker} ${r.name}`.toLowerCase().includes(q))).slice().sort((a,b)=>(finite(b[key])?b[key]:-999)-(finite(a[key])?a[key]:-999))}
+function renderCanonical(){const rows=canonicalRows();$('canonicalBody').innerHTML=rows.map(r=>`<tr data-ticker="${esc(r.ticker)}" class="${state.selected?.ticker===r.ticker?'selected':''}"><td><b>${r.rank}. ${esc(r.ticker)}</b> · ${esc(r.name)}</td><td style="color:${scoreTone(r.leadershipScore)}"><b>${fmt(r.leadershipScore,0)}</b></td><td class="${toneClass(r.scoreDelta1)}">${finite(r.scoreDelta1)?(r.scoreDelta1>0?'+':'')+fmt(r.scoreDelta1,1):'—'}</td><td>${fmt(r.persistencePct,0)}%</td><td class="${toneClass(r.daily)}">${pct(r.daily,1,true)}</td><td class="${toneClass(r.return5)}">${pct(r.return5,1,true)}</td><td class="${toneClass(r.return20)}">${pct(r.return20,1,true)}</td><td class="${toneClass(r.return60)}">${pct(r.return60,1,true)}</td><td>${fmt(r.rsScore,0)}</td><td class="${toneClass(r.relative5)}">${pct(r.relative5,1,true)}</td><td>${fmt(r.confirmationCount,0)}/6</td><td>${esc(r.stage)}</td><td>${fmt(r.sataScore,0)}/10</td><td>${pct(r.off52,1)}</td><td>${tag(r.quadrant)}</td><td>${tag(r.state)}</td></tr>`).join('')||'<tr><td colspan="16">No matching rows.</td></tr>';bindRows('canonicalBody')}
+function bindRows(id){document.querySelectorAll(`#${id} tr[data-ticker]`).forEach(x=>x.onclick=()=>selectTicker(x.dataset.ticker))}
+
+function researchRows(){
+  const d=state.data?.universes||{};
+  const universe=$('researchUniverse')?.value||'all';
+  let rows=universe==='all'?[...(d.themes||[]),...(d.industries||[]),...(d.sectors||[])]:[...(d[universe]||[])];
+  const seen=new Set();
+  rows=rows.filter(r=>r?.ticker&&!seen.has(r.ticker)&&seen.add(r.ticker));
+  const q=($('researchSearch')?.value||'').trim().toLowerCase();
+  const st=$('researchState')?.value||'all';
+  const key=$('researchSort')?.value||'leadershipScore';
+  rows=rows.filter(r=>(st==='all'||r.state===st)&&(!q||`${r.ticker} ${r.name} ${r.parentSector||''}`.toLowerCase().includes(q)));
+  rows.sort((a,b)=>(finite(b[key])?b[key]:-999)-(finite(a[key])?a[key]:-999));
+  return rows;
+}
+function researchSeries(r){
+  const all=state.data?.trendSeries||[];
+  const match=all.find(x=>x.ticker===r.ticker);
+  if(match?.values?.length>=8)return match.values.map(Number).filter(Number.isFinite);
+  const pts=[
+    100,
+    100+(finite(r.return60)?r.return60*.35:0),
+    100+(finite(r.return20)?r.return20*.60:0),
+    100+(finite(r.return5)?r.return5*.85:0),
+    100+(finite(r.daily)?r.daily:0)
+  ];
+  const out=[];
+  for(let i=0;i<pts.length-1;i++){
+    const steps=6;
+    for(let s=0;s<steps;s++){
+      const t=s/steps;
+      out.push(pts[i]+(pts[i+1]-pts[i])*t);
+    }
+  }
+  out.push(pts[pts.length-1]);
+  return out;
+}
+function drawResearchSpark(canvas,r){
+  const ctx=canvas.getContext('2d'),dpr=window.devicePixelRatio||1,w=canvas.clientWidth||130,h=canvas.clientHeight||54;
+  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  const vals=researchSeries(r),min=Math.min(...vals),max=Math.max(...vals),range=Math.max(1,max-min);
+  const x=i=>4+i*(w-8)/Math.max(1,vals.length-1),y=v=>h-5-(v-min)*(h-10)/range;
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line').trim();ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(4,y(100));ctx.lineTo(w-4,y(100));ctx.stroke();
+  const positive=vals[vals.length-1]>=vals[0];
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue(positive?'--green':'--red').trim();ctx.lineWidth=2;
+  ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.stroke();
+}
+function renderResearchQueue(){
+  const rows=researchRows();state.researchRows=rows;
+  $('researchCount').textContent=`${rows.length} GROUPS`;
+  $('researchQueue').innerHTML=rows.slice(0,40).map((r,i)=>`<div class="research-card ${state.selected?.ticker===r.ticker?'selected':''}" data-ticker="${esc(r.ticker)}">
+    <div><div class="research-card-rank">#${i+1} · ${esc(r.type||'GROUP')}</div><div class="research-card-ticker">${esc(r.ticker)}</div><div class="research-card-name">${esc(r.name)}</div><div class="research-card-meta"><span>${esc(r.parentSector||'Cross-sector')}</span><span>${esc(r.state||'')}</span><span>${fmt(r.confirmationCount,0)}/6 MTF</span></div></div>
+    <canvas class="research-spark" data-spark="${esc(r.ticker)}"></canvas>
+    <div class="research-card-score"><b style="color:${scoreTone(r.leadershipScore)}">${fmt(r.leadershipScore,0)}</b><span>LEADERSHIP</span><div class="${toneClass(r.relative5)}">${pct(r.relative5,1,true)} 5D REL</div></div>
+  </div>`).join('')||'<div class="research-empty">No groups match the current filters.</div>';
+  document.querySelectorAll('#researchQueue .research-card[data-ticker]').forEach(card=>card.onclick=()=>selectTicker(card.dataset.ticker,false));
+  requestAnimationFrame(()=>document.querySelectorAll('#researchQueue canvas[data-spark]').forEach(c=>{const r=rowByTicker(c.dataset.spark);if(r)drawResearchSpark(c,r)}));
+}
+function researchStep(direction){
+  const rows=state.researchRows.length?state.researchRows:researchRows();
+  if(!rows.length)return;
+  let i=rows.findIndex(r=>r.ticker===state.selected?.ticker);
+  i=i<0?0:(i+direction+rows.length)%rows.length;
+  selectTicker(rows[i].ticker,false);
+}
+
+function tvUrl(ticker,interval){const theme=document.documentElement.dataset.theme==='dark'?'dark':'light',symbol=encodeURIComponent(ticker);return`https://s.tradingview.com/widgetembed/?frameElementId=tv_${interval}_${ticker}&symbol=${symbol}&interval=${interval}&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=F1F3F6&studies=[]&theme=${theme}&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1`}
+function renderProfile(){const r=state.selected;if(!r)return;$('profileTicker').textContent=r.ticker;$('profileName').textContent=r.name;$('profileParent').textContent=`${r.type} · ${r.parentSector||'Cross-sector'} · ${r.date||state.data.asOf}`;$('profileScore').textContent=fmt(r.leadershipScore,0);$('scoreRing').style.background=`conic-gradient(${scoreTone(r.leadershipScore)} ${clamp(r.leadershipScore)*3.6}deg,var(--line) 0)`;$('profileQuadrant').textContent=r.quadrant;$('profileStage').textContent=r.stage;$('profileRs').textContent=fmt(r.rsScore,0);$('profileRel5').textContent=pct(r.relative5,1,true);$('profileMansfield').textContent=pct(r.mansfield,1,true);$('profileOff52').textContent=pct(r.off52,1);$('profileConfirm').textContent=`${fmt(r.confirmationCount,0)}/6`;$('profileAction').textContent=r.state;const names=['Price > 50DMA','Price > 150DMA','Price > 200DMA','50DMA rising','200DMA rising','Mansfield RS > 0','Mansfield RS rising','20D momentum > 0','5D momentum > 0','Within 15% of high'];$('bandList').innerHTML=names.map((n,i)=>`<div class="band ${r.sataChecks?.[i]?'on':''}"><span><i class="dot"></i>${n}</span><b>${r.sataChecks?.[i]?'PASS':'FAIL'}</b></div>`).join('');$('dailyFrame').innerHTML=`<iframe title="${esc(r.ticker)} Daily" src="${tvUrl(r.ticker,'D')}" allowtransparency="true" scrolling="no"></iframe>`;$('weeklyFrame').innerHTML=`<iframe title="${esc(r.ticker)} Weekly" src="${tvUrl(r.ticker,'W')}" allowtransparency="true" scrolling="no"></iframe>`;$('openTvBtn').onclick=()=>window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(r.ticker)}`,'_blank');$('openSataBtn').onclick=()=>window.open(`sata_watchlist_dashboard.html?symbol=${encodeURIComponent(r.ticker)}`,'_blank')}
+function selectTicker(ticker,scroll=true){const r=rowByTicker(ticker);if(!r)return;state.selected=r;try{localStorage.setItem('leadership-selected-ticker',ticker)}catch(_){}renderFunnel();renderTrend();renderMatrix();renderCanonical();renderResearchQueue();renderProfile();document.querySelector('.profile-grid')?.scrollIntoView({behavior:'smooth',block:'start'})}
+function renderAll(){renderSources();renderTape();renderCommandMovers();renderPerformance();renderFunnel();renderRRG();renderRotationChange();renderTrend();renderMatrix();renderPersistence();renderHeat();renderShortlists();renderCanonical();renderProfile();$('subtitle').textContent=`${state.data.asOf} · ${state.data.mode} · ${fmt(state.data.completeness,0)}% intelligence completeness · Group Momentum ${state.data.groupMomentum.rows.length} rows`}
+function bind(){
+const researchInputs=['researchSearch','researchUniverse','researchState','researchSort'];
+researchInputs.forEach(id=>{const el=$(id);if(el)el.addEventListener(id==='researchSearch'?'input':'change',renderResearchQueue)});
+const prev=$('researchPrevBtn'),next=$('researchNextBtn');
+if(prev)prev.onclick=()=>researchStep(-1);
+if(next)next.onclick=()=>researchStep(1);document.querySelectorAll('.universeBtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.universeBtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.universe=b.dataset.universe;renderRRG()});$('rrgSearch').oninput=renderRRG;$('rrgLimit').onchange=renderRRG;$('matrixSearch').oninput=renderMatrix;$('matrixFilter').onchange=renderMatrix;document.querySelectorAll('.persistenceBtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.persistenceBtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.persistenceUniverse=b.dataset.persistence;renderPersistence()});$('tableSort').onchange=renderCanonical;$('tableUniverse').onchange=renderCanonical;$('tableState').onchange=renderCanonical;$('tableSearch').oninput=renderCanonical;$('refreshBtn').onclick=()=>loadData(true);$('lightBtn').onclick=()=>setTheme('light');$('darkBtn').onclick=()=>setTheme('dark');$('settingsBtn').onclick=()=>{$('apiInput').value=apiUrl();$('timeoutInput').value=Math.round(timeout(false)/1000);$('settingsModal').classList.add('open')};$('closeSettings').onclick=()=>$('settingsModal').classList.remove('open');$('defaultApi').onclick=()=>$('apiInput').value=DEFAULT_API;$('saveSettings').onclick=()=>{const u=$('apiInput').value.trim().replace(/\?.*$/,'');if(u)localStorage.setItem(STORAGE.api,u);localStorage.setItem(STORAGE.timeout,String(Number($('timeoutInput').value||35)));$('settingsModal').classList.remove('open');loadData(false)};$('testApi').onclick=async()=>{try{const x=await jsonp($('apiInput').value.trim().replace(/\?.*$/,''),{action:'rotation',refresh:'0'},timeout(false));alert(x?.ok?`Connected · ${x.version} · ${x.asOf} · ${x.universes?.themes?.length||0} themes`:(x?.error||'Invalid response'))}catch(e){alert(e.message)}};$('rrgCanvas').onclick=e=>{const r=e.currentTarget.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,p=state.rrgPoints.find(p=>Math.hypot(p.x-x,p.y-y)<=p.r);if(p)selectTicker(p.ticker)};window.addEventListener('resize',()=>{clearTimeout(window.__rt);window.__rt=setTimeout(()=>{renderRRG();renderTrend()},120)})}
+(function init(){bind();setTheme(localStorage.getItem(STORAGE.theme)||'light');const cached=readPayload();if(cached?.data){try{state.data=validate(cached.data);state.selected=(state.data.shortlists?.topThemes||[])[0]||state.data.universes.themes[0];renderAll();const age=Math.round((Date.now()-cached.savedAt)/60000);setStatus(`Showing saved rotation payload while checking server · ${age} minutes old`,'warn')}catch(_){}}loadData(false)})();
+</script>
+<script>
+(function(){
+  const buttons = Array.from(document.querySelectorAll('.workspace-tab'));
+  const panels = Array.from(document.querySelectorAll('.workspace-panel'));
+  function activate(name){
+    buttons.forEach(b=>{
+      const on=b.dataset.tab===name;
+      b.classList.toggle('active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    panels.forEach(p=>p.classList.toggle('active',p.dataset.workspace===name));
+    try{localStorage.setItem('leadership-workspace-tab',name)}catch(_){}
+    window.dispatchEvent(new Event('resize'));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  buttons.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.tab)));
+  const urlParams=new URLSearchParams(location.search);const saved=urlParams.get('tab')||localStorage.getItem('leadership-workspace-tab');
+  if(saved && panels.some(p=>p.dataset.workspace===saved)) activate(saved);
+})();
+</script>
+
+<style id="now-ai-brief-style">
+#nowAiBriefDock{position:fixed;right:16px;bottom:16px;z-index:99997;display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:520px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.now-ai-btn{border:1px solid rgba(120,140,165,.45);background:#0f766e;color:#fff;border-radius:8px;padding:9px 12px;font:800 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.now-ai-btn.secondary{background:#173b63}.now-ai-btn.ghost{background:#fff;color:#17324f}.now-ai-btn:hover{filter:brightness(1.08)}
+#nowAiBriefModal{position:fixed;inset:0;z-index:99999;background:rgba(4,10,18,.72);display:none;align-items:center;justify-content:center;padding:20px}
+#nowAiBriefModal.open{display:flex}.now-ai-box{width:min(1180px,96vw);height:min(820px,92vh);background:#fff;color:#132238;border-radius:12px;overflow:hidden;display:grid;grid-template-rows:auto 1fr auto;box-shadow:0 25px 90px rgba(0,0,0,.45)}
+.now-ai-head{padding:12px 14px;border-bottom:1px solid #d8e1eb;display:flex;justify-content:space-between;align-items:center;gap:12px}.now-ai-head b{font:900 13px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.now-ai-head span{font:11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#65758a}
+#nowAiBriefText{width:100%;height:100%;resize:none;border:0;outline:0;padding:16px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#17283d;background:#f8fafc;white-space:pre-wrap}
+.now-ai-actions{padding:10px 14px;border-top:1px solid #d8e1eb;display:flex;justify-content:flex-end;gap:8px}
+@media(max-width:700px){#nowAiBriefDock{left:10px;right:10px;bottom:10px}.now-ai-btn{flex:1}.now-ai-box{width:100%;height:94vh}}
+</style>
+
+
+<script id="now-ai-brief-module">
+(()=>{
+'use strict';
+const PAGE_NAME="Leadership Rotation Command Center";
+const MASTER_PROMPT="You are the Chief Equity Strategist and Portfolio Manager of a multi-billion-dollar institutional growth fund. Analyze ALL FIVE workspaces of the Leadership Rotation Command Center as one coherent Leadership Operating System: Command 30%, Rotation 25%, Momentum 20%, Persistence 15%, Research 10%. Determine the leadership regime, breadth, concentration, rotation quality, money flow, multi-timeframe confirmation, durability, emerging leaders, deteriorating leaders, actionable groups, pullback candidates, and deployment hierarchy from sector to industry to theme to ETF. Reconcile conflicts and defer to the highest-confidence evidence. Finish with: LEADERSHIP REGIME; BREADTH; CONCENTRATION; BEST SECTORS; BEST INDUSTRIES; BEST THEMES; NEW/IMPROVING LEADERS; FADING/DOWNGRADED; PERSISTENT LEADERS; EMERGING ROTATIONS; CONSTRUCTIVE PULLBACKS; ACTIONABLE SETUPS; AVOID LIST; DEPLOYMENT HIERARCHY; PORTFOLIO IMPLICATION; WHAT CHANGES THE VIEW; CONVICTION 0-100; LEADERSHIP RISK 0-100; TODAY'S GRADE.";
+const $=id=>document.getElementById(id);
+const clean=s=>String(s??'').replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+function visibleState(){
+ const inputs=[...document.querySelectorAll('input,select,textarea')].map(el=>{const name=el.getAttribute('aria-label')||el.name||el.id||el.placeholder||el.tagName;const value=el.type==='checkbox'||el.type==='radio'?String(el.checked):el.value;return value?`${name}: ${value}`:''}).filter(Boolean);
+ return inputs.join('\n');
+}
+function chartState(){
+ const out=[];
+ try{
+  if(window.Chart&&Chart.instances){
+   const instances=Chart.instances instanceof Map?[...Chart.instances.values()]:Object.values(Chart.instances||{});
+   instances.forEach((ch,i)=>{
+    if(!ch?.data)return;
+    const title=ch.options?.plugins?.title?.text||ch.canvas?.getAttribute('aria-label')||ch.canvas?.id||`Chart ${i+1}`;
+    const labels=Array.isArray(ch.data.labels)?ch.data.labels:[];
+    const end=Math.max(0,labels.length-12);
+    const ds=(ch.data.datasets||[]).map(d=>{const vals=(d.data||[]).slice(end).map(v=>Array.isArray(v)?v.join('/'):(v&&typeof v==='object'?(v.y??v.c??JSON.stringify(v)):v));return `${d.label||'Series'}: ${vals.join(', ')}`}).join(' | ');
+    out.push(`${title}\nDates: ${labels.slice(end).join(', ')}\n${ds}`);
+   });
+  }
+ }catch(e){out.push(`Chart extraction warning: ${e.message}`)}
+ return out.join('\n\n');
+}
+function sectionText(){
+ const clone=document.body.cloneNode(true);
+ clone.querySelectorAll('script,style,noscript,iframe,canvas,#nowAiBriefDock,#nowAiBriefModal').forEach(n=>n.remove());
+ clone.querySelectorAll('[hidden]').forEach(n=>n.removeAttribute('hidden'));
+ clone.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.setAttribute('aria-hidden','false'));
+ return clean(clone.textContent);
+}
+function sourceFreshness(){
+ const candidates=[...document.querySelectorAll('[id*="date" i],[id*="asof" i],[id*="updated" i],[class*="status" i],[class*="asof" i]')].slice(0,80).map(n=>clean(n.textContent)).filter(Boolean);
+ return [...new Set(candidates)].slice(0,30).join(' | ');
+}
+function buildBrief(){
+ const now=new Date();
+ return `${MASTER_PROMPT}
+
+==================================================
+SOURCE PACKAGE
+==================================================
+Page: ${PAGE_NAME}
+Captured: ${now.toLocaleString()}
+URL: ${location.href}
+Freshness/Status: ${sourceFreshness()||'Not explicitly detected'}
+
+IMPORTANT READING RULES
+- Use only evidence contained in this source package.
+- Treat stale, missing, unavailable or conflicting fields explicitly.
+- Hidden internal workspaces and inactive tabs are included in the DOM extraction.
+- Canvas chart datasets are appended when Chart.js exposes them.
+- Do not invent values that are absent.
+
+==================================================
+PAGE DATA — ALL DOM WORKSPACES
+==================================================
+${sectionText()}
+
+==================================================
+ACTIVE CONTROLS / FILTERS
+==================================================
+${visibleState()||'No active form controls detected.'}
+
+==================================================
+CHART DATA — RECENT OBSERVATIONS
+==================================================
+${chartState()||'No readable Chart.js datasets detected. Interpret chart-related claims only from the textual dashboard evidence.'}`;
+}
+async function copyText(text){try{await navigator.clipboard.writeText(text)}catch(e){const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}}
+function preview(){const text=buildBrief();$('nowAiBriefText').value=text;$('nowAiBriefMeta').textContent=`${text.length.toLocaleString()} characters captured`;$('nowAiBriefModal').classList.add('open')}
+function download(){const text=buildBrief();const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`NOW_AI_Brief_${PAGE_NAME.replace(/[^a-z0-9]+/gi,'_')}_${new Date().toISOString().slice(0,10)}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+async function askChatGPT(){
+  const brief=buildBrief();
+  // Open immediately inside the click event so Safari/Chrome do not block it.
+  const chatWindow=window.open('https://chatgpt.com/','_blank');
+  const button=$('nowAiAsk');
+  const old=button?button.textContent:'Ask ChatGPT';
+  try{
+    await copyText(brief);
+    if(button){
+      button.textContent='Copied — paste in ChatGPT';
+      setTimeout(()=>button.textContent=old,3200);
+    }
+    // Browsers do not provide a supported way for a public webpage to insert
+    // text directly into the ChatGPT composer. The complete brief is therefore
+    // placed on the clipboard for one Cmd+V / Ctrl+V paste.
+    if(!chatWindow){
+      alert('The AI brief was copied. Your browser blocked the new tab—open chatgpt.com, paste with Cmd+V or Ctrl+V, then press Send.');
+    }
+  }catch(error){
+    if(button)button.textContent='Copy failed';
+    alert('Could not copy the AI brief. Use Preview AI Brief, then select and copy the text manually.');
+    setTimeout(()=>{if(button)button.textContent=old},2500);
+  }
+}
+
+function mount(){
+ const dock=document.createElement('div');dock.id='nowAiBriefDock';dock.innerHTML='<button class="now-ai-btn" id="nowAiAsk">Ask ChatGPT</button><button class="now-ai-btn secondary" id="nowAiCopy">Copy AI Brief</button><button class="now-ai-btn secondary" id="nowAiPreview">Preview AI Brief</button><button class="now-ai-btn ghost" id="nowAiDownload">Download AI Brief</button>';document.body.appendChild(dock);
+ const modal=document.createElement('div');modal.id='nowAiBriefModal';modal.innerHTML='<div class="now-ai-box"><div class="now-ai-head"><div><b>NOW AI Brief Preview</b><br><span id="nowAiBriefMeta">—</span></div><button class="now-ai-btn ghost" id="nowAiClose">Close</button></div><div class="now-ai-chat-note">Ask ChatGPT copies the complete live brief, opens ChatGPT, then you paste with Cmd+V (Mac) or Ctrl+V (Windows) and press Send.</div><textarea id="nowAiBriefText" spellcheck="false"></textarea><div class="now-ai-actions"><button class="now-ai-btn secondary" id="nowAiModalCopy">Copy</button><button class="now-ai-btn" id="nowAiModalDownload">Download</button></div></div>';document.body.appendChild(modal);
+ $('nowAiAsk').onclick=askChatGPT;$('nowAiCopy').onclick=async()=>{const b=$('nowAiCopy');const old=b.textContent;await copyText(buildBrief());b.textContent='Copied ✓';setTimeout(()=>b.textContent=old,1600)};$('nowAiPreview').onclick=preview;$('nowAiDownload').onclick=download;$('nowAiClose').onclick=()=>modal.classList.remove('open');$('nowAiModalCopy').onclick=async()=>copyText($('nowAiBriefText').value);$('nowAiModalDownload').onclick=download;modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();
+</script>
+
+</body>
+</html>
