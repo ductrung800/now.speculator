@@ -297,43 +297,64 @@
 }
 
 
+/* ===== STOCKBEE NATIVE THEME SYSTEM ===== */
 :root{
-  --sb-bg:#f8f8f6;--sb-card:#fff;--sb-card2:#f5f6f2;--sb-line:#e1e0d9;
-  --sb-text:#0b0b0b;--sb-muted:#52514e;--sb-dim:#898781;
+  --sb-bg:#f8f8f6;--sb-card:#ffffff;--sb-card2:#f5f6f2;--sb-card3:#eef1ec;
+  --sb-line:#e1e0d9;--sb-text:#0b0b0b;--sb-muted:#52514e;--sb-dim:#898781;
+  --sb-grid:#ecebe6;--sb-input:#ffffff;
 }
 html[data-theme="dark"]{
-  --sb-bg:#07111d;--sb-card:#0d1826;--sb-card2:#101d2d;--sb-line:#25364b;
-  --sb-text:#e8eef7;--sb-muted:#9aabc0;--sb-dim:#7f91a7;
+  --sb-bg:#07111d;--sb-card:#0d1826;--sb-card2:#111e2e;--sb-card3:#152235;
+  --sb-line:#26384e;--sb-text:#e8eef7;--sb-muted:#9aabc0;--sb-dim:#8193a9;
+  --sb-grid:#2a3b50;--sb-input:#101d2d;
 }
 body{background:var(--sb-bg)!important;color:var(--sb-text)!important}
-.stockbee-head h1{color:var(--sb-text)!important}
-.subtitle,.panel-label,.control-group-label,.note,.legend,.institutional-subtitle,.metric-label,.metric-sub,.commentary,.asof{color:var(--sb-muted)!important}
-.panel,.status-bar,.benchmark-module,.institutional-card,.danger-panel,.market-summary-panel,.command-strip,.time-machine,.metric,.institutional-inline{
+.stockbee-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:2px solid var(--sb-line);padding-bottom:14px;margin-bottom:18px}
+.stockbee-head h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:2px;color:var(--sb-text)}
+.brand-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:#1baf7a;text-transform:uppercase}
+.subline{color:var(--sb-muted);font-size:12.5px;margin-top:4px;font-family:'JetBrains Mono',monospace}
+.theme-toggle{display:flex;border:1px solid var(--sb-line);border-radius:8px;overflow:hidden;background:var(--sb-card)}
+.theme-toggle button{border:0;background:transparent;color:var(--sb-muted);padding:8px 10px;font:800 10px 'JetBrains Mono',monospace;cursor:pointer}
+.theme-toggle button.active{background:#1baf7a;color:#03231e}
+.status-bar,.panel,.benchmark-module,.benchmark-subchart,.market-summary-panel,.institutional-card,
+.institutional-inline,.command-strip,.time-machine,.metric,.danger-attached,.oscillator-inline{
   background:var(--sb-card)!important;border-color:var(--sb-line)!important;color:var(--sb-text)!important
 }
-.controls,.benchmark-subchart,.danger-attached,.command-bottom{border-color:var(--sb-line)!important}
-button,input,select,.btn-toggle button,#refreshBtn{
-  background:var(--sb-card2)!important;color:var(--sb-text)!important;border-color:var(--sb-line)!important
+.metric,.benchmark-stats>div,.nasi-metric,.osc-stat,.danger-list li,.command-cell,.institutional-cell{
+  background:var(--sb-card2)!important;border-color:var(--sb-line)!important;color:var(--sb-text)!important
 }
-.btn-toggle button.active{background:#2a78d6!important;color:#fff!important}
-.theme-switch{display:flex;border:1px solid var(--sb-line);border-radius:8px;overflow:hidden;background:var(--sb-card)}
-.theme-switch button{border:0;background:transparent!important;color:var(--sb-muted)!important;padding:8px 10px;font:800 10px ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;cursor:pointer}
-.theme-switch button.active{background:#18b89f!important;color:#06231f!important}
-html[data-theme="dark"] .status-bar,
-html[data-theme="dark"] .panel,
-html[data-theme="dark"] .benchmark-module,
-html[data-theme="dark"] .market-summary-panel{box-shadow:none}
+.controls,.benchmark-module>*+*,.benchmark-subchart,.danger-attached,.command-bottom,.market-summary-panel,
+.breadth-subchart,.oscillator-inline{border-color:var(--sb-line)!important}
+.subtitle,.subline,.panel-label,.control-group-label,.note,.legend,.institutional-subtitle,.metric-label,
+.metric-sub,.commentary p,.asof,.benchmark-kicker,.engine-guidance,.breadth-read,.nasi-label,.osc-label,
+.tm-title,.tm-date,.tm-head,.tm-controls{color:var(--sb-muted)!important}
+h1,h2,h3,.benchmark-title,.institutional-title,.metric-value,.command-value,.breadth-title,.osc-title{
+  color:var(--sb-text)!important
+}
+button,input,select,#refreshBtn,.btn-toggle button,.tm-btn{
+  background:var(--sb-input)!important;color:var(--sb-text)!important;border-color:var(--sb-line)!important
+}
+.btn-toggle button.active,.theme-toggle button.active{background:#1baf7a!important;color:#03231e!important}
+canvas{background:transparent!important}
+html[data-theme="dark"] .verdict.neutral{background:#1a2738;color:#c9d5e3}
+html[data-theme="dark"] .verdict.bull{background:rgba(27,175,122,.16);color:#69dfb7}
+html[data-theme="dark"] .verdict.bear{background:rgba(227,73,72,.16);color:#ff9292}
+@media(max-width:760px){.stockbee-head{display:block}.theme-toggle{margin-top:10px;width:max-content}}
 
 </style>
 </head>
 <body>
   <div class="wrap">
-
-  <!-- ================= APP TABS ================= -->
-<header class="top stockbee-head" style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:2px solid #e1e0d9;padding-bottom:14px;margin-bottom:18px;">
-  <div class="brand-eyebrow" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .18em; color: #1baf7a; text-transform: uppercase;">Stockbee Engine</div>
-  <h1 style="font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin-top: 2px; color: #0b0b0b;">Stockbee Market Monitor</h1>
-  <div class="subline" style="color: #52514e; font-size: 12.5px; margin-top: 4px; font-family: 'JetBrains Mono', monospace;">SPY, QQQ, T2108 and Stockbee ratios · NASI, McClellan and breadth signals exclusively from the FMP Nasdaq Breadth Engine</div>
+<header class="stockbee-head">
+  <div>
+    <div class="brand-eyebrow">Stockbee Engine</div>
+    <h1>Stockbee Market Monitor</h1>
+    <div class="subline">SPY, QQQ, T2108 and Stockbee ratios · NASI, McClellan and breadth signals exclusively from the FMP Nasdaq Breadth Engine</div>
+  </div>
+  <div class="theme-toggle" aria-label="Theme">
+    <button id="stockLight" type="button">Light</button>
+    <button id="stockDark" type="button">Dark</button>
+  </div>
 </header>
 
 <div class="status-bar">
@@ -1643,7 +1664,7 @@ function buildOrUpdateCharts() {
     ratioChart.data.labels=labels;ratioChart.data.datasets[0].data=currentData.map(d=>d.r5);ratioChart.data.datasets[1].data=currentData.map(d=>d.r10);ratioChart.data.datasets[2].data=currentData.map(()=>1);ratioChart.update();
     quarterlyChart.data.labels=labels;quarterlyChart.data.datasets[0].data=currentData.map(d=>d.up25q);quarterlyChart.data.datasets[1].data=currentData.map(d=>d.down25q);quarterlyChart.update();
   }
-  updateBenchmarkStats('SPY'); updateBenchmarkStats('QQQ');
+  updateBenchmarkStats('SPY'); updateBenchmarkStats('QQQ'); setTimeout(()=>window.STOCKBEE_RETHEME_CHARTS?.(),0);
   linkChartGroup([spyChart, ratioChart, quarterlyChart]);
   linkChartGroup([qqqChart, nasiChart]);
 }
@@ -2136,23 +2157,61 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 
-<script id="stockTheme">
+<script id="stockbeeNativeTheme">
 (function(){
   const KEY='now.dashboard.theme';
+  function palette(){
+    const dark=document.documentElement.dataset.theme==='dark';
+    return {
+      grid:dark?'#2a3b50':'#ecebe6',
+      tick:dark?'#9eb0c4':'#898781',
+      tooltip:dark?'#101d2d':'#ffffff',
+      tooltipText:dark?'#e8eef7':'#0b0b0b',
+      border:dark?'#26384e':'#e1e0d9'
+    };
+  }
+  function rethemeCharts(){
+    if(typeof Chart==='undefined') return;
+    const p=palette();
+    Chart.defaults.color=p.tick;
+    Chart.defaults.borderColor=p.grid;
+    Chart.instances.forEach(chart=>{
+      const o=chart.options||{};
+      if(o.plugins?.legend?.labels) o.plugins.legend.labels.color=p.tick;
+      if(o.plugins?.tooltip){
+        o.plugins.tooltip.backgroundColor=p.tooltip;
+        o.plugins.tooltip.titleColor=p.tooltipText;
+        o.plugins.tooltip.bodyColor=p.tooltipText;
+        o.plugins.tooltip.borderColor=p.border;
+        o.plugins.tooltip.borderWidth=1;
+      }
+      Object.values(o.scales||{}).forEach(scale=>{
+        if(scale.grid) scale.grid.color=p.grid;
+        if(scale.ticks) scale.ticks.color=p.tick;
+        if(scale.title) scale.title.color=p.tick;
+        if(scale.border) scale.border.color=p.border;
+      });
+      chart.update('none');
+    });
+  }
   function apply(theme){
     theme=theme==='dark'?'dark':'light';
     document.documentElement.dataset.theme=theme;
     try{localStorage.setItem(KEY,theme)}catch(_){}
-    document.getElementById('stockLightBtn')?.classList.toggle('active',theme==='light');
-    document.getElementById('stockDarkBtn')?.classList.toggle('active',theme==='dark');
+    document.getElementById('stockLight')?.classList.toggle('active',theme==='light');
+    document.getElementById('stockDark')?.classList.toggle('active',theme==='dark');
+    setTimeout(rethemeCharts,0);
   }
   document.addEventListener('DOMContentLoaded',()=>{
     let theme='light';
-    try{theme=localStorage.getItem(KEY)||((matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light')}catch(_){}
-    document.getElementById('stockLightBtn')?.addEventListener('click',()=>apply('light'));
-    document.getElementById('stockDarkBtn')?.addEventListener('click',()=>apply('dark'));
+    try{theme=localStorage.getItem(KEY)||((matchMedia('(prefers-color-scheme:dark)').matches)?'dark':'light')}catch(_){}
+    document.getElementById('stockLight')?.addEventListener('click',()=>apply('light'));
+    document.getElementById('stockDark')?.addEventListener('click',()=>apply('dark'));
     apply(theme);
+    setTimeout(rethemeCharts,1200);
+    setTimeout(rethemeCharts,3500);
   });
+  window.STOCKBEE_RETHEME_CHARTS=rethemeCharts;
 })();
 </script>
 
