@@ -306,41 +306,35 @@ async function fetchText(url){const c=new AbortController();const t=setTimeout((
 function parseHistory(text){const data=Papa.parse(text,{skipEmptyLines:true}).data;if(data.length<2)return[];const h=data[0].map(norm);const find=(...names)=>h.findIndex(x=>names.some(y=>x===y||x.includes(y)));const c={date:find('date'),adv:find('advances'),dec:find('declines'),unch:find('unchanged'),eligible:find('eligible universe'),rana:find('rana'),osc:find('mcclellan oscillator'),nasi:find('fmp nasi'),nasi50:find('nasi 50 sma'),health:find('breadth health score'),risk:find('risk mode'),signal:find('signal'),regime:find('breadth trend regime','trend regime'),momentum:find('breadth momentum'),guidance:find('tactical guidance'),quality:find('data quality')};if(c.date<0||c.nasi<0)return[];return data.slice(1).map(r=>({date:iso(r[c.date]),adv:n(r[c.adv]),dec:n(r[c.dec]),unch:n(r[c.unch]),eligible:n(r[c.eligible]),rana:n(r[c.rana]),osc:n(r[c.osc]),nasi:n(r[c.nasi]),nasi50:n(r[c.nasi50]),health:n(r[c.health]),risk:r[c.risk]||'',signal:r[c.signal]||'',regime:r[c.regime]||'',momentum:r[c.momentum]||'',guidance:r[c.guidance]||'',quality:n(r[c.quality])})).filter(r=>r.date&&r.nasi!=null).sort((a,b)=>a.date.localeCompare(b.date));}
 function parseLatest(text){const d=Papa.parse(text,{skipEmptyLines:true}).data;const out={};d.slice(1).forEach(r=>{if(r[0])out[norm(r[0])]=r[1]});return out}
 
+
+function parseStooqDaily(text){
+  const data=Papa.parse(text,{header:true,skipEmptyLines:true}).data||[];
+  const out={};
+  data.forEach(row=>{
+    const date=String(row.Date||row.date||'').trim();
+    const o=Number(row.Open??row.open),h=Number(row.High??row.high),
+          l=Number(row.Low??row.low),c=Number(row.Close??row.close);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(date)&&[o,h,l,c].every(Number.isFinite)){
+      out[date]={Date:date,Open:o,High:h,Low:l,Close:c};
+    }
+  });
+  return out;
+}
+async function fetchStooqEtfHistory(){
+  const urls={
+    SPY:'https://stooq.com/q/d/l/?s=spy.us&i=d',
+    QQQ:'https://stooq.com/q/d/l/?s=qqq.us&i=d'
+  };
+  const [spyText,qqqText]=await Promise.all([fetchText(urls.SPY),fetchText(urls.QQQ)]);
+  liveEtfData={SPY:parseStooqDaily(spyText),QQQ:parseStooqDaily(qqqText)};
+  return Object.keys(liveEtfData.SPY).length+Object.keys(liveEtfData.QQQ).length;
+}
+
 async function fetchDirectEtfHistory(){
   try{
-    const [spyRes,qqqRes]=await Promise.all([
-      fetch('http://localhost:8000/api/history/SPY',{cache:'no-store'}),
-      fetch('http://localhost:8000/api/history/QQQ',{cache:'no-store'})
-    ]);
-
-    if(!spyRes.ok||!qqqRes.ok){
-      throw new Error(`Direct ETF HTTP ${spyRes.status}/${qqqRes.status}`);
-    }
-
-    const [spyJson,qqqJson]=await Promise.all([spyRes.json(),qqqRes.json()]);
-
-    liveEtfData={SPY:{},QQQ:{}};
-
-    if(Array.isArray(spyJson.data)){
-      spyJson.data.forEach(bar=>{
-        if(bar&&bar.Date){
-          liveEtfData.SPY[bar.Date]=bar;
-        }
-      });
-    }
-
-    if(Array.isArray(qqqJson.data)){
-      qqqJson.data.forEach(bar=>{
-        if(bar&&bar.Date){
-          liveEtfData.QQQ[bar.Date]=bar;
-        }
-      });
-    }
-
-    return Object.keys(liveEtfData.SPY).length+
-           Object.keys(liveEtfData.QQQ).length;
-  }catch(error){
-    console.warn('Direct ETF history unavailable; using Stockbee sheet fallback.',error);
+    return await fetchStooqEtfHistory();
+  }catch(stooqError){
+    console.warn('Stooq ETF history unavailable; using Stockbee sheet fallback.',stooqError);
     liveEtfData={SPY:{},QQQ:{}};
     return 0;
   }
@@ -544,6 +538,12 @@ function benchmarkVisibleSlice(symbol,h){
   return h.slice(startIndex);
 }
 
+function chartThemeColors(){
+  const dark=document.documentElement.dataset.theme==='dark';
+  return dark
+    ? {grid:'#31445b',tick:'#b2c0d0',nasiUp:'#35d0bd',nasiDown:'#ff6b7d',sma:'#73a8ff',zero:'#7f91a7',spy:'#67a5ff',qqq:'#c08cff',greenFill:'rgba(40,211,155,.30)',redFill:'rgba(255,101,125,.28)'}
+    : {grid:'#e6e8e3',tick:'#666b67',nasiUp:'#0f766e',nasiDown:'#d74747',sma:'#2f6fde',zero:'#999999',spy:'#2a78d6',qqq:'#9333ea',greenFill:'rgba(17,153,110,.25)',redFill:'rgba(215,71,71,.22)'};
+}
 function renderBenchmarkNasiChart(symbol,h,chart,id){
   const key=symbol==='SPY'?'spy':'qqq';
   const ohlcKey=symbol==='SPY'?'spyOhlc':'qqqOhlc';
@@ -577,11 +577,12 @@ function renderBenchmarkNasiChart(symbol,h,chart,id){
   const candleColors=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?'rgba(17,153,110,.82)':'rgba(215,71,71,.82)');
   const candleBorders=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?'#087c55':'#a52322');
 
+  const tc=chartThemeColors();
   const datasets=[
     {type:'bar',label:symbol,data:pad(exactOhlc.map(o=>o?[o.o,o.c]:null)),ohlc:paddedOhlc,isCandle:true,backgroundColor:candleColors,borderColor:candleBorders,borderWidth:1.1,borderSkipped:false,barPercentage:.68,categoryPercentage:.92,yAxisID:'yPrice'},
-    {type:'line',label:'FMP NASI',data:pad(visible.map(r=>r.adjNasi)),borderColor:'#0f766e',pointRadius:0,borderWidth:2,tension:.12,yAxisID:'y',segment:{borderColor:c=>c.p1.parsed.y>=c.p0.parsed.y?'#0f766e':'#d74747'}},
-    {type:'line',label:'NASI 50 SMA',data:pad(visible.map(r=>r.adj50)),borderColor:'#2f6fde',pointRadius:0,borderWidth:1.7,tension:.12,yAxisID:'y'},
-    {type:'line',label:'NASI Zero',data:pad(visible.map(()=>0)),borderColor:'#999',borderDash:[4,3],pointRadius:0,borderWidth:1,yAxisID:'y'}
+    {type:'line',label:'FMP NASI',data:pad(visible.map(r=>r.adjNasi)),borderColor:tc.nasiUp,pointRadius:0,borderWidth:2,tension:.12,yAxisID:'y',segment:{borderColor:c=>c.p1.parsed.y>=c.p0.parsed.y?tc.nasiUp:tc.nasiDown}},
+    {type:'line',label:'NASI 50 SMA',data:pad(visible.map(r=>r.adj50)),borderColor:tc.sma,pointRadius:0,borderWidth:1.7,tension:.12,yAxisID:'y'},
+    {type:'line',label:'NASI Zero',data:pad(visible.map(()=>0)),borderColor:tc.zero,borderDash:[4,3],pointRadius:0,borderWidth:1,yAxisID:'y'}
   ];
 
   const options={
@@ -609,8 +610,8 @@ function renderBenchmarkNasiChart(symbol,h,chart,id){
     },
     scales:{
       x:{grid:{display:false},ticks:{display:false},border:{display:false}},
-      y:{position:'left',grid:{color:'#ecece7'},ticks:{color:'#0f766e',font:{size:10}},title:{display:true,text:'FMP NASI',color:'#0f766e'}},
-      yPrice:{position:'right',min:range.min,max:range.max,beginAtZero:false,bounds:'data',grid:{drawOnChartArea:false},ticks:{color:symbol==='SPY'?'#2a78d6':'#9333ea',font:{size:10}},title:{display:true,text:symbol+' Price',color:symbol==='SPY'?'#2a78d6':'#9333ea'}}
+      y:{position:'left',grid:{color:tc.grid},ticks:{color:tc.nasiUp,font:{size:10}},title:{display:true,text:'FMP NASI',color:tc.nasiUp}},
+      yPrice:{position:'right',min:range.min,max:range.max,beginAtZero:false,bounds:'data',grid:{drawOnChartArea:false},ticks:{color:symbol==='SPY'?tc.spy:tc.qqq,font:{size:10}},title:{display:true,text:symbol+' Price',color:symbol==='SPY'?tc.spy:tc.qqq}}
     }
   };
 
@@ -763,17 +764,18 @@ function renderCharts(h){
 
   spyNasiChart=renderBenchmarkNasiChart('SPY',h,spyNasiChart,'spyNasiChart');
   qqqNasiChart=renderBenchmarkNasiChart('QQQ',h,qqqNasiChart,'qqqNasiChart');
-  document.getElementById('qqqRead').textContent='Candlestick · FMP NASI · NASI 50-day SMA · exact Stockbee QQQ series';
+  document.getElementById('qqqRead').textContent='Candlestick · real QQQ daily history · FMP NASI · NASI 50-day SMA';
 
   // SPY middle: McClellan Oscillator, with hidden x labels.
   const oscLabels=spyRows.map(r=>r.date).concat(['','','','']);
   const oscPad=a=>a.concat([null,null,null,null]);
+  const tc2=chartThemeColors();
   const oscSets=[
     {
       label:'Oscillator',
       data:oscPad(spyRows.map(r=>r.osc)),
-      borderColor:'#6d52c7',
-      backgroundColor:oscPad(spyRows.map(r=>r.osc>=0?'rgba(17,153,110,.25)':'rgba(215,71,71,.22)')),
+      borderColor:document.documentElement.dataset.theme==='dark'?'#b89cff':'#6d52c7',
+      backgroundColor:oscPad(spyRows.map(r=>r.osc>=0?tc2.greenFill:tc2.redFill)),
       fill:true,
       pointRadius:0,
       borderWidth:1.5,
@@ -782,7 +784,7 @@ function renderCharts(h){
     {
       label:'Zero',
       data:oscPad(spyRows.map(()=>0)),
-      borderColor:'#999',
+      borderColor:tc2.zero,
       borderDash:[3,3],
       pointRadius:0,
       borderWidth:1
@@ -814,7 +816,7 @@ function renderCharts(h){
       type:'line',
       label:'Zero',
       data:adPad(qqqRows.map(()=>0)),
-      borderColor:'#8b8f8c',
+      borderColor:tc2.zero,
       borderDash:[3,3],
       pointRadius:0,
       borderWidth:1
@@ -1274,7 +1276,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     try{localStorage.setItem(KEY,theme)}catch(_){}
     document.getElementById('nasiLight')?.classList.toggle('active',theme==='light');
     document.getElementById('nasiDark')?.classList.toggle('active',theme==='dark');
-    setTimeout(rethemeCharts,0);
+    if(typeof render==='function'&&window.rows?.length){setTimeout(()=>render(),0)}else{setTimeout(rethemeCharts,0)}
   }
   document.addEventListener('DOMContentLoaded',()=>{
     let theme='light';
