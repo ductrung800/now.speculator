@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NASDAQ Institutional Breadth Laboratory · FMP Canonical</title>
+<title>NASDAQ Institutional Breadth Laboratory · Stockbee QQQ Restored</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
@@ -40,17 +40,6 @@
 @media(max-width:1250px){.decision-widgets{grid-template-columns:1fr}.posture-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.posture-grid{grid-template-columns:1fr}}
 @media(max-width:1250px){.benchmark-grid{grid-template-columns:1fr}.interpretation-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.interpretation-grid{grid-template-columns:1fr}.benchmark-chart{height:340px}.chartbox.support-chart{height:270px}}
-.now-ai-chat-note{
-  margin:0 0 10px;
-  padding:9px 11px;
-  border:1px solid rgba(16,185,129,.28);
-  border-radius:8px;
-  background:rgba(16,185,129,.08);
-  color:inherit;
-  font:700 10px/1.45 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-}
-
-
 /* ===== NASI NATIVE THEME SYSTEM ===== */
 :root{
   --bg:#f7f8f6;--card:#ffffff;--card2:#f8f8f5;--card3:#f1f3ef;
@@ -242,7 +231,7 @@ canvas{background:transparent!important}
         </div>
         <span class="pill" id="qqqTrendBadge">—</span>
       </div>
-      <div class="primary-read" id="qqqRead">Candlestick · FMP NASI · NASI 50-day SMA · exact Stockbee QQQ series</div>
+      <div class="primary-read" id="qqqRead">Candlestick · exact Stockbee QQQ series · FMP NASI · NASI 50-day SMA</div>
       <div class="combined-chart-stack">
         <div>
           <div class="chartbox benchmark-chart"><canvas id="qqqNasiChart"></canvas></div>
@@ -291,7 +280,6 @@ canvas{background:transparent!important}
 <div class="footer">Educational decision-support system · not financial advice</div>
 </div>
 <script>
-const CAPITAL_API='https://script.google.com/macros/s/AKfycbyJJuJBqxzj4YC2OQoZTiPeciYzwKIliGyYdboOCyFUUcl9Xxt587bFdMxK4pQfatqtNA/exec';
 const PUB='https://docs.google.com/spreadsheets/d/e/2PACX-1vQJgJsQkbBX3USosTbGEO8iwpdXK6Clc6hoUq6lqA7IlbJnkboWtq0asanPGUuZoMIXx9VxRC9d-q6h/pub';
 const GIDS=['1906345525','1126999134'];
 const STOCKBEE_SHEET_ID='1O6OhS7ciA8zwfycBfGPbP2fWJnR0pn2UUvFZVDP9jpE';
@@ -307,72 +295,11 @@ async function fetchText(url){const c=new AbortController();const t=setTimeout((
 function parseHistory(text){const data=Papa.parse(text,{skipEmptyLines:true}).data;if(data.length<2)return[];const h=data[0].map(norm);const find=(...names)=>h.findIndex(x=>names.some(y=>x===y||x.includes(y)));const c={date:find('date'),adv:find('advances'),dec:find('declines'),unch:find('unchanged'),eligible:find('eligible universe'),rana:find('rana'),osc:find('mcclellan oscillator'),nasi:find('fmp nasi'),nasi50:find('nasi 50 sma'),health:find('breadth health score'),risk:find('risk mode'),signal:find('signal'),regime:find('breadth trend regime','trend regime'),momentum:find('breadth momentum'),guidance:find('tactical guidance'),quality:find('data quality')};if(c.date<0||c.nasi<0)return[];return data.slice(1).map(r=>({date:iso(r[c.date]),adv:n(r[c.adv]),dec:n(r[c.dec]),unch:n(r[c.unch]),eligible:n(r[c.eligible]),rana:n(r[c.rana]),osc:n(r[c.osc]),nasi:n(r[c.nasi]),nasi50:n(r[c.nasi50]),health:n(r[c.health]),risk:r[c.risk]||'',signal:r[c.signal]||'',regime:r[c.regime]||'',momentum:r[c.momentum]||'',guidance:r[c.guidance]||'',quality:n(r[c.quality])})).filter(r=>r.date&&r.nasi!=null).sort((a,b)=>a.date.localeCompare(b.date));}
 function parseLatest(text){const d=Papa.parse(text,{skipEmptyLines:true}).data;const out={};d.slice(1).forEach(r=>{if(r[0])out[norm(r[0])]=r[1]});return out}
 
-
-
-function normalizeApiUrl(url){
-  return String(url||'').trim().replace(/\?.*$/,'');
-}
-function jsonpRequest(base,params={},timeout=45000){
-  return new Promise((resolve,reject)=>{
-    const cb='__nasiPriceCb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    const script=document.createElement('script');
-    const timer=setTimeout(()=>cleanup(new Error('Price API timed out.')),timeout);
-    function cleanup(err,data){
-      clearTimeout(timer);
-      try{delete window[cb]}catch(_){}
-      script.remove();
-      err?reject(err):resolve(data);
-    }
-    window[cb]=data=>cleanup(null,data);
-    script.onerror=()=>cleanup(new Error('Unable to reach Capital Allocation API.'));
-    const q=new URLSearchParams({...params,callback:cb,_ts:Date.now()});
-    script.src=`${normalizeApiUrl(base)}?${q.toString()}`;
-    document.head.appendChild(script);
-  });
-}
-function apiSeriesToMap(rows){
-  const out={};
-  (Array.isArray(rows)?rows:[]).forEach(row=>{
-    const date=String(row.date||row.Date||'').slice(0,10);
-    const close=Number(row.close??row.Close??row.price);
-    const open=Number(row.open??row.Open);
-    const high=Number(row.high??row.High);
-    const low=Number(row.low??row.Low);
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(close)||close<=0)return;
-    out[date]={
-      Date:date,
-      Close:close,
-      Open:Number.isFinite(open)?open:close,
-      High:Number.isFinite(high)?high:close,
-      Low:Number.isFinite(low)?low:close
-    };
-  });
-  return out;
-}
 async function fetchDirectEtfHistory(){
-  try{
-    const to=new Date().toISOString().slice(0,10);
-    const fromDate=new Date();
-    fromDate.setDate(fromDate.getDate()-620);
-    const from=fromDate.toISOString().slice(0,10);
-    const payload=await jsonpRequest(CAPITAL_API,{action:'dashboard',from,to});
-    if(!payload?.ok) throw new Error(payload?.error||'Price API returned an error.');
-    const series=payload.series||{};
-    liveEtfData={
-      SPY:apiSeriesToMap(series.SPY||series.spy||[]),
-      QQQ:apiSeriesToMap(series.QQQ||series.qqq||[])
-    };
-    const spyCount=Object.keys(liveEtfData.SPY).length;
-    const qqqCount=Object.keys(liveEtfData.QQQ).length;
-    if(!spyCount||!qqqCount){
-      throw new Error(`Incomplete benchmark series: SPY ${spyCount}, QQQ ${qqqCount}`);
-    }
-    return spyCount+qqqCount;
-  }catch(apiError){
-    console.warn('Canonical Apps Script benchmark history unavailable; using Stockbee sheet fallback.',apiError);
-    liveEtfData={SPY:{},QQQ:{}};
-    return 0;
-  }
+  // GitHub Pages must not call localhost. The known-working Stockbee
+  // benchmark sheet is the canonical SPY/QQQ source for this page.
+  liveEtfData={SPY:{},QQQ:{}};
+  return 0;
 }
 
 function mergeDirectEtfIntoPriceMap(){
@@ -488,7 +415,7 @@ async function load(){
     rows=hist; metrics=latest; idx=rows.length-1;
     document.getElementById('slider').max=rows.length-1;
         render();
-    setStatus('ok',`${rows.length} breadth sessions loaded · ${priceCount?priceCount+' benchmark records linked':'benchmark price overlay unavailable'} · ${directEtfCount?'canonical Apps Script SPY/QQQ series active':'Stockbee sheet fallback active'} · latest ${rows.at(-1).date}`);
+    setStatus('ok',`${rows.length} breadth sessions loaded · ${priceCount?priceCount+' benchmark records linked':'benchmark price overlay unavailable'} · ${sheetPriceCount?'exact Stockbee SPY/QQQ series active':'benchmark overlay unavailable'} · latest ${rows.at(-1).date}`);
   }catch(e){
     console.error(e);
     setStatus('err','Render error · '+e.message);
@@ -527,7 +454,8 @@ function syntheticOhlc(values){
   });
 }
 function autoRange(series,extras=[]){const vals=[];series.forEach(o=>{if(o){if(Number.isFinite(o.l))vals.push(o.l);if(Number.isFinite(o.h))vals.push(o.h)}});extras.flat().forEach(v=>{if(Number.isFinite(v))vals.push(v)});if(!vals.length)return{};const lo=Math.min(...vals),hi=Math.max(...vals),span=Math.max(hi-lo,Math.abs(hi)*.025,1);return{min:lo-span*.08,max:hi+span*.08};}
-const candleWicksPlugin={id:'labCandleWicks',afterDatasetsDraw(chart){const{ctx}=chart;chart.data.datasets.forEach((ds,di)=>{if(!ds.isCandle||!ds.ohlc)return;const meta=chart.getDatasetMeta(di),scale=chart.scales[ds.yAxisID||'yPrice'];ctx.save();ctx.strokeStyle='#454843';ctx.lineWidth=1;meta.data.forEach((bar,i)=>{const o=ds.ohlc[i];if(!o)return;ctx.beginPath();ctx.moveTo(bar.x,scale.getPixelForValue(o.h));ctx.lineTo(bar.x,scale.getPixelForValue(o.l));ctx.stroke()});ctx.restore()})}};
+const candleWicksPlugin={id:'labCandleWicks',afterDatasetsDraw(chart){const{ctx}=chart;
+    const dark=document.documentElement.dataset.theme==='dark';chart.data.datasets.forEach((ds,di)=>{if(!ds.isCandle||!ds.ohlc)return;const meta=chart.getDatasetMeta(di),scale=chart.scales[ds.yAxisID||'yPrice'];ctx.save();ctx.strokeStyle=dark?'#a8b8ca':'#454843';ctx.lineWidth=1;meta.data.forEach((bar,i)=>{const o=ds.ohlc[i];if(!o)return;ctx.beginPath();ctx.moveTo(bar.x,scale.getPixelForValue(o.h));ctx.lineTo(bar.x,scale.getPixelForValue(o.l));ctx.stroke()});ctx.restore()})}};
 Chart.register(candleWicksPlugin);
 function renderDiagnostics(r,history,t){
   const health=Number(val(r,'health'))||0;
@@ -565,7 +493,7 @@ function renderDiagnostics(r,history,t){
   document.getElementById('adRatioBadge').textContent=ratio>=1?'Advancers leading':'Decliners leading';
   document.getElementById('adRatioBadge').className='pill '+(ratio>=1?'bull':'bear');
 }
-function render(){if(!rows.length)return;const r=adjusted(rows[idx]),t=tone(r),history=rows.slice(0,idx+1).map(adjusted);document.getElementById('decision').className='panel decision '+t;document.getElementById('decisionTitle').textContent=t==='bear'?'Defensive internal breadth':t==='bull'?'Constructive internal breadth':'Transitional internal breadth';const risk=val(r,'risk')||'—',signal=val(r,'signal')||'—';document.getElementById('riskPill').textContent=risk;document.getElementById('riskPill').className='pill '+t;document.getElementById('signalPill').textContent=signal;document.getElementById('asof').textContent='As of '+r.date;document.getElementById('selectedLabel').textContent=r.date;document.getElementById('slider').value=idx;document.getElementById('dateInput').value=r.date;document.getElementById('startDate').textContent=rows[0].date;document.getElementById('endDate').textContent=rows.at(-1).date;document.getElementById('prev').disabled=idx===0;document.getElementById('next').disabled=idx===rows.length-1;const health=Number(val(r,'health'));const dist=r.adj50==null?null:r.adjNasi-r.adj50;const five=history.length>5?r.adjNasi-history.at(-6).adjNasi:null;document.getElementById('metrics').innerHTML=[['Breadth health',`${fmt(health)} <span class="health-context ${health>=65?'bull':health<40?'bear':'warn'}">${health>=80?'Strong':health>=65?'Healthy':health>=45?'Transitional':health>=35?'Weak':'Critical'}</span>`,'0–100 composite',health>=65?'pos':health<40?'neg':'warnText'],['FMP NASI',fmt(r.adjNasi,0,true),'FMP cumulative breadth',r.adjNasi>=0?'pos':'neg'],['NASI vs 50 SMA',fmt(dist,0,true),'Trend confirmation',dist>=0?'pos':'neg'],['McClellan Osc',fmt(r.osc,1,true),'Short-term breadth impulse',r.osc>=0?'pos':'neg'],['5-day NASI change',fmt(five,0,true),'Slope / momentum',five>=0?'pos':'neg'],['A/D ratio',fmt(r.dec? r.adv/r.dec:null,2),'Daily participation',r.adv>r.dec?'pos':'neg'],['Eligible universe',fmt(r.eligible),'Data breadth',''],['Data quality',r.quality!=null?fmt(r.quality>1?r.quality:r.quality*100,1)+'%':'—','Coverage','']].map(x=>`<div class="metric"><span>${x[0]}</span><strong class="${x[3]}">${x[1]}</strong><small>${x[2]}</small></div>`).join('');const guide=val(r,'guidance')||`${val(r,'regime')||'Breadth regime unavailable'} · ${val(r,'momentum')||'Momentum unavailable'}`;document.getElementById('guidance').innerHTML=`<strong>Portfolio guidance:</strong> ${guide}`;document.getElementById('spyTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('spyTrendBadge').className='pill '+t;document.getElementById('qqqTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('qqqTrendBadge').className='pill '+t;document.getElementById('oscBadge').textContent=r.osc>=0?'Positive impulse':'Negative impulse';document.getElementById('oscBadge').className='pill '+(r.osc>=0?'bull':'bear');renderInterpretation(r,history,t);const net=(r.adv||0)-(r.dec||0),adRatio=r.dec?r.adv/r.dec:null,partTone=net>=0?'bull':'bear';document.getElementById('participationBadge').textContent=net>=0?'Net advancing':'Net declining';document.getElementById('participationBadge').className='pill '+partTone;document.getElementById('participationStats').innerHTML=`<div class="pstat"><span>Advances</span><strong class="pos">${fmt(r.adv)}</strong></div><div class="pstat"><span>Declines</span><strong class="neg">${fmt(r.dec)}</strong></div><div class="pstat"><span>Net A−D</span><strong class="${net>=0?'pos':'neg'}">${fmt(net,0,true)}</strong></div><div class="pstat"><span>A/D ratio</span><strong class="${adRatio>=1?'pos':'neg'}">${fmt(adRatio,2)}</strong></div>`;renderDiagnostics(r,history,t);renderCharts(history);renderTable(history.slice(-15).reverse());setTimeout(()=>window.NASI_RETHEME_CHARTS?.(),0);}
+function render(){if(!rows.length)return;const r=adjusted(rows[idx]),t=tone(r),history=rows.slice(0,idx+1).map(adjusted);document.getElementById('decision').className='panel decision '+t;document.getElementById('decisionTitle').textContent=t==='bear'?'Defensive internal breadth':t==='bull'?'Constructive internal breadth':'Transitional internal breadth';const risk=val(r,'risk')||'—',signal=val(r,'signal')||'—';document.getElementById('riskPill').textContent=risk;document.getElementById('riskPill').className='pill '+t;document.getElementById('signalPill').textContent=signal;document.getElementById('asof').textContent='As of '+r.date;document.getElementById('selectedLabel').textContent=r.date;document.getElementById('slider').value=idx;document.getElementById('dateInput').value=r.date;document.getElementById('startDate').textContent=rows[0].date;document.getElementById('endDate').textContent=rows.at(-1).date;document.getElementById('prev').disabled=idx===0;document.getElementById('next').disabled=idx===rows.length-1;const health=Number(val(r,'health'));const dist=r.adj50==null?null:r.adjNasi-r.adj50;const five=history.length>5?r.adjNasi-history.at(-6).adjNasi:null;document.getElementById('metrics').innerHTML=[['Breadth health',`${fmt(health)} <span class="health-context ${health>=65?'bull':health<40?'bear':'warn'}">${health>=80?'Strong':health>=65?'Healthy':health>=45?'Transitional':health>=35?'Weak':'Critical'}</span>`,'0–100 composite',health>=65?'pos':health<40?'neg':'warnText'],['FMP NASI',fmt(r.adjNasi,0,true),'FMP cumulative breadth',r.adjNasi>=0?'pos':'neg'],['NASI vs 50 SMA',fmt(dist,0,true),'Trend confirmation',dist>=0?'pos':'neg'],['McClellan Osc',fmt(r.osc,1,true),'Short-term breadth impulse',r.osc>=0?'pos':'neg'],['5-day NASI change',fmt(five,0,true),'Slope / momentum',five>=0?'pos':'neg'],['A/D ratio',fmt(r.dec? r.adv/r.dec:null,2),'Daily participation',r.adv>r.dec?'pos':'neg'],['Eligible universe',fmt(r.eligible),'Data breadth',''],['Data quality',r.quality!=null?fmt(r.quality>1?r.quality:r.quality*100,1)+'%':'—','Coverage','']].map(x=>`<div class="metric"><span>${x[0]}</span><strong class="${x[3]}">${x[1]}</strong><small>${x[2]}</small></div>`).join('');const guide=val(r,'guidance')||`${val(r,'regime')||'Breadth regime unavailable'} · ${val(r,'momentum')||'Momentum unavailable'}`;document.getElementById('guidance').innerHTML=`<strong>Portfolio guidance:</strong> ${guide}`;document.getElementById('spyTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('spyTrendBadge').className='pill '+t;document.getElementById('qqqTrendBadge').textContent=val(r,'regime')||'—';document.getElementById('qqqTrendBadge').className='pill '+t;document.getElementById('oscBadge').textContent=r.osc>=0?'Positive impulse':'Negative impulse';document.getElementById('oscBadge').className='pill '+(r.osc>=0?'bull':'bear');renderInterpretation(r,history,t);const net=(r.adv||0)-(r.dec||0),adRatio=r.dec?r.adv/r.dec:null,partTone=net>=0?'bull':'bear';document.getElementById('participationBadge').textContent=net>=0?'Net advancing':'Net declining';document.getElementById('participationBadge').className='pill '+partTone;document.getElementById('participationStats').innerHTML=`<div class="pstat"><span>Advances</span><strong class="pos">${fmt(r.adv)}</strong></div><div class="pstat"><span>Declines</span><strong class="neg">${fmt(r.dec)}</strong></div><div class="pstat"><span>Net A−D</span><strong class="${net>=0?'pos':'neg'}">${fmt(net,0,true)}</strong></div><div class="pstat"><span>A/D ratio</span><strong class="${adRatio>=1?'pos':'neg'}">${fmt(adRatio,2)}</strong></div>`;renderDiagnostics(r,history,t);renderCharts(history);renderTable(history.slice(-15).reverse());}
 function benchmarkVisibleSlice(symbol,h){
   const key=symbol==='SPY'?'spy':'qqq';
   const firstValid=h.findIndex(row=>Number.isFinite(priceByDate[row.date]?.[key]));
@@ -573,25 +501,12 @@ function benchmarkVisibleSlice(symbol,h){
   return h.slice(startIndex);
 }
 
-function chartThemeColors(){
-  const dark=document.documentElement.dataset.theme==='dark';
-  return dark
-    ? {grid:'#334a63',tick:'#c2cfdd',nasiUp:'#38dcc8',nasiDown:'#ff7183',sma:'#78aaff',zero:'#91a3b7',spy:'#64a8ff',qqq:'#d19cff',greenFill:'rgba(45,218,164,.34)',redFill:'rgba(255,105,126,.32)'}
-    : {grid:'#e6e8e3',tick:'#666b67',nasiUp:'#0f766e',nasiDown:'#d74747',sma:'#2f6fde',zero:'#999999',spy:'#2a78d6',qqq:'#9333ea',greenFill:'rgba(17,153,110,.25)',redFill:'rgba(215,71,71,.22)'};
-}
 function renderBenchmarkNasiChart(symbol,h,chart,id){
   const key=symbol==='SPY'?'spy':'qqq';
   const ohlcKey=symbol==='SPY'?'spyOhlc':'qqqOhlc';
 
   const visible=benchmarkVisibleSlice(symbol,h);
   const price=visible.map(r=>priceByDate[r.date]?.[key]??null);
-  const validPriceCount=price.filter(Number.isFinite).length;
-  if(symbol==='QQQ'){
-    const read=document.getElementById('qqqRead');
-    if(read) read.textContent=validPriceCount
-      ? `Candlestick · canonical QQQ series (${validPriceCount} sessions) · FMP NASI · NASI 50-day SMA`
-      : 'QQQ price series unavailable · NASI series only';
-  }
 
   const exactOhlc=visible.map((row,index)=>{
     const direct=priceByDate[row.date]?.[ohlcKey];
@@ -616,16 +531,14 @@ function renderBenchmarkNasiChart(symbol,h,chart,id){
   const pad=a=>a.concat(new Array(rightPad).fill(null));
   const paddedOhlc=exactOhlc.concat(new Array(rightPad).fill(null));
 
-  const isDark=document.documentElement.dataset.theme==='dark';
-  const candleColors=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?(isDark?'rgba(40,211,155,.94)':'rgba(17,153,110,.82)'):(isDark?'rgba(255,101,125,.94)':'rgba(215,71,71,.82)'));
-  const candleBorders=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?(isDark?'#72efc5':'#087c55'):(isDark?'#ff9dad':'#a52322'));
+  const candleColors=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?'rgba(17,153,110,.82)':'rgba(215,71,71,.82)');
+  const candleBorders=paddedOhlc.map(o=>!o?'rgba(0,0,0,0)':o.c>=o.o?'#087c55':'#a52322');
 
-  const tc=chartThemeColors();
   const datasets=[
     {type:'bar',label:symbol,data:pad(exactOhlc.map(o=>o?[o.o,o.c]:null)),ohlc:paddedOhlc,isCandle:true,backgroundColor:candleColors,borderColor:candleBorders,borderWidth:1.1,borderSkipped:false,barPercentage:.68,categoryPercentage:.92,yAxisID:'yPrice'},
-    {type:'line',label:'FMP NASI',data:pad(visible.map(r=>r.adjNasi)),borderColor:tc.nasiUp,pointRadius:0,borderWidth:2,tension:.12,yAxisID:'y',segment:{borderColor:c=>c.p1.parsed.y>=c.p0.parsed.y?tc.nasiUp:tc.nasiDown}},
-    {type:'line',label:'NASI 50 SMA',data:pad(visible.map(r=>r.adj50)),borderColor:tc.sma,pointRadius:0,borderWidth:1.7,tension:.12,yAxisID:'y'},
-    {type:'line',label:'NASI Zero',data:pad(visible.map(()=>0)),borderColor:tc.zero,borderDash:[4,3],pointRadius:0,borderWidth:1,yAxisID:'y'}
+    {type:'line',label:'FMP NASI',data:pad(visible.map(r=>r.adjNasi)),borderColor:'#0f766e',pointRadius:0,borderWidth:2,tension:.12,yAxisID:'y',segment:{borderColor:c=>c.p1.parsed.y>=c.p0.parsed.y?'#0f766e':'#d74747'}},
+    {type:'line',label:'NASI 50 SMA',data:pad(visible.map(r=>r.adj50)),borderColor:'#2f6fde',pointRadius:0,borderWidth:1.7,tension:.12,yAxisID:'y'},
+    {type:'line',label:'NASI Zero',data:pad(visible.map(()=>0)),borderColor:'#999',borderDash:[4,3],pointRadius:0,borderWidth:1,yAxisID:'y'}
   ];
 
   const options={
@@ -653,8 +566,8 @@ function renderBenchmarkNasiChart(symbol,h,chart,id){
     },
     scales:{
       x:{grid:{display:false},ticks:{display:false},border:{display:false}},
-      y:{position:'left',grid:{color:tc.grid},ticks:{color:tc.nasiUp,font:{size:10}},title:{display:true,text:'FMP NASI',color:tc.nasiUp}},
-      yPrice:{position:'right',min:range.min,max:range.max,beginAtZero:false,bounds:'data',grid:{drawOnChartArea:false},ticks:{color:symbol==='SPY'?tc.spy:tc.qqq,font:{size:10}},title:{display:true,text:symbol+' Price',color:symbol==='SPY'?tc.spy:tc.qqq}}
+      y:{position:'left',grid:{color:'#ecece7'},ticks:{color:'#0f766e',font:{size:10}},title:{display:true,text:'FMP NASI',color:'#0f766e'}},
+      yPrice:{position:'right',min:range.min,max:range.max,beginAtZero:false,bounds:'data',grid:{drawOnChartArea:false},ticks:{color:symbol==='SPY'?'#2a78d6':'#9333ea',font:{size:10}},title:{display:true,text:symbol+' Price',color:symbol==='SPY'?'#2a78d6':'#9333ea'}}
     }
   };
 
@@ -807,17 +720,17 @@ function renderCharts(h){
 
   spyNasiChart=renderBenchmarkNasiChart('SPY',h,spyNasiChart,'spyNasiChart');
   qqqNasiChart=renderBenchmarkNasiChart('QQQ',h,qqqNasiChart,'qqqNasiChart');
+  document.getElementById('qqqRead').textContent='Candlestick · exact Stockbee QQQ series · FMP NASI · NASI 50-day SMA';
 
   // SPY middle: McClellan Oscillator, with hidden x labels.
   const oscLabels=spyRows.map(r=>r.date).concat(['','','','']);
   const oscPad=a=>a.concat([null,null,null,null]);
-  const tc2=chartThemeColors();
   const oscSets=[
     {
       label:'Oscillator',
       data:oscPad(spyRows.map(r=>r.osc)),
-      borderColor:document.documentElement.dataset.theme==='dark'?'#b89cff':'#6d52c7',
-      backgroundColor:oscPad(spyRows.map(r=>r.osc>=0?tc2.greenFill:tc2.redFill)),
+      borderColor:'#6d52c7',
+      backgroundColor:oscPad(spyRows.map(r=>r.osc>=0?'rgba(17,153,110,.25)':'rgba(215,71,71,.22)')),
       fill:true,
       pointRadius:0,
       borderWidth:1.5,
@@ -826,7 +739,7 @@ function renderCharts(h){
     {
       label:'Zero',
       data:oscPad(spyRows.map(()=>0)),
-      borderColor:tc2.zero,
+      borderColor:'#999',
       borderDash:[3,3],
       pointRadius:0,
       borderWidth:1
@@ -858,7 +771,7 @@ function renderCharts(h){
       type:'line',
       label:'Zero',
       data:adPad(qqqRows.map(()=>0)),
-      borderColor:tc2.zero,
+      borderColor:'#8b8f8c',
       borderDash:[3,3],
       pointRadius:0,
       borderWidth:1
@@ -1162,7 +1075,6 @@ load();
 @media(max-width:700px){#nowAiBriefDock{left:10px;right:10px;bottom:10px}.now-ai-btn{flex:1}.now-ai-box{width:100%;height:94vh}}
 </style>
 
-
 <script id="now-ai-brief-module">
 (()=>{
 'use strict';
@@ -1273,7 +1185,6 @@ function mount(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
 </script>
-
 
 <script id="nasiNativeTheme">
 (function(){
