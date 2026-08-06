@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NASDAQ Institutional Breadth Laboratory · Stockbee QQQ Restored</title>
+<title>NASDAQ Institutional Breadth Laboratory · Local QQQ OHLC Restored</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
@@ -296,10 +296,55 @@ function parseHistory(text){const data=Papa.parse(text,{skipEmptyLines:true}).da
 function parseLatest(text){const d=Papa.parse(text,{skipEmptyLines:true}).data;const out={};d.slice(1).forEach(r=>{if(r[0])out[norm(r[0])]=r[1]});return out}
 
 async function fetchDirectEtfHistory(){
-  // GitHub Pages must not call localhost. The known-working Stockbee
-  // benchmark sheet is the canonical SPY/QQQ source for this page.
-  liveEtfData={SPY:{},QQQ:{}};
-  return 0;
+  try{
+    const [spyRes,qqqRes]=await Promise.all([
+      fetch('http://localhost:8000/api/history/SPY',{cache:'no-store'}),
+      fetch('http://localhost:8000/api/history/QQQ',{cache:'no-store'})
+    ]);
+
+    if(!spyRes.ok||!qqqRes.ok){
+      throw new Error(`Direct ETF HTTP ${spyRes.status}/${qqqRes.status}`);
+    }
+
+    const [spyJson,qqqJson]=await Promise.all([
+      spyRes.json(),
+      qqqRes.json()
+    ]);
+
+    liveEtfData={SPY:{},QQQ:{}};
+
+    if(Array.isArray(spyJson.data)){
+      spyJson.data.forEach(bar=>{
+        if(bar&&bar.Date){
+          liveEtfData.SPY[bar.Date]=bar;
+        }
+      });
+    }
+
+    if(Array.isArray(qqqJson.data)){
+      qqqJson.data.forEach(bar=>{
+        if(bar&&bar.Date){
+          liveEtfData.QQQ[bar.Date]=bar;
+        }
+      });
+    }
+
+    const spyCount=Object.keys(liveEtfData.SPY).length;
+    const qqqCount=Object.keys(liveEtfData.QQQ).length;
+
+    if(!spyCount||!qqqCount){
+      throw new Error(`Incomplete local ETF history: SPY ${spyCount}, QQQ ${qqqCount}`);
+    }
+
+    return spyCount+qqqCount;
+  }catch(error){
+    console.warn(
+      'Local SPY/QQQ OHLC unavailable; using Stockbee sheet fallback.',
+      error
+    );
+    liveEtfData={SPY:{},QQQ:{}};
+    return 0;
+  }
 }
 
 function mergeDirectEtfIntoPriceMap(){
@@ -415,7 +460,7 @@ async function load(){
     rows=hist; metrics=latest; idx=rows.length-1;
     document.getElementById('slider').max=rows.length-1;
         render();
-    setStatus('ok',`${rows.length} breadth sessions loaded · ${priceCount?priceCount+' benchmark records linked':'benchmark price overlay unavailable'} · ${sheetPriceCount?'exact Stockbee SPY/QQQ series active':'benchmark overlay unavailable'} · latest ${rows.at(-1).date}`);
+    setStatus('ok',`${rows.length} breadth sessions loaded · ${priceCount?priceCount+' benchmark records linked':'benchmark price overlay unavailable'} · ${directEtfCount?'local SPY/QQQ OHLC active':'Stockbee sheet fallback active'} · latest ${rows.at(-1).date}`);
   }catch(e){
     console.error(e);
     setStatus('err','Render error · '+e.message);
@@ -720,7 +765,20 @@ function renderCharts(h){
 
   spyNasiChart=renderBenchmarkNasiChart('SPY',h,spyNasiChart,'spyNasiChart');
   qqqNasiChart=renderBenchmarkNasiChart('QQQ',h,qqqNasiChart,'qqqNasiChart');
-  document.getElementById('qqqRead').textContent='Candlestick · exact Stockbee QQQ series · FMP NASI · NASI 50-day SMA';
+  const qqqLinked=h.filter(r=>Number.isFinite(priceByDate[r.date]?.qqq)).length;
+  const qqqBadge=document.getElementById('qqqTrendBadge');
+  if(!qqqLinked){
+    qqqBadge.textContent='QQQ DATA MISSING';
+    qqqBadge.className='pill bear';
+  }
+  {
+    const directQqqCount=Object.keys(liveEtfData.QQQ||{}).length;
+    const linkedQqqCount=qqqRows.filter(r=>Number.isFinite(priceByDate[r.date]?.qqq)).length;
+    const source=directQqqCount?'local QQQ OHLC':'Stockbee QQQ fallback';
+    document.getElementById('qqqRead').textContent=linkedQqqCount
+      ? `Candlestick · ${source} · ${linkedQqqCount} linked sessions · FMP NASI · NASI 50-day SMA`
+      : 'QQQ price series unavailable';
+  }
 
   // SPY middle: McClellan Oscillator, with hidden x labels.
   const oscLabels=spyRows.map(r=>r.date).concat(['','','','']);
