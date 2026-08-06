@@ -272,6 +272,8 @@
 .topbar{min-height:0;background:transparent!important;border:0!important;box-shadow:none!important;padding:0 0 8px!important;position:static!important;justify-content:flex-end}
 .topbar .brand,.topbar .nav{display:none!important}
 .top-actions{margin-left:auto}
+
+#capLightBtn.active,#capDarkBtn.active{background:var(--accent)!important;color:#061c18!important;border-color:var(--accent)!important}
 </style>
 </head>
 <body>
@@ -307,7 +309,7 @@
       </nav>
       <div class="top-actions">
         <button id="refreshBtn" class="btn primary"><span id="dataDot" class="status-dot"></span>Refresh</button>
-        <button id="settingsBtn" class="btn">Settings</button>
+        <button id="capLightBtn" class="btn" type="button">Light</button><button id="capDarkBtn" class="btn" type="button">Dark</button><button id="settingsBtn" class="btn">Settings</button>
       </div>
     </header>
 
@@ -480,6 +482,9 @@ const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJ
     const resolved = pref === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light':'dark') : pref;
     document.documentElement.dataset.theme = resolved;
     localStorage.setItem(STORAGE.theme,pref);
+    const lightBtn=$('capLightBtn'),darkBtn=$('capDarkBtn');
+    if(lightBtn) lightBtn.classList.toggle('active',resolved==='light');
+    if(darkBtn) darkBtn.classList.toggle('active',resolved==='dark');
     setTimeout(()=>rebuildAllCharts(),0);
   }
   function toast(msg, kind='') { const el=$('toast'); el.textContent=msg; el.style.borderColor=kind==='bad'?'var(--red)':kind==='ok'?'var(--green)':'var(--border)'; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),4200); }
@@ -731,6 +736,8 @@ const NOW_CAPITAL_PRODUCTION_API = 'https://script.google.com/macros/s/AKfycbyJJ
     $('saveSettingsBtn').onclick=()=>{ localStorage.setItem(STORAGE.apiUrl,NOW_CAPITAL_PRODUCTION_API); localStorage.setItem(STORAGE.lookback,$('lookbackSelect').value); applyTheme($('themeSelect').value); $('settingsModal').classList.remove('open'); loadData(); };
     
     $('refreshBtn').onclick=loadData;
+    $('capLightBtn').onclick=()=>applyTheme('light');
+    $('capDarkBtn').onclick=()=>applyTheme('dark');
     $('latestBtn').onclick=()=>renderAt(state.latestIndex);
     $('timeSlider').oninput=e=>renderAt(Number(e.target.value));
     $('dateInput').onchange=e=>{ const i=latestIndexOnOrBefore(state.ratios.MACRO,e.target.value); if(i>=199) renderAt(i); };
