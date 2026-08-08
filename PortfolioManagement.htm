@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOW Portfolio Command Center</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#071018;--panel:#0d1726;--panel2:#101c2d;--line:#203047;--text:#dce8f5;--muted:#7f91a8;
+  --cyan:#20e3c2;--blue:#4da3ff;--green:#35d07f;--amber:#ffbe3d;--red:#ff5a6f;--violet:#a780ff;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:12px/1.4 Inter,system-ui,Segoe UI,Arial,sans-serif}
+button,input,select{font:inherit}.shell{max-width:1920px;margin:auto;padding:14px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.eyebrow{font-size:9px;letter-spacing:.18em;color:var(--cyan);font-weight:800;text-transform:uppercase}
+h1{margin:2px 0 0;font-size:22px;letter-spacing:-.03em}.sub{color:var(--muted);font-size:10px}
+.actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:#0f1b2b;color:var(--text);border-radius:7px;padding:8px 11px;cursor:pointer}
+.btn.primary{background:var(--cyan);color:#03251f;border-color:transparent;font-weight:800}
+.statusdot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}
+.banner{border:1px solid var(--line);background:linear-gradient(135deg,#101c2c,#0b1420);border-left:4px solid var(--amber);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.banner-grid{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}.state{font-size:18px;font-weight:900;letter-spacing:.02em}.state span{color:var(--amber)}
+.banner p{margin:5px 0 0;color:#aebdd0;max-width:1200px}.badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{border:1px solid var(--line);border-radius:999px;padding:5px 8px;color:#aebdd0;background:#0b1420;font-size:10px}
+.tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);margin:0 0 10px;overflow:auto}
+.tab{padding:9px 13px;border:0;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;font-weight:700;white-space:nowrap}
+.tab.active{color:var(--cyan);border-color:var(--cyan)}.view{display:none}.view.active{display:block}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(120px,1fr));gap:8px;margin-bottom:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px}
+.kpi .label,.section-title{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.kpi .value{font-size:18px;font-weight:900;margin-top:4px}.kpi .note{font-size:9px;color:var(--muted);margin-top:2px}
+.green{color:var(--green)!important}.red{color:var(--red)!important}.amber{color:var(--amber)!important}.cyan{color:var(--cyan)!important}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.grid3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line)}
+.panel-body{padding:12px}.action-list{display:grid;gap:7px}.action{display:grid;grid-template-columns:90px 62px 1fr auto;gap:8px;align-items:center;padding:8px;border:1px solid #1c2a3e;border-radius:7px;background:#0a1421}
+.action .ticker{font-weight:900;color:var(--cyan)}.pill{font-size:9px;font-weight:900;border-radius:999px;padding:3px 6px;text-align:center}
+.p-exit{background:#4c1320;color:#ff9bab}.p-reduce{background:#4a2c08;color:#ffd078}.p-protect{background:#2d2853;color:#c9baff}.p-hold{background:#103b2b;color:#84f1b5}.p-add{background:#063f3b;color:#70f6e4}.p-closed{background:#253042;color:#a7b4c5}
+.barrow{display:grid;grid-template-columns:140px 1fr 70px;gap:9px;align-items:center;margin:8px 0}.bar{height:8px;border-radius:99px;background:#16243a;overflow:hidden}.fill{height:100%;background:var(--cyan)}
+.table-wrap{overflow:auto;max-height:620px}.table-tools{display:flex;gap:8px;padding:9px;border-bottom:1px solid var(--line)}
+.table-tools input,.table-tools select{background:#091321;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px}
+table{border-collapse:collapse;width:100%;min-width:1450px}th,td{padding:7px 8px;border-bottom:1px solid #17243a;text-align:right;white-space:nowrap}
+th{position:sticky;top:0;background:#101c2d;color:#8ea0b6;font-size:9px;letter-spacing:.06em;text-transform:uppercase;z-index:2}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tbody tr:hover{background:#101c2b}.tickerlink{color:var(--cyan);font-weight:900;text-decoration:none}
+.riskmeter{height:12px;background:#17243a;border-radius:99px;overflow:hidden}.riskmeter>div{height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red))}
+.chartbox{height:280px}.empty{color:var(--muted);padding:18px;text-align:center}
+.footer{margin-top:10px;color:#62758e;font-size:9px;text-align:center}.source{padding:8px 10px;background:#0a1421;border:1px solid var(--line);border-radius:7px;margin-bottom:10px;color:#91a3b9}
+@media(max-width:1200px){.kpis{grid-template-columns:repeat(4,1fr)}.grid3{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}.banner-grid{grid-template-columns:1fr}.badges{justify-content:flex-start}}
+
+.memo{display:grid;grid-template-columns:1.35fr .65fr;gap:10px;margin-bottom:10px}
+.memo-main{background:linear-gradient(135deg,#0f1d2d,#0a1522);border:1px solid var(--line);border-radius:9px;padding:14px}
+.memo-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);font-weight:900;margin-bottom:7px}
+.memo-headline{font-size:16px;font-weight:900;margin-bottom:7px}
+.memo-copy{color:#b2c1d3;line-height:1.55}
+.memo-lines{display:grid;gap:6px;margin-top:10px}
+.memo-line{display:grid;grid-template-columns:110px 1fr;gap:10px;padding-top:6px;border-top:1px solid #1b2a3f}
+.memo-line b{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8fa1b8}
+.scorebox{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.score{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:11px}
+.score .big{font-size:24px;font-weight:900;margin-top:4px}
+.direction-wrap{margin:10px 0}.direction-bar{height:18px;border-radius:99px;background:#16243a;overflow:hidden;display:flex}
+.direction-long{height:100%;background:var(--green)}.direction-short{height:100%;background:var(--red)}
+.cluster{display:grid;grid-template-columns:170px 1fr 74px 74px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #17243a}
+.cluster:last-child{border-bottom:0}.cluster-name{font-weight:800}.cluster-note{font-size:9px;color:var(--muted)}
+.flag{display:inline-block;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:900;border:1px solid var(--line)}
+.flag.warn{color:#ffd078;background:#4a2c08}.flag.danger{color:#ff9bab;background:#4c1320}.flag.ok{color:#84f1b5;background:#103b2b}
+.intel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.exposure-split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.small-note{font-size:9px;color:var(--muted);margin-top:5px}
+@media(max-width:1200px){.memo{grid-template-columns:1fr}.intel-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.intel-grid{grid-template-columns:1fr}.exposure-split{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.2 · Risk Intelligence</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
+    <div class="actions"><button class="btn" id="themeBtn">Light</button><button class="btn primary" id="refreshBtn">↻ Refresh Live Data</button></div>
+  </div>
+
+  <div class="source"><span class="statusdot"></span><b>LIVE DATA SOURCE</b> · Published Google Sheet CSV · <span id="freshness">waiting for response</span></div>
+
+  <div class="banner" id="masterBanner">
+    <div class="banner-grid">
+      <div><div class="state">PORTFOLIO STATE · <span id="stateText">ANALYSING</span></div><p id="stateNarrative">Calculating exposure, portfolio heat, concentration and required actions.</p></div>
+      <div class="badges"><span class="badge" id="openBadge">Open —</span><span class="badge" id="heatBadge">Heat —</span><span class="badge" id="cashBadge">Cash —</span><span class="badge" id="actionBadge">Actions —</span></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="command">Portfolio Command</button>
+    <button class="tab" data-tab="risk">Risk Intelligence</button>
+    <button class="tab" data-tab="exposure">Exposure & Concentration</button>
+    <button class="tab" data-tab="positions">Position Monitor</button>
+    <button class="tab" data-tab="journal">Trade Journal</button>
+  </div>
+
+  <section class="view active" id="command">
+    <div class="memo">
+      <div class="memo-main">
+        <div class="memo-title">Daily Portfolio Action Memo</div>
+        <div class="memo-headline" id="memoHeadline">Building today’s operating instruction…</div>
+        <div class="memo-copy" id="memoCopy"></div>
+        <div class="memo-lines" id="memoLines"></div>
+      </div>
+      <div class="scorebox">
+        <div class="score"><div class="section-title">Risk Pressure</div><div class="big" id="riskPressure">—</div><div class="small-note">0 low · 100 extreme</div></div>
+        <div class="score"><div class="section-title">Risk Capacity</div><div class="big" id="riskCapacity">—</div><div class="small-note">Remaining capacity to policy limits</div></div>
+        <div class="score"><div class="section-title">Economic Gross</div><div class="big" id="econGross">—</div><div class="small-note">Leverage-adjusted exposure / NAV</div></div>
+        <div class="score"><div class="section-title">Net Direction</div><div class="big" id="netDirection">—</div><div class="small-note">Bull exposure less inverse exposure</div></div>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid3">
+      <div class="panel"><div class="panel-head"><div class="section-title">Required Action Queue</div><span class="sub">Risk-ranked</span></div><div class="panel-body"><div class="action-list" id="actionQueue"></div></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Portfolio Heat</div><span class="sub">Risk to active stops</span></div><div class="panel-body" id="heatPanel"></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Concentration Watch</div><span class="sub">Open positions only</span></div><div class="panel-body" id="concentrationPanel"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><div class="panel-head"><div class="section-title">Allocation by Sector</div><span class="sub">Current market value</span></div><div class="panel-body"><div class="chartbox"><canvas id="sectorChart"></canvas></div></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Allocation by Industry</div><span class="sub">Current market value</span></div><div class="panel-body"><div class="chartbox"><canvas id="industryChart"></canvas></div></div></div>
+    </div>
+  </section>
+
+  <section class="view" id="risk">
+    <div class="intel-grid" id="riskKpis"></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head"><div class="section-title">Directional Exposure</div><span class="sub">Leverage-adjusted</span></div>
+        <div class="panel-body" id="directionPanel"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="section-title">Risk Limit Diagnostics</div><span class="sub">Policy engine</span></div>
+        <div class="panel-body" id="riskDiagnostics"></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><div class="panel-head"><div class="section-title">Leverage-Adjusted Risk Contribution</div></div><div class="panel-body" id="riskByPosition"></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Stop & Trend Exceptions</div></div><div class="panel-body"><div class="action-list" id="exceptions"></div></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="section-title">Economic Correlation Proxies</div><span class="sub">Taxonomy clusters · not statistical return correlations</span></div>
+      <div class="panel-body" id="clusterPanel"></div>
+    </div>
+  </section>
+
+  <section class="view" id="exposure">
+    <div class="grid2">
+      <div class="panel"><div class="panel-head"><div class="section-title">Sector Exposure Ranking</div><span class="sub">Capital weight</span></div><div class="panel-body" id="sectorBars"></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Industry Exposure Ranking</div><span class="sub">Capital weight</span></div><div class="panel-body" id="industryBars"></div></div>
+    </div>
+    <div class="grid2">
+      <div class="panel"><div class="panel-head"><div class="section-title">Leverage-Adjusted Sector Exposure</div><span class="sub">Economic gross</span></div><div class="panel-body" id="adjSectorBars"></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Leverage-Adjusted Industry Exposure</div><span class="sub">Economic gross</span></div><div class="panel-body" id="adjIndustryBars"></div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><div class="section-title">Position Concentration</div></div><div class="panel-body" id="positionBars"></div></div>
+  </section>
+
+  <section class="view" id="positions">
+    <div class="panel">
+      <div class="table-tools"><input id="search" placeholder="Search ticker or company…"><select id="statusFilter"><option value="OPEN">Open positions</option><option value="ALL">All records</option><option value="CLOSED">Closed only</option><option value="ACTION">Action required</option></select></div>
+      <div class="table-wrap"><table><thead><tr>
+        <th>Ticker</th><th>Company</th><th>Status</th><th>Action</th><th>Exposure Basis</th><th>Dir</th><th>Lev</th><th>Economic Wt</th><th>Weight</th><th>Shares</th><th>Entry</th><th>Last</th><th>P/L</th><th>P/L %</th><th>Days</th><th>Value</th><th>ATR%</th><th>vs SMA50</th><th>Trend</th><th>Stop</th><th>Stop %</th><th>Risk $</th><th>Risk % NAV</th><th>Sector</th><th>Industry</th>
+      </tr></thead><tbody id="positionRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="view" id="journal">
+    <div class="panel"><div class="panel-head"><div class="section-title">Closed Trade Journal</div><span class="sub" id="journalCount"></span></div>
+      <div class="table-wrap"><table><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
+    </div>
+  </section>
+  <div class="footer">NOW Portfolio Command Center v2.2 · Economic taxonomy + leverage-adjusted risk intelligence + daily action memo · For informational purposes only.</div>
+</div>
+
+<script>
+const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvDsxwxJSatKaMzAUsdAGJT4ZhtiRQ0iHbyihBL9DOje7r4oVibcxYDOs-NYz3lBEXrevKMwq8duaH/pub?gid=2081359794&single=true&output=csv';
+let positions=[],charts={},summary={};
+
+const ETF_EXPOSURE_MAP = {
+  // Open leveraged / thematic products — classify by economic exposure, not legal wrapper.
+  MUU:  {sector:'Technology', industry:'Semiconductors & Semiconductor Equipment', underlying:'Micron Technology (MU)', direction:'Bull', leverage:'2x'},
+  LABU: {sector:'Health Care', industry:'Biotechnology', underlying:'S&P Biotechnology Select Industry Index', direction:'Bull', leverage:'3x'},
+  SOXS: {sector:'Technology', industry:'Semiconductors & Semiconductor Equipment', underlying:'NYSE Semiconductor Index', direction:'Inverse', leverage:'-3x'},
+  DPST: {sector:'Financials', industry:'Regional Banks', underlying:'S&P Regional Banks Select Industry Index', direction:'Bull', leverage:'3x'},
+  GDXU: {sector:'Materials', industry:'Gold & Precious Metals Mining', underlying:'Gold Miners Index', direction:'Bull', leverage:'3x'},
+  PLTU: {sector:'Technology', industry:'Application Software', underlying:'Palantir Technologies (PLTR)', direction:'Bull', leverage:'2x'},
+  SPCX: {sector:'Industrials', industry:'Aerospace & Defense', underlying:'SpaceX', direction:'Bull', leverage:'2x'},
+
+  // Common journal / previously held products.
+  AGQ:  {sector:'Materials', industry:'Silver', underlying:'Silver bullion', direction:'Bull', leverage:'2x'},
+  AMDL: {sector:'Technology', industry:'Semiconductors & Semiconductor Equipment', underlying:'Advanced Micro Devices (AMD)', direction:'Bull', leverage:'2x'},
+  SNXX: {sector:'Technology', industry:'Semiconductors & Semiconductor Equipment', underlying:'Semiconductor equity basket', direction:'Bull', leverage:'2x'},
+  ETHA: {sector:'Digital Assets', industry:'Ethereum', underlying:'Ether', direction:'Long', leverage:'1x'}
+};
+
+function applyExposureTaxonomy(p){
+  const x=ETF_EXPOSURE_MAP[String(p.ticker||'').toUpperCase()];
+  p.sheetSector=p.sector;
+  p.sheetIndustry=p.industry;
+  p.underlying='';
+  p.direction='';
+  p.leverage='';
+  if(x){
+    p.sector=x.sector;
+    p.industry=x.industry;
+    p.underlying=x.underlying||'';
+    p.direction=x.direction||'';
+    p.leverage=x.leverage||'';
+    p.taxonomySource='Exposure override';
+  }else{
+    p.taxonomySource='Sheet classification';
+  }
+  return p;
+}
+
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const num=v=>{if(v===null||v===undefined)return 0;const s=String(v).replace(/[$,%\s,]/g,'').replace(/[()]/g,'');let n=parseFloat(s);if(!isFinite(n))return 0;if(String(v).includes('('))n=-n;return n};
+const pct=v=>{if(v===null||v===undefined||v==='')return 0;let n=num(v);return String(v).includes('%')?n/100:n};
+const money=v=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v||0);
+const money2=v=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(v||0);
+const per=v=>(v*100).toFixed(2)+'%';
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+function parseCSV(text){
+  const rows=[];let row=[],cell='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];
+    if(c=='"'&&q&&n=='"'){cell+='"';i++}
+    else if(c=='"')q=!q;
+    else if(c==','&&!q){row.push(cell);cell=''}
+    else if((c=='\n'||c=='\r')&&!q){if(c=='\r'&&n=='\n')i++;row.push(cell);rows.push(row);row=[];cell=''}
+    else cell+=c;
+  } if(cell||row.length){row.push(cell);rows.push(row)} return rows;
+}
+function clean(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9%]+/g,' ')}
+function findHeader(rows){
+  for(let i=0;i<Math.min(rows.length,40);i++) if(rows[i].some(x=>clean(x)==='ticker')) return i;
+  return 27;
+}
+function colMap(headers){
+  const m={};headers.forEach((h,i)=>{const k=clean(h); if(k)m[k]=i});return m;
+}
+function pick(row,map,names,fallback){
+  for(const n of names){const k=clean(n);if(map[k]!==undefined&&row[map[k]]!==undefined)return row[map[k]]}
+  return fallback!==undefined?row[fallback]:'';
+}
+function classifyETF(ticker,company,sector,industry){
+  const s=(ticker+' '+company+' '+sector+' '+industry).toUpperCase();
+  if(/DIREXION|PROSHARES|ULTRAPRO|2X|3X|BULL|BEAR/.test(s)){
+    if(/BEAR|SHORT|INVERSE/.test(s))return 'Leveraged inverse ETF';
+    return 'Leveraged long ETF';
+  }
+  if(/\bETF\b/.test(s))return 'ETF';
+  return 'Equity';
+}
+
+function leverageMultiple(p){
+  const raw=String(p.leverage||'1x').toLowerCase().replace('x','').trim();
+  const n=Math.abs(parseFloat(raw));
+  return isFinite(n)&&n>0?n:1;
+}
+function directionSign(p){
+  const d=String(p.direction||'').toLowerCase();
+  return /inverse|bear|short/.test(d)?-1:1;
+}
+function directionLabel(p){return directionSign(p)<0?'INVERSE':'LONG'}
+function economicCluster(p){
+  const i=String(p.industry||'').toLowerCase(), s=String(p.sector||'').toLowerCase();
+  if(/semiconductor/.test(i))return 'Semiconductor Beta';
+  if(/biotech/.test(i))return 'Biotechnology Beta';
+  if(/gold|silver|precious/.test(i))return 'Precious Metals / Miners';
+  if(/regional bank/.test(i))return 'Regional Banks';
+  if(/aerospace|defense/.test(i))return 'Aerospace & Defense';
+  if(/software/.test(i))return 'Software / Growth';
+  if(/communication equipment/.test(i))return 'Networking / Communication';
+  if(/electrical equipment/.test(i))return 'Electrical / Power';
+  if(s==='technology')return 'Technology Beta';
+  return p.sector||'Other';
+}
+function aggregateEconomic(list,key){
+  const m={};
+  list.forEach(p=>{
+    const v=Math.abs(p.economicExposure||0);
+    m[p[key]]=(m[p[key]]||0)+v;
+  });
+  return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+}
+
+function buildPositions(rows){
+  const hi=findHeader(rows), headers=rows[hi], map=colMap(headers), out=[];
+  for(let r=hi+1;r<rows.length;r++){
+    const row=rows[r], ticker=pick(row,map,['Ticker'],0).trim();
+    if(!ticker||ticker.toLowerCase()==='ticker')continue;
+    const p={
+      ticker, company:pick(row,map,['Company Name','Company'],1), sector:pick(row,map,['Sector'],2)||'Unclassified',
+      industry:pick(row,map,['Industry'],3)||'Unclassified', weight:pct(pick(row,map,['Weight'],4)),
+      shares:num(pick(row,map,['Shares'],5)), cost:num(pick(row,map,['Total Cost','Cost'],6)),
+      purchased:pick(row,map,['Purchase day','Purchased'],7), entry:num(pick(row,map,['ENTRY Actual','Entry'],9)),
+      last:num(pick(row,map,['Price Last','Last'],10)), chg:pct(pick(row,map,['% Chg','%Chg'],11)),
+      pl:num(pick(row,map,['P/L'],12)), plPct:pct(pick(row,map,['P/L %'],13)),
+      exitDate:pick(row,map,['Exit Date'],14), exitPrice:num(pick(row,map,['Exit Price'],15)),
+      realizedPL:num(pick(row,map,['Realized P/L'],16)), realizedPct:pct(pick(row,map,['Realized P/L %'],17)),
+      days:num(pick(row,map,['Days Hold'],18)), value:num(pick(row,map,['Value'],19)),
+      atr:num(pick(row,map,['ATR'],20)), atrPct:pct(pick(row,map,['ATR%'],21)),
+      sma50Atr:num(pick(row,map,['50MA'],22)), sma50Pct:pct(pick(row,map,['50MA %'],23)),
+      ma10:pick(row,map,['10d'],24), ma20:pick(row,map,['20d'],25), ma50:pick(row,map,['50d'],26),
+      ma10w:pick(row,map,['10w'],27), ma40w:pick(row,map,['40w'],28),
+      stopPct:pct(pick(row,map,['%'],29)), stop2:num(pick(row,map,['-2'],30)), stop1:num(pick(row,map,['-1'],31)),
+      sma50:num(pick(row,map,['SMA50'],32))
+    };
+    p.status=p.exitDate?'CLOSED':'OPEN';
+    if(!p.value&&p.status==='OPEN')p.value=p.shares*p.last;
+    p.instrument=classifyETF(p.ticker,p.company,p.sector,p.industry);
+    applyExposureTaxonomy(p);
+    if(!p.direction)p.direction='Long';
+    if(!p.leverage)p.leverage='1x';
+    p.leverageMultiple=leverageMultiple(p);
+    p.directionSign=directionSign(p);
+    p.cluster=economicCluster(p);
+    p.trend=[p.ma10,p.ma20,p.ma50,p.ma10w,p.ma40w].map(x=>String(x).includes('▲')?1:String(x).includes('▼')?-1:0).reduce((a,b)=>a+b,0);
+    p.riskDollar=p.status==='OPEN'&&p.stop2>0?Math.max(0,(p.last-p.stop2)*p.shares):0;
+    p.economicExposure=p.status==='OPEN'?p.value*p.leverageMultiple*p.directionSign:0;
+    p.adjustedRisk=p.riskDollar*p.leverageMultiple;
+    out.push(p);
+  } return out;
+}
+function aggregate(list,key){
+  const m={};list.forEach(p=>m[p[key]]=(m[p[key]]||0)+p.value);return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+}
+function actionFor(p){
+  if(p.status==='CLOSED')return {label:'CLOSED',cls:'p-closed',score:0,reason:'Position exited and moved to journal.'};
+  if(p.stop2&&p.last<=p.stop2)return {label:'EXIT',cls:'p-exit',score:100,reason:'Current price is at or below the active stop.'};
+  if(p.plPct<=-.10||p.trend<=-4)return {label:'REDUCE',cls:'p-reduce',score:80,reason:'Large loss or broad moving-average deterioration.'};
+  if(p.sma50Pct<0||p.trend<=-2)return {label:'PROTECT',cls:'p-protect',score:60,reason:'Below SMA50 or trend ladder has weakened.'};
+  if(p.plPct>0&&p.sma50Pct>0&&p.trend>=3)return {label:'ADD ELIGIBLE',cls:'p-add',score:20,reason:'Profitable, above SMA50 and trend continuity is strong.'};
+  return {label:'HOLD',cls:'p-hold',score:10,reason:'No immediate portfolio action required.'};
+}
+function calcSummary(){
+  const open=positions.filter(p=>p.status==='OPEN'),closed=positions.filter(p=>p.status==='CLOSED');
+  const invested=open.reduce((s,p)=>s+p.value,0), cost=open.reduce((s,p)=>s+p.cost,0), openPL=open.reduce((s,p)=>s+p.pl,0);
+  const heat=open.reduce((s,p)=>s+p.riskDollar,0), nav=invested, heatPct=nav?heat/nav:0;
+  const adjustedHeat=open.reduce((s,p)=>s+p.adjustedRisk,0), adjustedHeatPct=nav?adjustedHeat/nav:0;
+  const bullEconomic=open.filter(p=>p.directionSign>0).reduce((s,p)=>s+Math.abs(p.economicExposure),0);
+  const inverseEconomic=open.filter(p=>p.directionSign<0).reduce((s,p)=>s+Math.abs(p.economicExposure),0);
+  const economicGross=bullEconomic+inverseEconomic, economicGrossPct=nav?economicGross/nav:0;
+  const economicNet=bullEconomic-inverseEconomic, economicNetPct=nav?economicNet/nav:0;
+  const actions=open.map(p=>({...p,action:actionFor(p)}));
+  const required=actions.filter(p=>['EXIT','REDUCE','PROTECT'].includes(p.action.label));
+  const clusters={};
+  open.forEach(p=>{
+    if(!clusters[p.cluster])clusters[p.cluster]={name:p.cluster,capital:0,gross:0,net:0,bull:0,inverse:0,tickers:[]};
+    const c=clusters[p.cluster], ev=Math.abs(p.economicExposure);
+    c.capital+=p.value;c.gross+=ev;c.net+=p.economicExposure;
+    if(p.directionSign>0)c.bull+=ev;else c.inverse+=ev;
+    c.tickers.push(p.ticker);
+  });
+  const clusterList=Object.values(clusters).sort((a,b)=>b.gross-a.gross);
+  return {
+    open,closed,invested,cost,openPL,heat,heatPct,adjustedHeat,adjustedHeatPct,nav,actions,required,
+    bullEconomic,inverseEconomic,economicGross,economicGrossPct,economicNet,economicNetPct,
+    sector:aggregate(open,'sector'),industry:aggregate(open,'industry'),
+    adjSector:aggregateEconomic(open,'sector'),adjIndustry:aggregateEconomic(open,'industry'),
+    clusterList
+  };
+}
+
+function concentrationPenalty(s){
+  const topPos=s.open.length?Math.max(...s.open.map(p=>p.value/s.invested)):0;
+  const topSec=s.sector.length?s.sector[0][1]/s.invested:0;
+  return Math.max(0,(topPos-.15)*180)+Math.max(0,(topSec-.35)*80);
+}
+function riskPressureScore(s){
+  let score=0;
+  score+=Math.min(40,s.adjustedHeatPct/.08*40);
+  score+=Math.min(25,Math.max(0,s.economicGrossPct-1)*25);
+  score+=Math.min(20,s.required.length/Math.max(1,s.open.length)*35);
+  score+=Math.min(15,concentrationPenalty(s));
+  return Math.max(0,Math.min(100,Math.round(score)));
+}
+function riskCapacityPct(s){
+  const heatCap=Math.max(0,1-s.adjustedHeatPct/.08);
+  const grossCap=Math.max(0,1-Math.max(0,s.economicGrossPct-1)/1);
+  return Math.round(Math.max(0,Math.min(1,Math.min(heatCap,grossCap)))*100);
+}
+function riskDiagnostics(s){
+  const d=[];
+  const topPos=s.open.slice().sort((a,b)=>b.value-a.value)[0];
+  const topSec=s.sector[0];
+  if(s.adjustedHeatPct>.08)d.push({level:'danger',text:`Leverage-adjusted heat ${per(s.adjustedHeatPct)} exceeds the 8% risk ceiling.`});
+  else if(s.adjustedHeatPct>.06)d.push({level:'warn',text:`Leverage-adjusted heat ${per(s.adjustedHeatPct)} is elevated.`});
+  else d.push({level:'ok',text:`Leverage-adjusted heat ${per(s.adjustedHeatPct)} is within policy.`});
+  if(s.economicGrossPct>1.75)d.push({level:'danger',text:`Economic gross exposure ${per(s.economicGrossPct)} is very high after leverage adjustment.`});
+  else if(s.economicGrossPct>1.25)d.push({level:'warn',text:`Economic gross exposure ${per(s.economicGrossPct)} is elevated after leverage adjustment.`});
+  if(topPos&&topPos.value/s.invested>.20)d.push({level:'warn',text:`${topPos.ticker} is ${per(topPos.value/s.invested)} of capital — single-position concentration is high.`});
+  if(topSec&&topSec[1]/s.invested>.45)d.push({level:'warn',text:`${topSec[0]} is ${per(topSec[1]/s.invested)} of capital — sector concentration is high.`});
+  s.clusterList.filter(c=>c.bull>0&&c.inverse>0).forEach(c=>d.push({level:'warn',text:`${c.name} contains both long and inverse exposure (${c.tickers.join(', ')}). Gross risk remains even if net exposure appears smaller.`}));
+  if(!d.some(x=>x.level==='danger'||x.level==='warn'))d.push({level:'ok',text:'No material concentration or leverage exceptions detected.'});
+  return d;
+}
+function renderMemo(){
+  const s=summary, rp=riskPressureScore(s), cap=riskCapacityPct(s);
+  const exits=s.actions.filter(p=>p.action.label==='EXIT').map(p=>p.ticker);
+  const reduces=s.actions.filter(p=>p.action.label==='REDUCE').map(p=>p.ticker);
+  const protects=s.actions.filter(p=>p.action.label==='PROTECT').map(p=>p.ticker);
+  const adds=s.actions.filter(p=>p.action.label==='ADD ELIGIBLE').map(p=>p.ticker);
+  const topCluster=s.clusterList[0];
+  let headline='SELECTIVE RISK · FUND NEW TRADES FROM EXISTING CAPACITY';
+  if(exits.length||s.adjustedHeatPct>.08||s.economicGrossPct>1.75)headline='DEFENSIVE · REDUCE RISK BEFORE ADDING EXPOSURE';
+  else if(reduces.length||s.adjustedHeatPct>.06||s.economicGrossPct>1.35)headline='PROTECT CAPITAL · NEW RISK REQUIRES FUNDING';
+  else if(adds.length&&cap>35)headline='SELECTIVE OFFENSE · ADD ONLY TO VERIFIED STRENGTH';
+  $('#memoHeadline').textContent=headline;
+  $('#memoCopy').textContent=`Leverage-adjusted gross exposure is ${per(s.economicGrossPct)} with net directional exposure of ${per(s.economicNetPct)}. Adjusted portfolio heat is ${per(s.adjustedHeatPct)}. ${topCluster?topCluster.name+' is the largest economic risk cluster at '+per(topCluster.gross/s.nav)+'.':''}`;
+  const fmt=a=>a.length?a.join(', '):'None';
+  $('#memoLines').innerHTML=[
+    ['Exit now',fmt(exits)],['Reduce',fmt(reduces)],['Protect',fmt(protects)],
+    ['Add eligible',s.adjustedHeatPct>.08||s.economicGrossPct>1.75?'None until risk is reduced':fmt(adds)],
+    ['Funding rule',cap<20?'No new risk capacity — trim/exit first':cap<45?'Any new entry should be funded by a trim or exit':'Some risk capacity remains; keep position sizing selective']
+  ].map(x=>`<div class="memo-line"><b>${x[0]}</b><span>${esc(x[1])}</span></div>`).join('');
+  $('#riskPressure').textContent=rp+'/100';$('#riskPressure').className='big '+(rp>=70?'red':rp>=45?'amber':'green');
+  $('#riskCapacity').textContent=cap+'%';$('#riskCapacity').className='big '+(cap<20?'red':cap<45?'amber':'green');
+  $('#econGross').textContent=per(s.economicGrossPct);$('#econGross').className='big '+(s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan');
+  $('#netDirection').textContent=(s.economicNetPct>=0?'+':'')+per(s.economicNetPct);$('#netDirection').className='big '+(s.economicNetPct>=0?'green':'red');
+}
+
+function render(){
+  summary=calcSummary(); const s=summary;
+  const cash=0,gross=s.nav?s.invested/s.nav:0,largest=s.open.slice().sort((a,b)=>b.value-a.value)[0], topSector=s.sector[0];
+  const avgPL=s.open.length?s.open.reduce((a,p)=>a+p.plPct,0)/s.open.length:0;
+  const state=s.required.some(p=>p.action.label==='EXIT')?'DEFENSIVE':s.required.length>=3?'PROTECT':s.heatPct>.06?'RISK CAPACITY FULL':'SELECTIVE OFFENSE';
+  $('#stateText').textContent=state;
+  $('#stateNarrative').textContent=`${s.open.length} open positions, ${s.required.length} requiring action. Base heat is ${per(s.heatPct)}; leverage-adjusted heat is ${per(s.adjustedHeatPct)}. ${topSector?topSector[0]+' represents '+per(topSector[1]/s.invested)+' of open market value.':''}`;
+  $('#openBadge').textContent=`Open ${s.open.length} · Closed ${s.closed.length}`;$('#heatBadge').textContent=`Adj Heat ${per(s.adjustedHeatPct)}`;$('#cashBadge').textContent=`Cash ${per(cash)}`;$('#actionBadge').textContent=`Actions ${s.required.length}`;
+  const k=[
+    ['Net Liquidation',money(s.nav),'Open market value','cyan'],['Open P/L',money(s.openPL),per(s.invested?s.openPL/(s.invested-s.openPL||1):0),s.openPL>=0?'green':'red'],
+    ['Economic Gross',per(s.economicGrossPct),'Leverage-adjusted / NAV',s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan'],['Adjusted Heat',per(s.adjustedHeatPct),money(s.adjustedHeat)+' leverage-adjusted risk',s.adjustedHeatPct>.08?'red':s.adjustedHeatPct>.06?'amber':'green'],
+    ['Open Positions',s.open.length,`${s.closed.length} closed journal records`,''],['Largest Position',largest?per(largest.value/s.invested):'—',largest?largest.ticker:'—','amber'],
+    ['Top Sector',topSector?per(topSector[1]/s.invested):'—',topSector?topSector[0]:'—',''],['Avg Open Return',per(avgPL),'Equal-weighted',avgPL>=0?'green':'red']
+  ];
+  $('#kpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[3]}">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
+  renderMemo();renderActions();renderHeat();renderConcentration();renderCharts();renderRisk();renderBars();renderTables();
+  $('#metaLine').textContent=`${s.open.length} open · ${s.closed.length} closed · Source: live published sheet`;
+  $('#freshness').textContent='refreshed '+new Date().toLocaleString('en-AU');
+}
+function renderActions(){
+  const arr=summary.actions.slice().sort((a,b)=>b.action.score-a.action.score).slice(0,10);
+  $('#actionQueue').innerHTML=arr.length?arr.map(p=>`<div class="action"><div class="ticker">${esc(p.ticker)}</div><span class="pill ${p.action.cls}">${p.action.label}</span><div>${esc(p.action.reason)}</div><div class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</div></div>`).join(''):'<div class="empty">No open positions.</div>';
+}
+function renderHeat(){
+  const limit=.06, used=Math.min(100,summary.heatPct/limit*100), remaining=Math.max(0,limit-summary.heatPct);
+  $('#heatPanel').innerHTML=`<div style="display:flex;justify-content:space-between"><b style="font-size:22px">${per(summary.heatPct)}</b><span class="${summary.heatPct>limit?'red':'green'}">${summary.heatPct>limit?'LIMIT EXCEEDED':'WITHIN LIMIT'}</span></div><div class="riskmeter" style="margin:12px 0"><div style="width:${used}%"></div></div><div class="sub">Heat limit ${per(limit)} · Remaining capacity ${per(remaining)} · Dollar risk ${money(summary.heat)}</div>`;
+}
+function renderConcentration(){
+  const top=summary.open.slice().sort((a,b)=>b.value-a.value).slice(0,5);
+  $('#concentrationPanel').innerHTML=top.map(p=>`<div class="barrow"><span>${esc(p.ticker)}</span><div class="bar"><div class="fill" style="width:${Math.min(100,p.value/summary.invested*100)}%"></div></div><b>${per(p.value/summary.invested)}</b></div>`).join('');
+}
+function chart(id,data){
+  if(charts[id])charts[id].destroy(); const ctx=document.getElementById(id);
+  charts[id]=new Chart(ctx,{type:'doughnut',data:{labels:data.map(x=>x[0]),datasets:[{data:data.map(x=>x[1]),borderWidth:0}]},options:{maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#9fb0c5',boxWidth:9,font:{size:9}}}}}});
+}
+function renderCharts(){chart('sectorChart',summary.sector);chart('industryChart',summary.industry.slice(0,8))}
+function renderRisk(){
+  const s=summary; const max=s.open.length?Math.max(...s.open.map(p=>p.adjustedRisk)):1;
+  $('#riskKpis').innerHTML=[
+    ['Base Heat',per(s.heatPct),money(s.heat)+' stop risk',s.heatPct>.06?'red':'green'],
+    ['Adjusted Heat',per(s.adjustedHeatPct),money(s.adjustedHeat)+' leverage-adjusted',s.adjustedHeatPct>.08?'red':s.adjustedHeatPct>.06?'amber':'green'],
+    ['Economic Gross',per(s.economicGrossPct),'Absolute leverage-adjusted exposure',s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan'],
+    ['Net Direction',(s.economicNetPct>=0?'+':'')+per(s.economicNetPct),`Long ${per(s.nav?s.bullEconomic/s.nav:0)} · Inverse ${per(s.nav?s.inverseEconomic/s.nav:0)}`,s.economicNetPct>=0?'green':'red']
+  ].map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[3]}">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
+
+  const totalGross=s.bullEconomic+s.inverseEconomic||1, longPct=s.bullEconomic/totalGross*100, shortPct=s.inverseEconomic/totalGross*100;
+  $('#directionPanel').innerHTML=`<div style="display:flex;justify-content:space-between;gap:12px"><div><div class="section-title">Long / Bull Economic Exposure</div><div style="font-size:22px;font-weight:900" class="green">${per(s.nav?s.bullEconomic/s.nav:0)}</div></div><div style="text-align:right"><div class="section-title">Inverse / Bear Economic Exposure</div><div style="font-size:22px;font-weight:900" class="red">${per(s.nav?s.inverseEconomic/s.nav:0)}</div></div></div><div class="direction-wrap"><div class="direction-bar"><div class="direction-long" style="width:${longPct}%"></div><div class="direction-short" style="width:${shortPct}%"></div></div></div><div class="sub">Net directional exposure ${(s.economicNetPct>=0?'+':'')+per(s.economicNetPct)} · Economic gross ${per(s.economicGrossPct)}</div>`;
+
+  const diag=riskDiagnostics(s);
+  $('#riskDiagnostics').innerHTML=diag.map(d=>`<div style="padding:7px 0;border-bottom:1px solid #17243a"><span class="flag ${d.level}">${d.level.toUpperCase()}</span> <span style="margin-left:7px">${esc(d.text)}</span></div>`).join('');
+
+  $('#riskByPosition').innerHTML=s.open.slice().sort((a,b)=>b.adjustedRisk-a.adjustedRisk).map(p=>`<div class="barrow"><span>${esc(p.ticker)} <small class="sub">${p.leverage}</small></span><div class="bar"><div class="fill" style="width:${p.adjustedRisk/max*100}%"></div></div><b>${money(p.adjustedRisk)}</b></div>`).join('');
+  const ex=s.actions.filter(p=>['EXIT','REDUCE','PROTECT'].includes(p.action.label));
+  $('#exceptions').innerHTML=ex.length?ex.map(p=>`<div class="action"><div class="ticker">${p.ticker}</div><span class="pill ${p.action.cls}">${p.action.label}</span><div>${p.action.reason}</div><div>${per(p.sma50Pct)}</div></div>`).join(''):'<div class="empty">No current exceptions.</div>';
+
+  $('#clusterPanel').innerHTML=s.clusterList.map(c=>{
+    const grossPct=s.nav?c.gross/s.nav:0, netPct=s.nav?c.net/s.nav:0, conflict=c.bull>0&&c.inverse>0;
+    return `<div class="cluster"><div><div class="cluster-name">${esc(c.name)}</div><div class="cluster-note">${esc(c.tickers.join(', '))}</div></div><div class="bar"><div class="fill" style="width:${Math.min(100,grossPct/Math.max(.01,s.clusterList[0].gross/s.nav)*100)}%"></div></div><b>${per(grossPct)}</b><span class="flag ${conflict?'warn':'ok'}">${conflict?'MIXED':'ALIGNED'}</span></div>`;
+  }).join('');
+}
+function bars(el,data,total){
+  const max=data.length?data[0][1]:1;$(el).innerHTML=data.slice(0,12).map(x=>`<div class="barrow"><span>${esc(x[0])}</span><div class="bar"><div class="fill" style="width:${x[1]/max*100}%"></div></div><b>${per(x[1]/total)}</b></div>`).join('');
+}
+function renderBars(){
+  bars('#sectorBars',summary.sector,summary.invested);bars('#industryBars',summary.industry,summary.invested);
+  bars('#adjSectorBars',summary.adjSector,summary.nav);bars('#adjIndustryBars',summary.adjIndustry,summary.nav);
+  bars('#positionBars',summary.open.map(p=>[p.ticker,p.value]).sort((a,b)=>b[1]-a[1]),summary.invested);
+}
+function trendText(p){return [p.ma10,p.ma20,p.ma50,p.ma10w,p.ma40w].join(' ')}
+function renderTables(){
+  const q=$('#search').value.toLowerCase(),f=$('#statusFilter').value;
+  let arr=positions.filter(p=>(p.ticker+' '+p.company).toLowerCase().includes(q));
+  if(f==='OPEN')arr=arr.filter(p=>p.status==='OPEN');if(f==='CLOSED')arr=arr.filter(p=>p.status==='CLOSED');if(f==='ACTION')arr=arr.filter(p=>['EXIT','REDUCE','PROTECT'].includes(actionFor(p).label));
+  $('#positionRows').innerHTML=arr.map(p=>{const a=actionFor(p);return `<tr><td><a class="tickerlink" target="_blank" href="https://www.tradingview.com/chart/?symbol=${encodeURIComponent(p.ticker)}">${esc(p.ticker)}</a></td><td>${esc(p.company)}</td><td><span class="pill ${p.status==='OPEN'?'p-hold':'p-closed'}">${p.status}</span></td><td><span class="pill ${a.cls}">${a.label}</span></td><td>${esc(p.underlying||p.instrument)}</td><td class="${p.directionSign<0?'red':'green'}">${directionLabel(p)}</td><td>${esc(p.leverage)}</td><td>${per(summary.nav?Math.abs(p.economicExposure)/summary.nav:0)}</td><td>${per(p.weight)}</td><td>${p.shares}</td><td>${money2(p.entry)}</td><td>${money2(p.last)}</td><td class="${p.pl>=0?'green':'red'}">${money(p.pl)}</td><td class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</td><td>${p.days||''}</td><td>${money(p.value)}</td><td>${per(p.atrPct)}</td><td class="${p.sma50Pct>=0?'green':'red'}">${per(p.sma50Pct)}</td><td>${trendText(p)}</td><td>${money2(p.stop2)}</td><td>${per(p.stopPct)}</td><td>${money(p.riskDollar)}</td><td>${per(summary.nav?p.riskDollar/summary.nav:0)}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`}).join('');
+  $('#journalRows').innerHTML=summary.closed.map(p=>`<tr><td class="tickerlink">${esc(p.ticker)}</td><td>${esc(p.company)}</td><td>${esc(p.underlying||p.instrument)}</td><td>${esc(p.purchased)}</td><td>${esc(p.exitDate)}</td><td>${money2(p.entry)}</td><td>${money2(p.exitPrice)}</td><td class="${p.realizedPL>=0?'green':'red'}">${money(p.realizedPL)}</td><td class="${p.realizedPct>=0?'green':'red'}">${per(p.realizedPct)}</td><td>${p.days}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`).join('');
+  $('#journalCount').textContent=summary.closed.length+' closed records';
+}
+async function load(){
+  $('#refreshBtn').disabled=true;$('#refreshBtn').textContent='Refreshing…';
+  try{
+    const res=await fetch(CSV_URL+'&t='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
+    const text=await res.text();positions=buildPositions(parseCSV(text));render();
+  }catch(e){$('#metaLine').textContent='Live sheet connection failed';$('#stateText').textContent='DATA ERROR';$('#stateNarrative').textContent=e.message+' · Confirm the Google Sheet remains published as CSV.'}
+  finally{$('#refreshBtn').disabled=false;$('#refreshBtn').textContent='↻ Refresh Live Data'}
+}
+$$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active')});
+$('#refreshBtn').onclick=load;$('#search').oninput=renderTables;$('#statusFilter').onchange=renderTables;
+$('#themeBtn').onclick=()=>{const light=document.body.classList.toggle('light');document.documentElement.style.setProperty('--bg',light?'#eef3f8':'#071018');document.documentElement.style.setProperty('--panel',light?'#ffffff':'#0d1726');document.documentElement.style.setProperty('--panel2',light?'#f5f8fc':'#101c2d');document.documentElement.style.setProperty('--line',light?'#ced8e5':'#203047');document.documentElement.style.setProperty('--text',light?'#142235':'#dce8f5');document.documentElement.style.setProperty('--muted',light?'#66778c':'#7f91a8');$('#themeBtn').textContent=light?'Dark':'Light';renderCharts()};
+load();
+</script>
+</body>
+</html>
