@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NOW Portfolio Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root{
   --bg:#071018;--panel:#0d1726;--panel2:#101c2d;--line:#203047;--text:#dce8f5;--muted:#7f91a8;
@@ -89,6 +90,39 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 .modal textarea{width:100%;min-height:58vh;resize:vertical;background:#07111d;color:#cfe1f5;border:1px solid var(--line);border-radius:8px;padding:12px;font:11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
 .modal-foot{display:flex;gap:8px;justify-content:flex-end;padding:10px 14px;border-top:1px solid var(--line)}
 .ai-status{font-size:9px;color:var(--muted)}
+
+
+/* ===== IN-PAGE INSTITUTIONAL TICKER CHART ===== */
+.chart-modal-backdrop{
+  position:fixed;inset:0;width:100vw;height:100vh;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(4px);
+  display:none;justify-content:center;align-items:center;z-index:10000;padding:24px;
+}
+.chart-modal-backdrop.show{display:flex}
+.chart-modal{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  width:100%;max-width:1080px;height:min(760px,88vh);
+  display:flex;flex-direction:column;box-shadow:0 24px 48px rgba(0,0,0,.5);overflow:hidden;
+}
+.chart-modal-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--line);background:var(--panel2);
+}
+.chart-modal-title{font-size:15px;font-weight:900;letter-spacing:.01em}
+.chart-modal-title small{font-size:10px;font-weight:500;color:var(--muted);margin-left:8px}
+.chart-modal-actions{display:flex;gap:10px;align-items:center}
+.chart-modal-status{
+  font-size:9px;font-weight:900;padding:4px 9px;border-radius:5px;
+  background:rgba(32,227,194,.08);color:var(--cyan);border:1px solid rgba(32,227,194,.18)
+}
+.chart-modal-close{
+  width:30px;height:30px;border-radius:6px;border:1px solid var(--line);
+  background:transparent;color:var(--muted);cursor:pointer;font-weight:800
+}
+.chart-modal-close:hover{border-color:var(--red);color:var(--red);background:rgba(255,90,111,.08)}
+.chart-modal-body{flex:1;min-height:0;position:relative}
+.tickerlink{cursor:pointer;color:var(--cyan);font-weight:900;text-decoration:underline;text-underline-offset:3px}
+.tickerlink:hover{filter:brightness(1.16)}
 
 </style>
 </head>
@@ -201,7 +235,22 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
       <div class="table-wrap"><table class="sortable" id="journalTable"><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
     </div>
   </section>
-  <div class="footer">NOW Portfolio Command Center v2.3 · AI portfolio brief integration + sortable tables + leverage-adjusted risk intelligence · For informational purposes only.</div>
+  <div class="footer">NOW Portfolio Command Center v2.3 · AI portfolio brief integration + sortable tables + in-page institutional ticker charts + leverage-adjusted risk intelligence · For informational purposes only.</div>
+</div>
+
+
+<!-- ================= IN-PAGE INSTITUTIONAL TICKER CHART ================= -->
+<div id="chartModalBackdrop" class="chart-modal-backdrop" onclick="closeChartModal(event)">
+  <div class="chart-modal" onclick="event.stopPropagation()">
+    <div class="chart-modal-header">
+      <div id="chartModalTitle" class="chart-modal-title">TICKER <small>· Institutional Daily HLC</small></div>
+      <div class="chart-modal-actions">
+        <span id="chartModalStatus" class="chart-modal-status">CONNECTING…</span>
+        <button class="chart-modal-close" onclick="closeChartModal()">✕</button>
+      </div>
+    </div>
+    <div id="chartModalContainer" class="chart-modal-body"></div>
+  </div>
 </div>
 
 <div class="modal-backdrop" id="briefModal">
@@ -545,16 +594,173 @@ function renderTables(){
     const k=tableSort.positions.key,d=tableSort.positions.dir;
     arr=arr.slice().sort((a,b)=>compareValues(sortValuePosition(a,k),sortValuePosition(b,k))*d);
   }
-  $('#positionRows').innerHTML=arr.map(p=>{const a=actionFor(p);return `<tr><td><a class="tickerlink" target="_blank" href="https://www.tradingview.com/chart/?symbol=${encodeURIComponent(p.ticker)}">${esc(p.ticker)}</a></td><td>${esc(p.company)}</td><td><span class="pill ${p.status==='OPEN'?'p-hold':'p-closed'}">${p.status}</span></td><td><span class="pill ${a.cls}">${a.label}</span></td><td>${esc(p.underlying||p.instrument)}</td><td class="${p.directionSign<0?'red':'green'}">${directionLabel(p)}</td><td>${esc(p.leverage)}</td><td>${per(summary.nav?Math.abs(p.economicExposure)/summary.nav:0)}</td><td>${per(p.weight)}</td><td>${p.shares}</td><td>${money2(p.entry)}</td><td>${money2(p.last)}</td><td class="${p.pl>=0?'green':'red'}">${money(p.pl)}</td><td class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</td><td>${p.days||''}</td><td>${money(p.value)}</td><td>${per(p.atrPct)}</td><td class="${p.sma50Pct>=0?'green':'red'}">${per(p.sma50Pct)}</td><td>${trendText(p)}</td><td>${money2(p.stop2)}</td><td>${per(p.stopPct)}</td><td>${money(p.riskDollar)}</td><td>${per(summary.nav?p.riskDollar/summary.nav:0)}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`}).join('');
+  $('#positionRows').innerHTML=arr.map(p=>{const a=actionFor(p);return `<tr><td><span class="tickerlink" onclick="openStandaloneChart(\'${esc(p.ticker)}\')">${esc(p.ticker)}</span></td><td>${esc(p.company)}</td><td><span class="pill ${p.status==='OPEN'?'p-hold':'p-closed'}">${p.status}</span></td><td><span class="pill ${a.cls}">${a.label}</span></td><td>${esc(p.underlying||p.instrument)}</td><td class="${p.directionSign<0?'red':'green'}">${directionLabel(p)}</td><td>${esc(p.leverage)}</td><td>${per(summary.nav?Math.abs(p.economicExposure)/summary.nav:0)}</td><td>${per(p.weight)}</td><td>${p.shares}</td><td>${money2(p.entry)}</td><td>${money2(p.last)}</td><td class="${p.pl>=0?'green':'red'}">${money(p.pl)}</td><td class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</td><td>${p.days||''}</td><td>${money(p.value)}</td><td>${per(p.atrPct)}</td><td class="${p.sma50Pct>=0?'green':'red'}">${per(p.sma50Pct)}</td><td>${trendText(p)}</td><td>${money2(p.stop2)}</td><td>${per(p.stopPct)}</td><td>${money(p.riskDollar)}</td><td>${per(summary.nav?p.riskDollar/summary.nav:0)}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`}).join('');
   let journalArr=summary.closed.slice();
   if(tableSort.journal.key){
     const k=tableSort.journal.key,d=tableSort.journal.dir;
     journalArr.sort((a,b)=>compareValues(sortValueJournal(a,k),sortValueJournal(b,k))*d);
   }
-  $('#journalRows').innerHTML=journalArr.map(p=>`<tr><td class="tickerlink">${esc(p.ticker)}</td><td>${esc(p.company)}</td><td>${esc(p.underlying||p.instrument)}</td><td>${esc(p.purchased)}</td><td>${esc(p.exitDate)}</td><td>${money2(p.entry)}</td><td>${money2(p.exitPrice)}</td><td class="${p.realizedPL>=0?'green':'red'}">${money(p.realizedPL)}</td><td class="${p.realizedPct>=0?'green':'red'}">${per(p.realizedPct)}</td><td>${p.days}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`).join('');
+  $('#journalRows').innerHTML=journalArr.map(p=>`<tr><td><span class="tickerlink" onclick="openStandaloneChart(\'${esc(p.ticker)}\')">${esc(p.ticker)}</span></td><td>${esc(p.company)}</td><td>${esc(p.underlying||p.instrument)}</td><td>${esc(p.purchased)}</td><td>${esc(p.exitDate)}</td><td>${money2(p.entry)}</td><td>${money2(p.exitPrice)}</td><td class="${p.realizedPL>=0?'green':'red'}">${money(p.realizedPL)}</td><td class="${p.realizedPct>=0?'green':'red'}">${per(p.realizedPct)}</td><td>${p.days}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`).join('');
   $('#journalCount').textContent=summary.closed.length+' closed records';
   if(tableSort.positions.key)applySortIndicators('positions',tableSort.positions.key,tableSort.positions.dir);
   if(tableSort.journal.key)applySortIndicators('journal',tableSort.journal.key,tableSort.journal.dir);
+}
+
+
+let currentModalChart=null;
+let chartModalResizeObserver=null;
+
+function closeChartModal(e){
+  if(!e || e.target.id==='chartModalBackdrop' || !e.target){
+    const backdrop=document.getElementById('chartModalBackdrop');
+    if(backdrop)backdrop.classList.remove('show');
+    if(currentModalChart){currentModalChart.remove();currentModalChart=null}
+    if(chartModalResizeObserver){chartModalResizeObserver.disconnect();chartModalResizeObserver=null}
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeChartModal()});
+
+function chartThemeColors(){
+  const light=document.body.classList.contains('light');
+  return {
+    light,
+    bg: light ? '#ffffff' : '#0d1726',
+    text: light ? '#66778c' : '#8ea0b6',
+    grid: light ? 'rgba(206,216,229,.55)' : 'rgba(32,48,71,.42)',
+    standard: light ? '#101820' : '#f6f8fb',
+    cloud: light ? 'rgba(120,130,145,.13)' : 'rgba(205,215,225,.08)',
+    ema: light ? '#94a3b8' : '#64748b',
+    donchian: light ? 'rgba(185,120,26,.55)' : 'rgba(255,190,61,.52)'
+  };
+}
+
+function calcEMA(data,period,key){
+  const k=2/(period+1);let ema=0,started=false;const out=[];
+  for(const bar of data){
+    const v=bar[key];
+    if(!started){ema=v;started=true}else ema=(v-ema)*k+ema;
+    out.push({time:bar.time,value:ema});
+  }
+  return out;
+}
+
+async function fetchYahooModalData(ticker){
+  const target=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=1y`;
+  const proxies=[
+    u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+    u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+    u=>u
+  ];
+  for(const build of proxies){
+    try{
+      const r=await fetch(build(target),{cache:'no-store'});
+      if(r.ok){
+        const j=await r.json();
+        if(j?.chart?.result?.[0])return j.chart.result[0];
+      }
+    }catch(e){}
+  }
+  throw new Error('Yahoo chart data unavailable');
+}
+
+async function openStandaloneChart(ticker){
+  const backdrop=document.getElementById('chartModalBackdrop');
+  const container=document.getElementById('chartModalContainer');
+  const title=document.getElementById('chartModalTitle');
+  const status=document.getElementById('chartModalStatus');
+  if(!backdrop||!container)return;
+
+  title.innerHTML=`${esc(ticker)} <small>· Institutional Daily HLC</small>`;
+  status.textContent='FETCHING LIVE DATA…';
+  status.style.color='var(--amber)';
+  backdrop.classList.add('show');
+
+  if(currentModalChart){currentModalChart.remove();currentModalChart=null}
+  if(chartModalResizeObserver){chartModalResizeObserver.disconnect();chartModalResizeObserver=null}
+  container.innerHTML='';
+
+  const c=chartThemeColors();
+  currentModalChart=LightweightCharts.createChart(container,{
+    layout:{background:{type:'solid',color:c.bg},textColor:c.text,fontFamily:"Inter, system-ui, sans-serif"},
+    grid:{vertLines:{color:c.grid},horzLines:{color:c.grid}},
+    rightPriceScale:{borderColor:c.grid},
+    timeScale:{borderColor:c.grid,timeVisible:false},
+    crosshair:{mode:LightweightCharts.CrosshairMode.Normal}
+  });
+
+  chartModalResizeObserver=new ResizeObserver(()=>{
+    if(currentModalChart)currentModalChart.applyOptions({width:container.clientWidth,height:container.clientHeight});
+  });
+  chartModalResizeObserver.observe(container);
+
+  try{
+    const result=await fetchYahooModalData(ticker);
+    const ts=result.timestamp||[],q=result.indicators?.quote?.[0]||{};
+    const raw=[];
+    for(let i=0;i<ts.length;i++){
+      if(q.open?.[i]!=null&&q.high?.[i]!=null&&q.low?.[i]!=null&&q.close?.[i]!=null){
+        raw.push({
+          time:new Date(ts[i]*1000).toISOString().slice(0,10),
+          open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]
+        });
+      }
+    }
+    const uniq=new Map();raw.forEach(b=>uniq.set(b.time,b));
+    const data=[...uniq.values()].sort((a,b)=>a.time.localeCompare(b.time));
+    if(!data.length)throw new Error('No bars found');
+
+    const emaHigh=calcEMA(data,21,'high');
+    const emaLow=calcEMA(data,21,'low');
+    const emaClose=calcEMA(data,21,'close');
+
+    const cloudHigh=currentModalChart.addAreaSeries({
+      topColor:c.cloud,bottomColor:c.cloud,lineColor:c.grid,lineWidth:1,priceLineVisible:false,lastValueVisible:false
+    });
+    cloudHigh.setData(emaHigh);
+
+    const cloudLow=currentModalChart.addAreaSeries({
+      topColor:c.bg,bottomColor:c.bg,lineColor:c.grid,lineWidth:1,priceLineVisible:false,lastValueVisible:false
+    });
+    cloudLow.setData(emaLow);
+
+    const emaSeries=currentModalChart.addLineSeries({
+      color:c.ema,lineWidth:1,priceLineVisible:false,lastValueVisible:false
+    });
+    emaSeries.setData(emaClose);
+
+    const dcLen=100,dcOffset=2,up=[],dn=[],basis=[];
+    for(let i=dcLen-1;i<data.length;i++){
+      const win=data.slice(i-dcLen+1,i+1);
+      const hi=Math.max(...win.map(b=>b.high)),lo=Math.min(...win.map(b=>b.low)),mid=(hi+lo)/2;
+      if(i+dcOffset<data.length){
+        const t=data[i+dcOffset].time;
+        up.push({time:t,value:hi});dn.push({time:t,value:lo});basis.push({time:t,value:mid});
+      }
+    }
+    for(const arr of [up,dn,basis]){
+      const s=currentModalChart.addLineSeries({
+        color:c.donchian,lineWidth:1,lineStyle:2,priceLineVisible:false,lastValueVisible:false
+      });
+      s.setData(arr);
+    }
+
+    const highMap=new Map(emaHigh.map(x=>[x.time,x.value]));
+    const bars=data.map(b=>{
+      const h=highMap.get(b.time);
+      return {...b,color:(h!==undefined&&b.close<h)?'#e600e6':c.standard};
+    });
+    const barSeries=currentModalChart.addBarSeries({thinBars:false,openVisible:false});
+    barSeries.setData(bars);
+
+    status.textContent='LIVE YAHOO DATA';
+    status.style.color='var(--cyan)';
+    currentModalChart.timeScale().fitContent();
+  }catch(err){
+    status.textContent='DATA ERROR';
+    status.style.color='var(--red)';
+    container.innerHTML=`<div class="empty" style="padding-top:80px">${esc(err.message||String(err))}</div>`;
+  }
 }
 
 function masterAIPrompt(){
