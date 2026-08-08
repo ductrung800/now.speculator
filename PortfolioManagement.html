@@ -145,7 +145,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 .sizing-field input[readonly]{color:#9fb2c8;background:#0b1624}
 .range-line{display:grid;grid-template-columns:1fr 82px;gap:8px;align-items:center}
 .range-line input[type=range]{padding:0;accent-color:var(--cyan)}
-.sizing-metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sizing-metric-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .sizing-metric{background:#091523;border:1px solid #1b2b42;border-radius:8px;padding:9px}
 .sizing-metric .m-label{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:900}
 .sizing-metric .m-value{font-size:16px;font-weight:900;margin-top:3px}
@@ -179,12 +179,17 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 @media(max-width:1250px){.sizing-layout{grid-template-columns:1fr}.impact-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:720px){.sizing-grid2,.sizing-grid3,.sizing-metric-row,.verdict-grid,.impact-grid{grid-template-columns:1fr}}
 
+
+.account-base-note{font-size:9px;color:var(--muted);margin-top:6px;line-height:1.45}
+.account-live{display:inline-flex;align-items:center;gap:5px;font-size:9px;color:var(--green);font-weight:800}
+.account-live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="topbar">
-    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4 · Position Sizing & Campaign Manager</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
+    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4.1 · Account Risk Base</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
     <div class="actions">
   <div class="ai-actions">
     <button class="btn ai primary-ai" id="askChatGPTBtn">Ask ChatGPT</button>
@@ -307,7 +312,22 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
           <div class="sizing-card-head"><div class="sizing-title">⚙ Capital Sizing & Account Risk</div><span class="sub">USD $</span></div>
           <div class="sizing-card-body">
             <div class="sizing-grid2">
-              <div class="sizing-field"><label>Portfolio NAV ($)</label><input id="szNav" type="number" readonly></div>
+              <div class="sizing-field">
+                <label>Account Size ($) · Position-Sizing Base</label>
+                <input id="szAccountSize" type="number" min="1" step="1000" value="100000">
+                <div class="account-base-note">Saved locally in this browser. Use your total brokerage/account equity, not only the positions tracked on this page.</div>
+              </div>
+              <div class="sizing-field">
+                <label>Risk Base</label>
+                <select id="szRiskBase">
+                  <option value="ACCOUNT">Total Account Size</option>
+                  <option value="PORTFOLIO">Tracked Portfolio NAV</option>
+                </select>
+                <div class="account-base-note">Recommended: Total Account Size. Portfolio NAV remains visible separately for context.</div>
+              </div>
+            </div>
+            <div class="sizing-grid2" style="margin-top:9px">
+              <div class="sizing-field"><label>Tracked Portfolio NAV ($)</label><input id="szNav" type="number" readonly></div>
               <div class="sizing-field"><label>Mode</label><select id="szMode"><option value="NEW">New Position</option><option value="ADD">Add to Existing</option></select></div>
             </div>
             <div class="rule-sep"></div>
@@ -320,6 +340,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
               <div class="sizing-metric"><div class="m-label">Permitted Now</div><div class="m-value" id="szPermittedRisk">$0</div></div>
               <div class="sizing-metric"><div class="m-label">Active Base Heat</div><div class="m-value" id="szBaseHeat">—</div></div>
               <div class="sizing-metric"><div class="m-label">Risk Capacity</div><div class="m-value" id="szCapacity">—</div></div>
+              <div class="sizing-metric"><div class="m-label">Sizing Risk Base</div><div class="m-value" id="szRiskBaseValue">$0</div></div>
             </div>
           </div>
         </div>
@@ -366,7 +387,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
               <div class="sizing-field"><label>Sector Capital Cap (%)</label><input id="szSectorCap" type="number" value="45" step="1"></div>
               <div class="sizing-field"><label>Industry Capital Cap (%)</label><input id="szIndustryCap" type="number" value="30" step="1"></div>
             </div>
-            <div class="policy-chips"><span class="policy-chip">Cash risk is authoritative</span><span class="policy-chip">Leverage limits economic exposure</span><span class="policy-chip">Before → after is pre-funding</span></div>
+            <div class="policy-chips"><span class="policy-chip">Cash risk = selected Risk Base × Risk %</span><span class="policy-chip">Leverage limits economic exposure</span><span class="policy-chip">Before → after is pre-funding</span></div>
           </div>
         </div>
       </div>
@@ -407,7 +428,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
       <div class="table-wrap"><table class="sortable" id="journalTable"><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
     </div>
   </section>
-  <div class="footer">NOW Portfolio Command Center v2.4 · Position sizing + pyramided campaign management + portfolio risk gate + AI briefs + in-page charts · USD risk framework · For informational purposes only.</div>
+  <div class="footer">NOW Portfolio Command Center v2.4.1 · Account-size risk base + position sizing + pyramided campaign management + portfolio risk gate · USD framework · For informational purposes only.</div>
 </div>
 
 
@@ -1001,7 +1022,11 @@ function updateSizingTaxonomyFromTicker(){
 }
 function buildSizingPlan(){
   if(!summary||!summary.nav)return null;
-  const nav=summary.nav;
+  const trackedNav=summary.nav;
+  const accountSize=Math.max(1,sizingNum('szAccountSize',trackedNav));
+  const riskBaseMode=document.getElementById('szRiskBase')?.value||'ACCOUNT';
+  const riskBase=riskBaseMode==='PORTFOLIO'?trackedNav:accountSize;
+  const nav=riskBase;
   const mode=document.getElementById('szMode')?.value||'NEW';
   const ticker=(document.getElementById('szTicker')?.value||'').trim().toUpperCase();
   const side=document.getElementById('szSide')?.value||'LONG';
@@ -1121,7 +1146,7 @@ function buildSizingPlan(){
   else if(reduced){verdict='GO · REDUCED RISK ONLY';verdictClass='warn'}
 
   return {
-    ticker,mode,side,isLong,nav,entry,stop,target,lev,riskPct,plannedRisk,permittedRisk,
+    ticker,mode,side,isLong,nav,trackedNav,accountSize,riskBaseMode,riskBase,entry,stop,target,lev,riskPct,plannedRisk,permittedRisk,
     initialWeight,tranches,interval,sector,industry,underlying,existing,
     stopDistance,rewardDistance,flatShares,flatProfit,flatR,pyramidR,incrementalProfit,
     fullAddShares,finalAddShares,rows,finalRow,initialIncrementalRisk,reservedRisk,
@@ -1147,11 +1172,15 @@ function renderSizing(){
 
   $('#szCashRisk').textContent=money2(planned);
   $('#szPermittedRisk').textContent=money2(Math.max(0,Math.min(planned,capacity)));
-  $('#szBaseHeat').textContent=per(summary.heatPct);
+  const sizingBaseHeatPct=nav?summary.heat/nav:0;
+  const sizingAdjHeatPct=nav?summary.adjustedHeat/nav:0;
+  const sizingGrossPct=nav?summary.economicGross/nav:0;
+  $('#szBaseHeat').textContent=per(sizingBaseHeatPct);
   $('#szCapacity').textContent=money2(Math.max(0,capacity));
-  $('#sizingActiveHeatBadge').textContent='Base Heat '+per(summary.heatPct);
-  $('#sizingAdjHeatBadge').textContent='Adj Heat '+per(summary.adjustedHeatPct);
-  $('#sizingGrossBadge').textContent='Economic Gross '+per(summary.economicGrossPct);
+  $('#szRiskBaseValue').textContent=money2(nav);
+  $('#sizingActiveHeatBadge').textContent='Base Heat '+per(sizingBaseHeatPct);
+  $('#sizingAdjHeatBadge').textContent='Adj Heat '+per(sizingAdjHeatPct);
+  $('#sizingGrossBadge').textContent='Economic Gross '+per(sizingGrossPct);
 
   if(plan?.invalid){
     $('#sizingPermission').className='permission-banner';
@@ -1188,9 +1217,9 @@ function renderSizing(){
   $('#szCapitalSaved').textContent=money2(plan.reservedRisk);
 
   const impacts=[
-    ['Base Heat',summary.heatPct,plan.baseAfter,plan.baseAfter<=plan.baseHeatCap],
-    ['Adjusted Heat',summary.adjustedHeatPct,plan.adjAfter,plan.adjAfter<=plan.adjHeatCap],
-    ['Economic Gross',summary.economicGrossPct,plan.grossAfter,plan.grossAfter<=plan.grossCap],
+    ['Base Heat',plan.nav?summary.heat/plan.nav:0,plan.baseAfter,plan.baseAfter<=plan.baseHeatCap],
+    ['Adjusted Heat',plan.nav?summary.adjustedHeat/plan.nav:0,plan.adjAfter,plan.adjAfter<=plan.adjHeatCap],
+    ['Economic Gross',plan.nav?summary.economicGross/plan.nav:0,plan.grossAfter,plan.grossAfter<=plan.grossCap],
     ['Sector '+plan.sector,plan.sectorBefore,plan.sectorAfter,plan.sectorAfter<=plan.sectorCap],
     ['Industry '+plan.industry,plan.industryBefore,plan.industryAfter,plan.industryAfter<=plan.industryCap],
     ['Position '+(plan.ticker||'New'),plan.positionBefore,plan.positionAfter,plan.positionAfter<=plan.positionCap]
@@ -1218,6 +1247,22 @@ function renderSizing(){
   </tr>`).join('');
 }
 function initSizingControls(){
+  try{
+    const savedAccount=localStorage.getItem('now-portfolio-account-size-usd');
+    if(savedAccount&&isFinite(parseFloat(savedAccount))&&parseFloat(savedAccount)>0){
+      setSizingVal('szAccountSize',parseFloat(savedAccount));
+    }
+    const savedRiskBase=localStorage.getItem('now-portfolio-risk-base');
+    if(savedRiskBase==='ACCOUNT'||savedRiskBase==='PORTFOLIO')setSizingVal('szRiskBase',savedRiskBase);
+  }catch(e){}
+  document.getElementById('szAccountSize')?.addEventListener('input',()=>{
+    try{localStorage.setItem('now-portfolio-account-size-usd',document.getElementById('szAccountSize').value)}catch(e){}
+    renderSizing();
+  });
+  document.getElementById('szRiskBase')?.addEventListener('change',()=>{
+    try{localStorage.setItem('now-portfolio-risk-base',document.getElementById('szRiskBase').value)}catch(e){}
+    renderSizing();
+  });
   syncPair('szRiskPctRange','szRiskPct');
   syncPair('szInitialWeightRange','szInitialWeight');
   syncPair('szTranchesRange','szTranches');
@@ -1232,7 +1277,7 @@ function initSizingControls(){
 function masterAIPrompt(){
   return `You are the Chief Portfolio Manager and Tactical Risk Officer at an institutional growth fund. Analyze the complete Portfolio Command Center as a portfolio-management and risk-control system. Use only the evidence contained in this source package.
 
-Evaluate current capital weight, leverage-adjusted economic gross exposure, net directional exposure, base portfolio heat, leverage-adjusted heat, cash, single-position concentration, sector and industry concentration, economic exposure clusters, long versus inverse exposure, stop-loss violations, SMA/trend deterioration, open P/L, risk contribution, the Daily Portfolio Action Memo, and any active Position Sizing / Pyramided Campaign plan. For a sizing plan, evaluate planned cash risk, permitted risk now, traditional R/R, pyramided R/R, leverage-adjusted economic exposure, before/after portfolio impact, and whether the trade must be funded by a trim or exit.
+Evaluate current capital weight, leverage-adjusted economic gross exposure, net directional exposure, base portfolio heat, leverage-adjusted heat, cash, single-position concentration, sector and industry concentration, economic exposure clusters, long versus inverse exposure, stop-loss violations, SMA/trend deterioration, open P/L, risk contribution, the Daily Portfolio Action Memo, and any active Position Sizing / Pyramided Campaign plan. For a sizing plan, distinguish Total Account Size from Tracked Portfolio NAV and respect the selected sizing Risk Base. Evaluate planned cash risk, permitted risk now, traditional R/R, pyramided R/R, leverage-adjusted economic exposure, before/after portfolio impact, and whether the trade must be funded by a trim or exit.
 
 Separate true portfolio risk from simple capital weight, especially for leveraged and inverse ETFs. Identify positions that require EXIT, REDUCE, PROTECT, HOLD, or ADD ELIGIBLE treatment. Check whether apparent diversification is actually concentrated through correlated sector, industry, underlying, leveraged, or inverse exposure. Do not invent market-regime information that is not contained in this page.
 
@@ -1312,6 +1357,8 @@ function briefPackage(mode='master'){
     open_positions:s.open.map(positionForBrief),
     position_sizing_plan:lastSizingPlan && !lastSizingPlan.invalid ? {
       ticker:lastSizingPlan.ticker,mode:lastSizingPlan.mode,side:lastSizingPlan.side,
+      account_size:lastSizingPlan.accountSize,tracked_portfolio_nav:lastSizingPlan.trackedNav,
+      risk_base_mode:lastSizingPlan.riskBaseMode,risk_base_value:lastSizingPlan.riskBase,
       entry:lastSizingPlan.entry,stop:lastSizingPlan.stop,target:lastSizingPlan.target,
       leverage:lastSizingPlan.lev,planned_cash_risk:lastSizingPlan.plannedRisk,
       permitted_cash_risk_now:lastSizingPlan.permittedRisk,
