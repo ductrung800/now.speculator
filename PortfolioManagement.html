@@ -124,12 +124,67 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 .tickerlink{cursor:pointer;color:var(--cyan);font-weight:900;text-decoration:underline;text-underline-offset:3px}
 .tickerlink:hover{filter:brightness(1.16)}
 
+
+/* ================= V2.4 POSITION SIZING & CAMPAIGN MANAGER ================= */
+.sizing-layout{display:grid;grid-template-columns:minmax(330px,.78fr) minmax(620px,1.35fr);gap:10px}
+.sizing-left,.sizing-right{display:grid;gap:10px;align-content:start}
+.sizing-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.sizing-card.accent{border-color:rgba(32,227,194,.55)}
+.sizing-card-head{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-bottom:1px solid var(--line)}
+.sizing-card-body{padding:13px}
+.sizing-title{font-size:12px;font-weight:900}
+.sizing-grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sizing-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.sizing-field{display:grid;gap:5px}
+.sizing-field label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.sizing-field input,.sizing-field select{
+  width:100%;background:#081320;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:9px 10px;
+  outline:none;font-weight:700
+}
+.sizing-field input:focus,.sizing-field select:focus{border-color:var(--cyan)}
+.sizing-field input[readonly]{color:#9fb2c8;background:#0b1624}
+.range-line{display:grid;grid-template-columns:1fr 82px;gap:8px;align-items:center}
+.range-line input[type=range]{padding:0;accent-color:var(--cyan)}
+.sizing-metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sizing-metric{background:#091523;border:1px solid #1b2b42;border-radius:8px;padding:9px}
+.sizing-metric .m-label{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.sizing-metric .m-value{font-size:16px;font-weight:900;margin-top:3px}
+.permission-banner{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;background:linear-gradient(135deg,#0d1b2a,#0a1421);padding:12px 14px;margin-bottom:10px}
+.permission-banner.go{border-left-color:var(--green)}.permission-banner.no{border-left-color:var(--red)}
+.permission-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.permission-state{font-size:16px;font-weight:900}.permission-copy{margin-top:5px;color:#aebdd0}
+.verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.verdict-box{border:1px solid var(--line);border-radius:9px;padding:12px;background:#0a1522}
+.verdict-box.good{background:#0a5a45;border-color:#0e8467}.verdict-box.warn{background:#4a2c08;border-color:#805a13}.verdict-box.bad{background:#451521;border-color:#7e2638}
+.verdict-r{font-size:22px;font-weight:900;margin-top:5px}.verdict-note{font-size:10px;color:#bdcadd;margin-top:4px}
+.risk-buffer{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#091426;border:1px solid var(--line);border-radius:9px;padding:11px;margin-top:10px}
+.risk-buffer strong{color:var(--cyan)}.capital-saved{text-align:right;font-weight:900;color:var(--green);font-size:16px}
+.impact-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.impact-card{background:#091523;border:1px solid #1b2b42;border-radius:8px;padding:9px}
+.impact-card .beforeafter{font-size:13px;font-weight:900;margin-top:5px}
+.impact-card.fail{border-color:rgba(255,90,111,.7)}.impact-card.pass{border-color:rgba(53,208,127,.5)}
+.policy-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.policy-chip{font-size:9px;border:1px solid var(--line);border-radius:999px;padding:4px 7px;color:#94a7bd}
+.sizing-table-wrap{overflow:auto}
+.sizing-table{width:100%;min-width:940px;border-collapse:collapse}
+.sizing-table th,.sizing-table td{padding:9px;border-bottom:1px solid #18273c;text-align:right}
+.sizing-table th{font-size:8px;letter-spacing:.07em;text-transform:uppercase;color:#8ea0b6;background:#0b1726}
+.sizing-table td:first-child,.sizing-table th:first-child,.sizing-table td:nth-child(2),.sizing-table th:nth-child(2){text-align:left}
+.sizing-step{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#18283e;align-items:center;justify-content:center;font-size:9px;font-weight:900;margin-right:6px}
+.sizing-step.initial{background:#087d6a}.sizing-step.existing{background:#31415a}
+.size-btn{border:1px solid rgba(32,227,194,.35);background:rgba(32,227,194,.08);color:var(--cyan);border-radius:6px;padding:4px 7px;font-size:8px;font-weight:900;cursor:pointer}
+.size-btn:hover{background:rgba(32,227,194,.16)}
+.size-btn[disabled]{opacity:.25;cursor:not-allowed}
+.sizing-note{font-size:10px;color:var(--muted);line-height:1.5}
+.rule-sep{height:1px;background:var(--line);margin:11px 0}
+@media(max-width:1250px){.sizing-layout{grid-template-columns:1fr}.impact-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.sizing-grid2,.sizing-grid3,.sizing-metric-row,.verdict-grid,.impact-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="topbar">
-    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.3 · AI Brief + Sortable Tables</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
+    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4 · Position Sizing & Campaign Manager</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
     <div class="actions">
   <div class="ai-actions">
     <button class="btn ai primary-ai" id="askChatGPTBtn">Ask ChatGPT</button>
@@ -157,6 +212,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
     <button class="tab" data-tab="risk">Risk Intelligence</button>
     <button class="tab" data-tab="exposure">Exposure & Concentration</button>
     <button class="tab" data-tab="positions">Position Monitor</button>
+    <button class="tab" data-tab="sizing">Position Sizing</button>
     <button class="tab" data-tab="journal">Trade Journal</button>
   </div>
 
@@ -225,8 +281,124 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
     <div class="panel">
       <div class="table-tools"><input id="search" placeholder="Search ticker or company…"><select id="statusFilter"><option value="OPEN">Open positions</option><option value="ALL">All records</option><option value="CLOSED">Closed only</option><option value="ACTION">Action required</option></select></div>
       <div class="table-wrap"><table class="sortable" id="positionsTable"><thead><tr>
-        <th>Ticker</th><th>Company</th><th>Status</th><th>Action</th><th>Exposure Basis</th><th>Dir</th><th>Lev</th><th>Economic Wt</th><th>Weight</th><th>Shares</th><th>Entry</th><th>Last</th><th>P/L</th><th>P/L %</th><th>Days</th><th>Value</th><th>ATR%</th><th>vs SMA50</th><th>Trend</th><th>Stop</th><th>Stop %</th><th>Risk $</th><th>Risk % NAV</th><th>Sector</th><th>Industry</th>
+        <th>Ticker</th><th>Company</th><th>Status</th><th>Action</th><th>Size / Add</th><th>Exposure Basis</th><th>Dir</th><th>Lev</th><th>Economic Wt</th><th>Weight</th><th>Shares</th><th>Entry</th><th>Last</th><th>P/L</th><th>P/L %</th><th>Days</th><th>Value</th><th>ATR%</th><th>vs SMA50</th><th>Trend</th><th>Stop</th><th>Stop %</th><th>Risk $</th><th>Risk % NAV</th><th>Sector</th><th>Industry</th>
       </tr></thead><tbody id="positionRows"></tbody></table></div>
+    </div>
+  </section>
+
+
+  <section class="view" id="sizing">
+    <div id="sizingPermission" class="permission-banner">
+      <div class="permission-top">
+        <div><div class="section-title">Portfolio Permission</div><div class="permission-state" id="sizingPermissionState">WAITING FOR PORTFOLIO DATA</div></div>
+        <div class="badges">
+          <span class="badge" id="sizingActiveHeatBadge">Active Heat —</span>
+          <span class="badge" id="sizingAdjHeatBadge">Adj Heat —</span>
+          <span class="badge" id="sizingGrossBadge">Economic Gross —</span>
+        </div>
+      </div>
+      <div class="permission-copy" id="sizingPermissionCopy">Load the live portfolio to calculate risk capacity.</div>
+    </div>
+
+    <div class="sizing-layout">
+      <div class="sizing-left">
+
+        <div class="sizing-card">
+          <div class="sizing-card-head"><div class="sizing-title">⚙ Capital Sizing & Account Risk</div><span class="sub">USD $</span></div>
+          <div class="sizing-card-body">
+            <div class="sizing-grid2">
+              <div class="sizing-field"><label>Portfolio NAV ($)</label><input id="szNav" type="number" readonly></div>
+              <div class="sizing-field"><label>Mode</label><select id="szMode"><option value="NEW">New Position</option><option value="ADD">Add to Existing</option></select></div>
+            </div>
+            <div class="rule-sep"></div>
+            <div class="sizing-field">
+              <label>Risk Allocation · 0.1% steps</label>
+              <div class="range-line"><input id="szRiskPctRange" type="range" min="0.1" max="2.5" step="0.1" value="0.5"><input id="szRiskPct" type="number" min="0.1" max="5" step="0.1" value="0.5"></div>
+            </div>
+            <div class="sizing-metric-row" style="margin-top:10px">
+              <div class="sizing-metric"><div class="m-label">Planned Cash Risk</div><div class="m-value cyan" id="szCashRisk">$0</div></div>
+              <div class="sizing-metric"><div class="m-label">Permitted Now</div><div class="m-value" id="szPermittedRisk">$0</div></div>
+              <div class="sizing-metric"><div class="m-label">Active Base Heat</div><div class="m-value" id="szBaseHeat">—</div></div>
+              <div class="sizing-metric"><div class="m-label">Risk Capacity</div><div class="m-value" id="szCapacity">—</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sizing-card">
+          <div class="sizing-card-head"><div class="sizing-title">🛡 Target & Boundary Levels</div><span class="sub" id="szTaxonomy">Manual setup</span></div>
+          <div class="sizing-card-body">
+            <div class="sizing-grid2">
+              <div class="sizing-field"><label>Ticker</label><input id="szTicker" value=""></div>
+              <div class="sizing-field"><label>Trade Side</label><select id="szSide"><option value="LONG">Long</option><option value="SHORT">Short</option></select></div>
+            </div>
+            <div class="sizing-grid3" style="margin-top:9px">
+              <div class="sizing-field"><label>Entry Price ($)</label><input id="szEntry" type="number" step="0.01"></div>
+              <div class="sizing-field"><label>Initial Stop ($)</label><input id="szStop" type="number" step="0.01"></div>
+              <div class="sizing-field"><label>Target Exit ($)</label><input id="szTarget" type="number" step="0.01"></div>
+            </div>
+            <div class="sizing-grid3" style="margin-top:9px">
+              <div class="sizing-field"><label>Leverage</label><input id="szLeverage" type="number" min="1" max="5" step="1" value="1"></div>
+              <div class="sizing-field"><label>Sector</label><input id="szSector" value="Unclassified"></div>
+              <div class="sizing-field"><label>Industry</label><input id="szIndustry" value="Unclassified"></div>
+            </div>
+            <div class="sizing-field" style="margin-top:9px"><label>Economic Exposure Basis</label><input id="szUnderlying" value="Equity"></div>
+          </div>
+        </div>
+
+        <div class="sizing-card accent">
+          <div class="sizing-card-head"><div class="sizing-title">☷ Customize Pyramiding Rules</div><span class="sub">Campaign controls</span></div>
+          <div class="sizing-card-body">
+            <div class="sizing-field"><label>Initial Tranche Size Weight</label><div class="range-line"><input id="szInitialWeightRange" type="range" min="20" max="100" step="5" value="50"><input id="szInitialWeight" type="number" min="20" max="100" step="5" value="50"></div></div>
+            <div class="sizing-field" style="margin-top:10px"><label>Total Scale-In Tranches</label><div class="range-line"><input id="szTranchesRange" type="range" min="2" max="8" step="1" value="5"><input id="szTranches" type="number" min="2" max="8" step="1" value="5"></div></div>
+            <div class="sizing-field" style="margin-top:10px"><label>Interval Trigger Move (%)</label><div class="range-line"><input id="szIntervalRange" type="range" min="0.5" max="5" step="0.5" value="2"><input id="szInterval" type="number" min="0.5" max="10" step="0.5" value="2"></div></div>
+            <div class="sizing-note" style="margin-top:10px">Adds occur only after price advances by the selected interval. The required stop ratchets to keep campaign risk inside the planned cash-risk ceiling.</div>
+          </div>
+        </div>
+
+        <div class="sizing-card">
+          <div class="sizing-card-head"><div class="sizing-title">Risk Policy Guardrails</div><span class="sub">Editable</span></div>
+          <div class="sizing-card-body">
+            <div class="sizing-grid2">
+              <div class="sizing-field"><label>Base Heat Cap (%)</label><input id="szBaseHeatCap" type="number" value="6" step="0.5"></div>
+              <div class="sizing-field"><label>Adjusted Heat Cap (%)</label><input id="szAdjHeatCap" type="number" value="8" step="0.5"></div>
+              <div class="sizing-field"><label>Economic Gross Cap (%)</label><input id="szGrossCap" type="number" value="175" step="5"></div>
+              <div class="sizing-field"><label>Single Position Cap (%)</label><input id="szPositionCap" type="number" value="20" step="1"></div>
+              <div class="sizing-field"><label>Sector Capital Cap (%)</label><input id="szSectorCap" type="number" value="45" step="1"></div>
+              <div class="sizing-field"><label>Industry Capital Cap (%)</label><input id="szIndustryCap" type="number" value="30" step="1"></div>
+            </div>
+            <div class="policy-chips"><span class="policy-chip">Cash risk is authoritative</span><span class="policy-chip">Leverage limits economic exposure</span><span class="policy-chip">Before → after is pre-funding</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sizing-right">
+        <div class="sizing-card accent">
+          <div class="sizing-card-head"><div><div class="section-title">Decision Verdict</div><div class="sizing-title" id="szVerdict">ENTER SETUP PARAMETERS</div></div><div style="text-align:right"><div class="section-title" id="szProfitLabel">Potential Pyramided Profit</div><div style="font-size:24px;font-weight:900" id="szPyramidProfit">$0.00</div></div></div>
+          <div class="sizing-card-body">
+            <div class="verdict-grid">
+              <div class="verdict-box" id="szFlatBox"><div class="section-title">Traditional Sizing · Flat Entry</div><div class="verdict-r" id="szFlatR">—</div><div class="verdict-note">Profit outcome: <b id="szFlatProfit">$0</b> · Shares: <b id="szFlatShares">0</b></div></div>
+              <div class="verdict-box" id="szPyramidBox"><div class="section-title">Pyramided Scale-In Setup</div><div class="verdict-r" id="szPyramidR">—</div><div class="verdict-note">Final added shares: <b id="szFinalShares">0</b> · Avg add cost: <b id="szFinalAvg">$0</b></div></div>
+            </div>
+            <div class="risk-buffer"><div><strong>Risk Buffer</strong><div class="verdict-note" id="szRiskBufferText">Initial tranche risk will appear here.</div></div><div><div class="section-title">Reserved Campaign Risk</div><div class="capital-saved" id="szCapitalSaved">$0</div></div></div>
+          </div>
+        </div>
+
+        <div class="sizing-card">
+          <div class="sizing-card-head"><div><div class="sizing-title">Before → After Portfolio Impact</div><div class="sub">Pre-funding simulation; no offsetting trim assumed</div></div><span class="flag" id="szImpactVerdict">WAITING</span></div>
+          <div class="sizing-card-body"><div class="impact-grid" id="szImpactGrid"></div></div>
+        </div>
+
+        <div class="sizing-card">
+          <div class="sizing-card-head"><div><div class="sizing-title">Scale-In Matrix Schedule</div><div class="sub" id="szMatrixSub">Calculated steps keep total campaign risk inside the planned USD cash-risk budget.</div></div><span class="sub" id="szMatrixMeta"></span></div>
+          <div class="sizing-table-wrap">
+            <table class="sizing-table">
+              <thead><tr><th>Step</th><th>Target</th><th>Trigger Price</th><th>Shares Added</th><th>Total Held</th><th>Average Cost</th><th>Required Trailed Stop</th><th>Active Open Risk</th><th>Economic Exposure</th></tr></thead>
+              <tbody id="szMatrixRows"></tbody>
+            </table>
+          </div>
+          <div class="panel-body sizing-note" id="szMatrixNote">Weighted-average cost and required stop update after every add. For leveraged products, economic exposure is market value × leverage; actual stop-loss cash risk remains based on the security price and stop.</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -235,7 +407,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
       <div class="table-wrap"><table class="sortable" id="journalTable"><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
     </div>
   </section>
-  <div class="footer">NOW Portfolio Command Center v2.3 · AI portfolio brief integration + sortable tables + in-page institutional ticker charts + leverage-adjusted risk intelligence · For informational purposes only.</div>
+  <div class="footer">NOW Portfolio Command Center v2.4 · Position sizing + pyramided campaign management + portfolio risk gate + AI briefs + in-page charts · USD risk framework · For informational purposes only.</div>
 </div>
 
 
@@ -269,7 +441,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 
 <script>
 const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvDsxwxJSatKaMzAUsdAGJT4ZhtiRQ0iHbyihBL9DOje7r4oVibcxYDOs-NYz3lBEXrevKMwq8duaH/pub?gid=2081359794&single=true&output=csv';
-let positions=[],charts={},summary={},tableSort={positions:{key:'',dir:1},journal:{key:'',dir:1}};
+let positions=[],charts={},summary={},tableSort={positions:{key:'',dir:1},journal:{key:'',dir:1}},lastSizingPlan=null;
 
 const ETF_EXPOSURE_MAP = {
   // Open leveraged / thematic products — classify by economic exposure, not legal wrapper.
@@ -532,7 +704,7 @@ function render(){
     ['Top Sector',topSector?per(topSector[1]/s.invested):'—',topSector?topSector[0]:'—',''],['Avg Open Return',per(avgPL),'Equal-weighted',avgPL>=0?'green':'red']
   ];
   $('#kpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[3]}">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
-  renderMemo();renderActions();renderHeat();renderConcentration();renderCharts();renderRisk();renderBars();renderTables();
+  renderMemo();renderActions();renderHeat();renderConcentration();renderCharts();renderRisk();renderBars();renderTables();renderSizing();
   $('#metaLine').textContent=`${s.open.length} open · ${s.closed.length} closed · Source: live published sheet`;
   $('#freshness').textContent='refreshed '+new Date().toLocaleString('en-AU');
 }
@@ -594,7 +766,7 @@ function renderTables(){
     const k=tableSort.positions.key,d=tableSort.positions.dir;
     arr=arr.slice().sort((a,b)=>compareValues(sortValuePosition(a,k),sortValuePosition(b,k))*d);
   }
-  $('#positionRows').innerHTML=arr.map(p=>{const a=actionFor(p);return `<tr><td><span class="tickerlink" onclick="openStandaloneChart(\'${esc(p.ticker)}\')">${esc(p.ticker)}</span></td><td>${esc(p.company)}</td><td><span class="pill ${p.status==='OPEN'?'p-hold':'p-closed'}">${p.status}</span></td><td><span class="pill ${a.cls}">${a.label}</span></td><td>${esc(p.underlying||p.instrument)}</td><td class="${p.directionSign<0?'red':'green'}">${directionLabel(p)}</td><td>${esc(p.leverage)}</td><td>${per(summary.nav?Math.abs(p.economicExposure)/summary.nav:0)}</td><td>${per(p.weight)}</td><td>${p.shares}</td><td>${money2(p.entry)}</td><td>${money2(p.last)}</td><td class="${p.pl>=0?'green':'red'}">${money(p.pl)}</td><td class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</td><td>${p.days||''}</td><td>${money(p.value)}</td><td>${per(p.atrPct)}</td><td class="${p.sma50Pct>=0?'green':'red'}">${per(p.sma50Pct)}</td><td>${trendText(p)}</td><td>${money2(p.stop2)}</td><td>${per(p.stopPct)}</td><td>${money(p.riskDollar)}</td><td>${per(summary.nav?p.riskDollar/summary.nav:0)}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`}).join('');
+  $('#positionRows').innerHTML=arr.map(p=>{const a=actionFor(p);return `<tr><td><span class="tickerlink" onclick="openStandaloneChart(\'${esc(p.ticker)}\')">${esc(p.ticker)}</span></td><td>${esc(p.company)}</td><td><span class="pill ${p.status==='OPEN'?'p-hold':'p-closed'}">${p.status}</span></td><td><span class="pill ${a.cls}">${a.label}</span></td><td>${(p.status==='OPEN'&&!['EXIT','REDUCE','PROTECT'].includes(a.label))?`<button class="size-btn" onclick="openSizingForTicker('${esc(p.ticker)}')">SIZE →</button>`:'—'}</td><td>${esc(p.underlying||p.instrument)}</td><td class="${p.directionSign<0?'red':'green'}">${directionLabel(p)}</td><td>${esc(p.leverage)}</td><td>${per(summary.nav?Math.abs(p.economicExposure)/summary.nav:0)}</td><td>${per(p.weight)}</td><td>${p.shares}</td><td>${money2(p.entry)}</td><td>${money2(p.last)}</td><td class="${p.pl>=0?'green':'red'}">${money(p.pl)}</td><td class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</td><td>${p.days||''}</td><td>${money(p.value)}</td><td>${per(p.atrPct)}</td><td class="${p.sma50Pct>=0?'green':'red'}">${per(p.sma50Pct)}</td><td>${trendText(p)}</td><td>${money2(p.stop2)}</td><td>${per(p.stopPct)}</td><td>${money(p.riskDollar)}</td><td>${per(summary.nav?p.riskDollar/summary.nav:0)}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`}).join('');
   let journalArr=summary.closed.slice();
   if(tableSort.journal.key){
     const k=tableSort.journal.key,d=tableSort.journal.dir;
@@ -763,10 +935,304 @@ async function openStandaloneChart(ticker){
   }
 }
 
+
+function sizingNum(id, fallback=0){
+  const el=document.getElementById(id);
+  const n=parseFloat(el?.value);
+  return isFinite(n)?n:fallback;
+}
+function setSizingVal(id,v){
+  const el=document.getElementById(id);if(el)el.value=v;
+}
+function sizingPositionByTicker(t){
+  return positions.find(p=>String(p.ticker).toUpperCase()===String(t||'').trim().toUpperCase()&&p.status==='OPEN')||null;
+}
+function sizingTaxonomyForTicker(ticker){
+  const t=String(ticker||'').trim().toUpperCase();
+  const x=ETF_EXPOSURE_MAP[t];
+  if(x)return {sector:x.sector,industry:x.industry,underlying:x.underlying||'ETF exposure',leverage:Math.abs(parseFloat(String(x.leverage).replace('x','')))||1,economicDirection:/inverse|bear|short/i.test(x.direction||'')?'INVERSE':'LONG'};
+  return {sector:'Unclassified',industry:'Unclassified',underlying:'Equity',leverage:1,economicDirection:'LONG'};
+}
+function syncPair(rangeId,inputId){
+  const r=document.getElementById(rangeId),n=document.getElementById(inputId);
+  if(!r||!n)return;
+  r.oninput=()=>{n.value=r.value;renderSizing()};
+  n.oninput=()=>{r.value=n.value;renderSizing()};
+}
+function switchTab(name){
+  $$('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));
+  $$('.view').forEach(x=>x.classList.toggle('active',x.id===name));
+}
+function openSizingForTicker(ticker){
+  const p=sizingPositionByTicker(ticker);
+  switchTab('sizing');
+  setSizingVal('szMode',p?'ADD':'NEW');
+  setSizingVal('szTicker',ticker);
+  if(p){
+    setSizingVal('szSide','LONG');
+    setSizingVal('szEntry',p.last||p.entry||0);
+    setSizingVal('szStop',p.stop2||((p.last||0)-2*(p.atr||0)));
+    const riskDist=Math.max(.01,Math.abs((p.last||0)-(p.stop2||0)));
+    setSizingVal('szTarget',(p.last||0)+riskDist*2.5);
+    setSizingVal('szLeverage',p.leverageMultiple||1);
+    setSizingVal('szSector',p.sector||'Unclassified');
+    setSizingVal('szIndustry',p.industry||'Unclassified');
+    setSizingVal('szUnderlying',p.underlying||p.instrument||'Equity');
+  }
+  renderSizing();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function updateSizingTaxonomyFromTicker(){
+  const ticker=document.getElementById('szTicker')?.value?.trim().toUpperCase()||'';
+  const p=sizingPositionByTicker(ticker);
+  if(document.getElementById('szMode')?.value==='ADD'&&p){
+    setSizingVal('szEntry',p.last||p.entry||0);
+    setSizingVal('szStop',p.stop2||0);
+    setSizingVal('szLeverage',p.leverageMultiple||1);
+    setSizingVal('szSector',p.sector||'Unclassified');
+    setSizingVal('szIndustry',p.industry||'Unclassified');
+    setSizingVal('szUnderlying',p.underlying||p.instrument||'Equity');
+  }else{
+    const x=sizingTaxonomyForTicker(ticker);
+    if(ticker&&ETF_EXPOSURE_MAP[ticker]){
+      setSizingVal('szLeverage',x.leverage);setSizingVal('szSector',x.sector);setSizingVal('szIndustry',x.industry);setSizingVal('szUnderlying',x.underlying);
+    }
+  }
+}
+function buildSizingPlan(){
+  if(!summary||!summary.nav)return null;
+  const nav=summary.nav;
+  const mode=document.getElementById('szMode')?.value||'NEW';
+  const ticker=(document.getElementById('szTicker')?.value||'').trim().toUpperCase();
+  const side=document.getElementById('szSide')?.value||'LONG';
+  const isLong=side==='LONG';
+  const entry=sizingNum('szEntry'), stop=sizingNum('szStop'), target=sizingNum('szTarget');
+  const lev=Math.max(1,sizingNum('szLeverage',1));
+  const riskPct=sizingNum('szRiskPct',.5)/100;
+  const initialWeight=Math.max(.05,Math.min(1,sizingNum('szInitialWeight',50)/100));
+  const tranches=Math.max(2,Math.round(sizingNum('szTranches',5)));
+  const interval=Math.max(.001,sizingNum('szInterval',2)/100);
+  const baseHeatCap=sizingNum('szBaseHeatCap',6)/100;
+  const adjHeatCap=sizingNum('szAdjHeatCap',8)/100;
+  const grossCap=sizingNum('szGrossCap',175)/100;
+  const positionCap=sizingNum('szPositionCap',20)/100;
+  const sectorCap=sizingNum('szSectorCap',45)/100;
+  const industryCap=sizingNum('szIndustryCap',30)/100;
+  const sector=(document.getElementById('szSector')?.value||'Unclassified').trim()||'Unclassified';
+  const industry=(document.getElementById('szIndustry')?.value||'Unclassified').trim()||'Unclassified';
+  const underlying=(document.getElementById('szUnderlying')?.value||'Equity').trim()||'Equity';
+  const existing=mode==='ADD'?sizingPositionByTicker(ticker):null;
+
+  if(!(entry>0&&stop>0&&target>0))return {invalid:'Enter valid Entry, Stop and Target prices.',ticker,mode,nav};
+  const stopDistance=isLong?entry-stop:stop-entry;
+  const rewardDistance=isLong?target-entry:entry-target;
+  if(stopDistance<=0)return {invalid:isLong?'For a long trade, Stop must be below Entry.':'For a short trade, Stop must be above Entry.',ticker,mode,nav};
+  if(rewardDistance<=0)return {invalid:isLong?'For a long trade, Target must be above Entry.':'For a short trade, Target must be below Entry.',ticker,mode,nav};
+
+  const plannedRisk=nav*riskPct;
+  const remainingBase=Math.max(0,nav*baseHeatCap-summary.heat);
+  const remainingAdj=Math.max(0,nav*adjHeatCap-summary.adjustedHeat);
+  const allowedByAdj=remainingAdj/lev;
+  const permittedRisk=Math.max(0,Math.min(plannedRisk,remainingBase,allowedByAdj));
+
+  const existingShares=existing?.shares||0;
+  const existingAvg=existing?.entry||entry;
+  const existingStop=existing?.stop2||stop;
+  const existingRisk=existing?.riskDollar||0;
+  const campaignRiskCap=(mode==='ADD'?existingRisk:0)+plannedRisk;
+
+  const fullAddShares=Math.max(0,Math.floor(plannedRisk/stopDistance));
+  const firstAdd=Math.min(fullAddShares,Math.max(1,Math.ceil(fullAddShares*initialWeight)));
+  let remaining=Math.max(0,fullAddShares-firstAdd);
+  const laterCount=Math.max(1,tranches-1);
+  const baseLater=Math.floor(remaining/laterCount);
+  const adds=[firstAdd];
+  for(let i=1;i<tranches;i++){
+    const add=i===tranches-1?remaining-baseLater*(laterCount-1):baseLater;
+    adds.push(Math.max(0,add));
+  }
+
+  let totalHeld=existingShares, costDollars=existingShares*existingAvg, rows=[];
+  if(existing){
+    rows.push({step:0,label:'Existing Position',trigger:entry,add:0,total:existingShares,avg:existingAvg,requiredStop:existingStop,activeRisk:existingRisk,economic:existingShares*entry*lev,type:'existing'});
+  }
+
+  let incrementalProfit=0, initialIncrementalRisk=0;
+  for(let i=0;i<tranches;i++){
+    const trigger=isLong?entry*Math.pow(1+interval,i):entry*Math.pow(1-interval,i);
+    const add=adds[i]||0;
+    if(add<=0&&i>0)continue;
+    totalHeld+=add;
+    costDollars+=add*trigger;
+    const avg=totalHeld?costDollars/totalHeld:entry;
+    let requiredStop;
+    if(isLong){
+      const riskStop=avg-campaignRiskCap/Math.max(1,totalHeld);
+      requiredStop=Math.max(mode==='ADD'?existingStop:stop, stop, riskStop);
+    }else{
+      const riskStop=avg+campaignRiskCap/Math.max(1,totalHeld);
+      requiredStop=Math.min(mode==='ADD'?existingStop:stop, stop, riskStop);
+    }
+    const activeRisk=Math.max(0,totalHeld*Math.abs(avg-requiredStop));
+    const economic=totalHeld*trigger*lev;
+    incrementalProfit+=add*Math.max(0,isLong?target-trigger:trigger-target);
+    if(i===0)initialIncrementalRisk=add*stopDistance;
+    rows.push({step:i+1,label:i===0?(mode==='ADD'?'Initial Add':'Initial Tranche'):`Tranche ${i+1} Add`,trigger,add,total:totalHeld,avg,requiredStop,activeRisk,economic,type:i===0?'initial':'add'});
+  }
+
+  const finalRow=rows[rows.length-1];
+  const finalAddShares=adds.reduce((a,b)=>a+b,0);
+  const finalPositionValue=finalAddShares*(finalRow?.trigger||entry);
+  const flatShares=fullAddShares;
+  const flatProfit=flatShares*rewardDistance;
+  const flatR=plannedRisk?flatProfit/plannedRisk:0;
+  const pyramidR=plannedRisk?incrementalProfit/plannedRisk:0;
+  const reservedRisk=Math.max(0,plannedRisk-initialIncrementalRisk);
+
+  const sectorBefore=(summary.sector.find(x=>x[0]===sector)?.[1]||0)/nav;
+  const industryBefore=(summary.industry.find(x=>x[0]===industry)?.[1]||0)/nav;
+  const existingValue=existing?.value||0;
+  const positionBefore=existingValue/nav;
+  const baseAfter=(summary.heat+plannedRisk)/nav;
+  const adjAfter=(summary.adjustedHeat+plannedRisk*lev)/nav;
+  const grossAfter=(summary.economicGross+finalPositionValue*lev)/nav;
+  const sectorAfter=sectorBefore+finalPositionValue/nav;
+  const industryAfter=industryBefore+finalPositionValue/nav;
+  const positionAfter=positionBefore+finalPositionValue/nav;
+
+  const grossDollarCapacity=Math.max(0,nav*grossCap-summary.economicGross);
+  const grossShareCap=Math.floor(grossDollarCapacity/Math.max(.01,entry*lev));
+  const positionDollarCapacity=Math.max(0,nav*positionCap-existingValue);
+  const positionShareCap=Math.floor(positionDollarCapacity/Math.max(.01,entry));
+  const sectorDollarCapacity=Math.max(0,nav*sectorCap-(summary.sector.find(x=>x[0]===sector)?.[1]||0));
+  const sectorShareCap=Math.floor(sectorDollarCapacity/Math.max(.01,entry));
+  const industryDollarCapacity=Math.max(0,nav*industryCap-(summary.industry.find(x=>x[0]===industry)?.[1]||0));
+  const industryShareCap=Math.floor(industryDollarCapacity/Math.max(.01,entry));
+  const riskShareCap=Math.floor(permittedRisk/stopDistance);
+  const executableShares=Math.max(0,Math.min(fullAddShares,riskShareCap,grossShareCap,positionShareCap,sectorShareCap,industryShareCap));
+
+  const setupGood=flatR>=2;
+  const hardBlocked=permittedRisk<=0||executableShares<=0;
+  const reduced=!hardBlocked&&executableShares<fullAddShares;
+  let verdict='GO · FULL RISK';
+  let verdictClass='go';
+  if(!setupGood){verdict='NO GO · R/R BELOW 2R';verdictClass='no'}
+  else if(hardBlocked){verdict='FUNDED ENTRY ONLY · NO UNFUNDED RISK';verdictClass='no'}
+  else if(reduced){verdict='GO · REDUCED RISK ONLY';verdictClass='warn'}
+
+  return {
+    ticker,mode,side,isLong,nav,entry,stop,target,lev,riskPct,plannedRisk,permittedRisk,
+    initialWeight,tranches,interval,sector,industry,underlying,existing,
+    stopDistance,rewardDistance,flatShares,flatProfit,flatR,pyramidR,incrementalProfit,
+    fullAddShares,finalAddShares,rows,finalRow,initialIncrementalRisk,reservedRisk,
+    baseHeatCap,adjHeatCap,grossCap,positionCap,sectorCap,industryCap,
+    baseAfter,adjAfter,grossAfter,sectorBefore,sectorAfter,industryBefore,industryAfter,positionBefore,positionAfter,
+    executableShares,setupGood,hardBlocked,reduced,verdict,verdictClass
+  };
+}
+function renderSizing(){
+  if(!document.getElementById('szNav'))return;
+  if(!summary||!summary.nav){
+    document.getElementById('sizingPermissionState').textContent='WAITING FOR PORTFOLIO DATA';
+    return;
+  }
+  setSizingVal('szNav',summary.nav.toFixed(2));
+
+  const plan=buildSizingPlan();
+  lastSizingPlan=plan;
+  const nav=summary.nav;
+  const baseCap=sizingNum('szBaseHeatCap',6)/100, adjCap=sizingNum('szAdjHeatCap',8)/100;
+  const capacity=Math.max(0,Math.min(nav*baseCap-summary.heat,(nav*adjCap-summary.adjustedHeat)/Math.max(1,sizingNum('szLeverage',1))));
+  const riskPct=sizingNum('szRiskPct',.5)/100, planned=nav*riskPct;
+
+  $('#szCashRisk').textContent=money2(planned);
+  $('#szPermittedRisk').textContent=money2(Math.max(0,Math.min(planned,capacity)));
+  $('#szBaseHeat').textContent=per(summary.heatPct);
+  $('#szCapacity').textContent=money2(Math.max(0,capacity));
+  $('#sizingActiveHeatBadge').textContent='Base Heat '+per(summary.heatPct);
+  $('#sizingAdjHeatBadge').textContent='Adj Heat '+per(summary.adjustedHeatPct);
+  $('#sizingGrossBadge').textContent='Economic Gross '+per(summary.economicGrossPct);
+
+  if(plan?.invalid){
+    $('#sizingPermission').className='permission-banner';
+    $('#sizingPermissionState').textContent='ENTER VALID SETUP PARAMETERS';
+    $('#sizingPermissionCopy').textContent=plan.invalid;
+    $('#szVerdict').textContent='ENTER SETUP PARAMETERS';
+    $('#szMatrixRows').innerHTML='<tr><td colspan="9" class="empty">'+esc(plan.invalid)+'</td></tr>';
+    return;
+  }
+  if(!plan)return;
+
+  $('#sizingPermission').className='permission-banner '+(plan.verdictClass==='go'?'go':plan.verdictClass==='no'?'no':'');
+  $('#sizingPermissionState').textContent=plan.verdict;
+  const permissionReason=plan.hardBlocked
+    ?`Current portfolio risk leaves no unfunded capacity under the selected guardrails. You may still use this tab to plan the campaign, but it must be funded by reductions/exits first.`
+    :plan.reduced
+      ?`The setup is viable, but portfolio risk or concentration limits reduce executable size to ${plan.executableShares} shares versus ${plan.fullAddShares} planned shares.`
+      :`The setup fits the selected portfolio guardrails. Planned risk ${money2(plan.plannedRisk)} is currently permitted.`;
+  $('#sizingPermissionCopy').textContent=permissionReason;
+
+  $('#szTaxonomy').textContent=`${plan.sector} · ${plan.industry} · ${plan.lev}x`;
+  $('#szVerdict').textContent=plan.verdict;
+  $('#szProfitLabel').textContent=plan.mode==='ADD'?'Potential Incremental Pyramided Profit':'Potential Pyramided Profit';
+  $('#szPyramidProfit').textContent=money2(plan.incrementalProfit);
+  $('#szFlatR').textContent=`1 : ${plan.flatR.toFixed(2)} R`;
+  $('#szFlatProfit').textContent=money2(plan.flatProfit);
+  $('#szFlatShares').textContent=plan.flatShares;
+  $('#szPyramidR').textContent=`1 : ${plan.pyramidR.toFixed(2)} R`;
+  $('#szFinalShares').textContent=plan.finalAddShares;
+  $('#szFinalAvg').textContent=money2(plan.finalRow?.avg||plan.entry);
+  $('#szFlatBox').className='verdict-box '+(plan.flatR>=2?'good':'bad');
+  $('#szPyramidBox').className='verdict-box '+(plan.pyramidR>=2?'good':plan.pyramidR>=1.5?'warn':'bad');
+  $('#szRiskBufferText').textContent=`Initial tranche deploys ${money2(plan.initialIncrementalRisk)} of the ${money2(plan.plannedRisk)} planned campaign risk.`;
+  $('#szCapitalSaved').textContent=money2(plan.reservedRisk);
+
+  const impacts=[
+    ['Base Heat',summary.heatPct,plan.baseAfter,plan.baseAfter<=plan.baseHeatCap],
+    ['Adjusted Heat',summary.adjustedHeatPct,plan.adjAfter,plan.adjAfter<=plan.adjHeatCap],
+    ['Economic Gross',summary.economicGrossPct,plan.grossAfter,plan.grossAfter<=plan.grossCap],
+    ['Sector '+plan.sector,plan.sectorBefore,plan.sectorAfter,plan.sectorAfter<=plan.sectorCap],
+    ['Industry '+plan.industry,plan.industryBefore,plan.industryAfter,plan.industryAfter<=plan.industryCap],
+    ['Position '+(plan.ticker||'New'),plan.positionBefore,plan.positionAfter,plan.positionAfter<=plan.positionCap]
+  ];
+  $('#szImpactGrid').innerHTML=impacts.map(x=>`<div class="impact-card ${x[3]?'pass':'fail'}"><div class="section-title">${esc(x[0])}</div><div class="beforeafter">${per(x[1])} → ${per(x[2])}</div><div class="${x[3]?'green':'red'}" style="font-size:9px;margin-top:4px">${x[3]?'PASS':'LIMIT FAIL'}</div></div>`).join('');
+  const impactPass=impacts.every(x=>x[3]);
+  $('#szImpactVerdict').className='flag '+(impactPass?'ok':'danger');
+  $('#szImpactVerdict').textContent=impactPass?'ALL LIMITS PASS':'CONCENTRATION / RISK FAIL';
+
+  $('#szMatrixMeta').textContent=`Planned risk ${money2(plan.plannedRisk)} · Executable shares now ${plan.executableShares}`;
+  $('#szMatrixSub').textContent=plan.mode==='ADD'
+    ?`Existing active risk ${money2(plan.existing?.riskDollar||0)} plus new campaign risk capped by the planned ${money2(plan.plannedRisk)} USD allocation.`
+    :`Calculated steps keep open campaign risk inside the planned ${money2(plan.plannedRisk)} USD cash-risk budget.`;
+
+  $('#szMatrixRows').innerHTML=plan.rows.map(r=>`<tr>
+    <td><span class="sizing-step ${r.type}">${r.step||'•'}</span></td>
+    <td>${esc(r.label)}</td>
+    <td>${money2(r.trigger)}</td>
+    <td class="${r.add>0?'green':''}">${r.add>0?'+'+r.add:'—'}</td>
+    <td>${r.total}</td>
+    <td class="cyan">${money2(r.avg)}</td>
+    <td class="amber">${money2(r.requiredStop)}</td>
+    <td>${money2(r.activeRisk)}</td>
+    <td>${money2(r.economic)}</td>
+  </tr>`).join('');
+}
+function initSizingControls(){
+  syncPair('szRiskPctRange','szRiskPct');
+  syncPair('szInitialWeightRange','szInitialWeight');
+  syncPair('szTranchesRange','szTranches');
+  syncPair('szIntervalRange','szInterval');
+  ['szMode','szSide','szEntry','szStop','szTarget','szLeverage','szSector','szIndustry','szUnderlying','szBaseHeatCap','szAdjHeatCap','szGrossCap','szPositionCap','szSectorCap','szIndustryCap']
+    .forEach(id=>document.getElementById(id)?.addEventListener('input',renderSizing));
+  document.getElementById('szTicker')?.addEventListener('change',()=>{updateSizingTaxonomyFromTicker();renderSizing()});
+  document.getElementById('szTicker')?.addEventListener('input',()=>renderSizing());
+  document.getElementById('szMode')?.addEventListener('change',()=>{updateSizingTaxonomyFromTicker();renderSizing()});
+}
+
 function masterAIPrompt(){
   return `You are the Chief Portfolio Manager and Tactical Risk Officer at an institutional growth fund. Analyze the complete Portfolio Command Center as a portfolio-management and risk-control system. Use only the evidence contained in this source package.
 
-Evaluate current capital weight, leverage-adjusted economic gross exposure, net directional exposure, base portfolio heat, leverage-adjusted heat, cash, single-position concentration, sector and industry concentration, economic exposure clusters, long versus inverse exposure, stop-loss violations, SMA/trend deterioration, open P/L, position sizing, risk contribution, and the Daily Portfolio Action Memo.
+Evaluate current capital weight, leverage-adjusted economic gross exposure, net directional exposure, base portfolio heat, leverage-adjusted heat, cash, single-position concentration, sector and industry concentration, economic exposure clusters, long versus inverse exposure, stop-loss violations, SMA/trend deterioration, open P/L, risk contribution, the Daily Portfolio Action Memo, and any active Position Sizing / Pyramided Campaign plan. For a sizing plan, evaluate planned cash risk, permitted risk now, traditional R/R, pyramided R/R, leverage-adjusted economic exposure, before/after portfolio impact, and whether the trade must be funded by a trim or exit.
 
 Separate true portfolio risk from simple capital weight, especially for leveraged and inverse ETFs. Identify positions that require EXIT, REDUCE, PROTECT, HOLD, or ADD ELIGIBLE treatment. Check whether apparent diversification is actually concentrated through correlated sector, industry, underlying, leveraged, or inverse exposure. Do not invent market-regime information that is not contained in this page.
 
@@ -844,6 +1310,16 @@ function briefPackage(mode='master'){
     economic_clusters:s.clusterList,
     risk_diagnostics:diagnostics,
     open_positions:s.open.map(positionForBrief),
+    position_sizing_plan:lastSizingPlan && !lastSizingPlan.invalid ? {
+      ticker:lastSizingPlan.ticker,mode:lastSizingPlan.mode,side:lastSizingPlan.side,
+      entry:lastSizingPlan.entry,stop:lastSizingPlan.stop,target:lastSizingPlan.target,
+      leverage:lastSizingPlan.lev,planned_cash_risk:lastSizingPlan.plannedRisk,
+      permitted_cash_risk_now:lastSizingPlan.permittedRisk,
+      traditional_r:lastSizingPlan.flatR,pyramided_r:lastSizingPlan.pyramidR,
+      planned_add_shares:lastSizingPlan.finalAddShares,executable_shares_now:lastSizingPlan.executableShares,
+      verdict:lastSizingPlan.verdict,sector:lastSizingPlan.sector,industry:lastSizingPlan.industry,
+      before_after:{base_heat:lastSizingPlan.baseAfter,adjusted_heat:lastSizingPlan.adjAfter,economic_gross:lastSizingPlan.grossAfter,sector:lastSizingPlan.sectorAfter,industry:lastSizingPlan.industryAfter,position:lastSizingPlan.positionAfter}
+    } : null,
     closed_trades:s.closed.map(p=>({
       ticker:p.ticker,company:p.company,sector:p.sector,industry:p.industry,
       exposure_basis:p.underlying||p.instrument,purchased:p.purchased,exit_date:p.exitDate,
@@ -913,7 +1389,7 @@ function applySortIndicators(kind,key,dir){
   if(th)th.classList.add(dir===1?'sort-asc':'sort-desc');
 }
 function bindSortableHeaders(){
-  const posKeys=['ticker','company','status','action','exposure','direction','leverageMultiple','economicWeight','weight','shares','entry','last','pl','plPct','days','value','atrPct','sma50Pct','trend','stop2','stopPct','riskDollar','riskPctNav','sector','industry'];
+  const posKeys=['ticker','company','status','action','sizing','exposure','direction','leverageMultiple','economicWeight','weight','shares','entry','last','pl','plPct','days','value','atrPct','sma50Pct','trend','stop2','stopPct','riskDollar','riskPctNav','sector','industry'];
   const journalKeys=['ticker','company','exposure','purchased','exitDate','entry','exitPrice','realizedPL','realizedPct','days','sector','industry'];
   [['positionsTable','positions',posKeys],['journalTable','journal',journalKeys]].forEach(([id,kind,keys])=>{
     const table=document.getElementById(id); if(!table)return;
@@ -927,7 +1403,7 @@ function bindSortableHeaders(){
 function sortValuePosition(p,key){
   const a=actionFor(p);
   const map={
-    action:a.label,exposure:p.underlying||p.instrument,direction:directionLabel(p),
+    action:a.label,sizing:(!['EXIT','REDUCE','PROTECT'].includes(a.label)?'SIZE':'—'),exposure:p.underlying||p.instrument,direction:directionLabel(p),
     economicWeight:summary.nav?Math.abs(p.economicExposure)/summary.nav:0,
     riskPctNav:summary.nav?p.riskDollar/summary.nav:0
   };
@@ -962,6 +1438,7 @@ $$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('a
 $('#refreshBtn').onclick=load;$('#search').oninput=renderTables;$('#statusFilter').onchange=renderTables;
 $('#themeBtn').onclick=()=>{const light=document.body.classList.toggle('light');document.documentElement.style.setProperty('--bg',light?'#eef3f8':'#071018');document.documentElement.style.setProperty('--panel',light?'#ffffff':'#0d1726');document.documentElement.style.setProperty('--panel2',light?'#f5f8fc':'#101c2d');document.documentElement.style.setProperty('--line',light?'#ced8e5':'#203047');document.documentElement.style.setProperty('--text',light?'#142235':'#dce8f5');document.documentElement.style.setProperty('--muted',light?'#66778c':'#7f91a8');$('#themeBtn').textContent=light?'Dark':'Light';renderCharts()};
 bindSortableHeaders();
+initSizingControls();
 load();
 </script>
 </body>
