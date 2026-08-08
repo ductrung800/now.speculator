@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOW Institutional Research Terminal v5.3.0 Screener Bridge</title>
+<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{
+  --bg:#0b1119;--panel:#131c28;--panel2:#1b2634;--panel3:#223044;--line:#304055;
+  --text:#e8eef6;--muted:#91a0b4;--blue:#1d6fb5;--teal:#0f8f89;--green:#148b57;
+  --amber:#b87811;--red:#b83d4a;--purple:#7653a7;--cyan:#2ba6b7;--chart:#0b1119;
+  --shadow:0 8px 24px rgba(0,0,0,.16)
+}
+[data-theme=light]{
+  --bg:#f3f6fa;--panel:#fff;--panel2:#edf2f7;--panel3:#e3ebf4;--line:#d6dfeb;
+  --text:#172235;--muted:#66768b;--blue:#0c5fa6;--teal:#0c7d78;--green:#168653;
+  --amber:#ad7000;--red:#b33743;--purple:#714ca2;--cyan:#147f93;--chart:#fff;
+  --shadow:0 8px 24px rgba(43,60,80,.08)
+}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:12px/1.42 Inter,Arial,sans-serif}
+button,input,select,textarea{font:inherit}.app{max-width:1920px;margin:auto;padding:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px}.eyebrow{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:900}h1{margin:2px 0 3px;font-size:22px;line-height:1.15}.sub{color:var(--muted);font-size:10px}.actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:7px 10px;border-radius:7px;cursor:pointer;font-weight:700}.btn:hover{filter:brightness(1.07)}.btn.primary{background:var(--blue);color:#fff;border-color:transparent}.btn.teal{background:var(--teal);color:#fff;border-color:transparent}.btn.warn{background:var(--amber);color:#fff;border-color:transparent}.btn.danger{background:var(--red);color:#fff;border-color:transparent}
+.market{display:grid;grid-template-columns:2fr repeat(6,1fr);gap:7px;margin-top:8px}.tile{padding:9px 11px;min-height:72px}.hero{background:linear-gradient(135deg,#123d68,#0d6e78);color:#fff;border:0}.k{font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:900}.hero .k,.hero .n{color:#d8eff5}.v{font-size:17px;font-weight:900;margin-top:3px}.n{font-size:9.5px;color:var(--muted)}.tone-good{color:#4bd495}.tone-warn{color:#f0ba48}.tone-bad{color:#ff7583}.tone-info{color:#68aaf3}
+.summary{display:grid;grid-template-columns:2fr repeat(5,1fr);gap:7px;margin-top:8px}.summary .tile{min-height:63px}.hero2{background:linear-gradient(135deg,#133d66,#0c6b74);color:#fff;border:0}.hero2 .k,.hero2 .n{color:#d7edf4}
+.section{margin-top:8px;overflow:hidden}.head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--panel2);border-bottom:1px solid var(--line)}.head-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.viewtabs{display:flex;gap:5px}.viewtab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:5px 8px;border-radius:6px;cursor:pointer;font-weight:800}.viewtab.active{background:var(--teal);color:#fff;border-color:transparent}
+.pipeline{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:8px}.stage{padding:8px;text-align:center;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--panel)}.stage:hover,.stage.active{background:var(--panel2)}.stage.active{outline:2px solid var(--teal)}.count{font-size:18px;font-weight:900}.stage small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+.workspace{display:grid;grid-template-columns:330px minmax(0,1fr);gap:8px;margin-top:8px;align-items:start}.workspace>aside{display:flex;flex-direction:column;min-height:0;height:auto;overflow:hidden}.filters{padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-bottom:1px solid var(--line)}.filters input,.filters select{width:100%;padding:7px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:7px}.watchlist{flex:1;min-height:0;max-height:none;overflow:auto;overscroll-behavior:contain}.stock{display:grid;grid-template-columns:70px 1fr 54px;gap:7px;padding:9px;border-bottom:1px solid var(--line);cursor:pointer}.stock:hover,.stock.selected{background:var(--panel2)}.ticker{font-weight:900;font-size:13px}.name{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{text-align:right;font-weight:900;font-size:13px}.badge{display:inline-block;padding:2px 6px;border-radius:999px;color:#fff;font-size:8px;font-weight:900}.b-discovery{background:var(--purple)}.b-ready{background:var(--blue)}.b-start,.b-core,.b-add{background:var(--green)}.b-protect{background:var(--amber)}.b-trim,.b-exit{background:var(--red)}.source-chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:1px 5px;color:var(--muted);font-size:8px;margin-left:4px}
+.chartPanel{height:610px;overflow:hidden}.chartHead{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--panel2);border-bottom:1px solid var(--line)}.chartHead .right{display:flex;gap:6px;align-items:center}#chart{height:568px;position:relative}.chart-empty{height:100%;display:grid;place-items:center;color:var(--muted);padding:30px;text-align:center}.decision-float{position:absolute;right:12px;top:12px;z-index:4;width:210px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:9px;backdrop-filter:blur(4px);overflow:hidden}.decision-float h3{margin:0;padding:7px 9px;background:var(--panel2);font-size:10px}.dfrow{display:flex;justify-content:space-between;gap:8px;padding:5px 8px;border-top:1px solid var(--line);font-size:9px}.dfrow b{text-align:right}
+.command{display:grid;grid-template-columns:1.15fr 1.45fr 1.8fr;margin-top:8px;overflow:hidden}.group{border-right:1px solid var(--line)}.group:last-child{border-right:0}.gt{padding:6px;color:#fff;text-align:center;font-weight:900;letter-spacing:.04em}.context .gt{background:var(--blue)}.opportunity .gt{background:var(--teal)}.execution .gt{background:var(--green)}.grid{display:grid;grid-template-columns:repeat(4,1fr)}.cell{padding:7px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:55px}.cell:nth-child(4n){border-right:0}.cv{font-weight:900;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.origin{font-size:8px;color:var(--muted);margin-top:2px}.origin.imported{color:#66c7e0}.origin.derived{color:#e0b85f}.origin.governed{color:#66d59d}
+.lower{display:grid;grid-template-columns:1.05fr 1fr 1fr;gap:8px;margin-top:8px}.card h3{font-size:11px;margin:0;padding:8px 10px;background:var(--panel2);border-bottom:1px solid var(--line)}.metrics{display:grid;grid-template-columns:1fr 1fr;padding:6px}.metric{padding:7px;border-bottom:1px solid var(--line)}.metric:nth-child(odd){border-right:1px solid var(--line)}.bar{height:5px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:5px}.bar span{display:block;height:100%;background:var(--teal)}.check,.planrow{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line)}.check span:last-child,.planrow span:last-child{text-align:right}.pass{color:#42cc88;font-weight:900}.warnText{color:#e4aa34;font-weight:900}.fail{color:#ef6977;font-weight:900}
+.raw{margin-top:8px}.raw details{border-radius:10px;overflow:hidden}.raw summary{cursor:pointer;padding:9px 10px;background:var(--panel2);font-weight:900}.rawtable{width:100%;border-collapse:collapse}.rawtable th,.rawtable td{padding:7px 9px;border-top:1px solid var(--line);text-align:left}.rawtable th{width:42%;color:var(--muted);font-size:9px;text-transform:uppercase}
+.kanban{display:none;margin-top:8px}.kanban.active{display:block}.desk.hidden{display:none}.kanban-wrap{display:grid;grid-template-columns:repeat(8,minmax(220px,1fr));gap:8px;padding:8px;overflow-x:auto;align-items:start}.lane{background:var(--panel2);border:1px solid var(--line);border-radius:9px;min-height:420px}.lane-head{display:flex;justify-content:space-between;align-items:center;padding:8px 9px;border-bottom:1px solid var(--line);font-weight:900}.lane-cards{padding:7px;display:grid;gap:7px}.kcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px;cursor:pointer}.kcard:hover{transform:translateY(-1px);border-color:var(--teal)}.kcard-top{display:flex;justify-content:space-between;align-items:center}.kcard .meta{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;font-size:9px;color:var(--muted)}.kcard .meta b{color:var(--text)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.56);display:none;align-items:center;justify-content:center;z-index:100}.modal.open{display:flex}.modal-card{width:min(760px,94vw);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,.42)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}.form{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px}.form label{display:grid;gap:4px;color:var(--muted);font-size:9px;text-transform:uppercase;font-weight:900}.form input,.form select,.form textarea{padding:8px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}.form .wide{grid-column:1/-1}.modal-actions{display:flex;justify-content:flex-end;gap:7px;padding:0 12px 12px}.source-links{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:8px}.source-link{display:block;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px}.source-link b{color:#66aef5}.source-link small{display:block;color:var(--muted);margin-top:2px}.footer{text-align:center;color:var(--muted);font-size:9px;padding:10px}
+
+.provenance{margin-top:8px;overflow:hidden}.prov-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;background:linear-gradient(90deg,color-mix(in srgb,var(--teal) 35%,var(--panel2)),var(--panel2));border-bottom:1px solid var(--line)}.prov-title{font-size:13px;font-weight:900}.prov-meta{display:flex;gap:6px;flex-wrap:wrap}.prov-chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 7px;font-size:9px}.prov-body{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;padding:8px}.prov-stat{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 9px}.prov-stat b{display:block;font-size:13px;margin-top:2px}.adapter-registry{margin-top:8px;overflow:hidden}.adapter-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:8px}.adapter-card{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:8px}.adapter-card.active{border-color:var(--teal);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--teal) 35%,transparent)}.adapter-card .name{font-weight:900;font-size:10px}.adapter-card .status{font-size:8px;color:var(--muted);margin-top:2px}.adapter-card .count{font-size:18px;font-weight:950;margin-top:4px}.adapter-card .signals{font-size:8px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:1200px){.adapter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:760px){.adapter-grid{grid-template-columns:1fr}}
+.source-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}.scan-badge{display:inline-block;padding:2px 5px;border-radius:999px;background:color-mix(in srgb,var(--teal) 35%,var(--panel2));border:1px solid color-mix(in srgb,var(--teal) 55%,var(--line));font-size:7.5px;font-weight:900;color:var(--text)}.scan-badge.latest{background:color-mix(in srgb,var(--amber) 40%,var(--panel2));border-color:var(--amber)}
+@media(max-width:1400px){.market,.summary{grid-template-columns:repeat(4,1fr)}.hero,.hero2{grid-column:span 2}.workspace{grid-template-columns:300px minmax(0,1fr)}.grid{grid-template-columns:repeat(3,1fr)}.cell:nth-child(4n){border-right:1px solid var(--line)}.cell:nth-child(3n){border-right:0}}
+@media(max-width:1100px){.workspace{grid-template-columns:1fr}.workspace>aside{height:auto!important}.watchlist{flex:none;max-height:420px}.command,.lower{grid-template-columns:1fr}.market,.summary{grid-template-columns:repeat(2,1fr)}.hero,.hero2{grid-column:span 2}.source-links{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.prov-body{grid-template-columns:1fr 1fr}.top{align-items:flex-start;flex-direction:column}.market,.summary{grid-template-columns:1fr}.hero,.hero2{grid-column:span 1}.pipeline{grid-template-columns:repeat(2,1fr)}.filters,.form{grid-template-columns:1fr}.source-links{grid-template-columns:1fr}.decision-float{display:none}}
+
+.intel-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:8px}.intel-card{padding:8px 10px}.intel-card .v{font-size:15px}.tableView,.ledgerView{display:none;margin-top:8px}.tableView.active,.ledgerView.active{display:block}.institutional-table,.ledger-table{width:100%;border-collapse:collapse;min-width:1650px}.institutional-table th,.institutional-table td,.ledger-table th,.ledger-table td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.institutional-table th,.ledger-table th{position:sticky;top:0;background:var(--panel2);z-index:2;color:var(--muted);font-size:8px;text-transform:uppercase}.table-wrap{overflow:auto;max-height:780px}.institutional-table tr{cursor:pointer}.institutional-table tr:hover{background:var(--panel2)}.universe-chip{display:inline-block;padding:2px 5px;border-radius:999px;background:var(--panel3);border:1px solid var(--line);font-size:8px}.scan-history{display:grid;gap:6px;padding:8px}.history-row{display:grid;grid-template-columns:140px 1fr 90px;gap:8px;padding:7px;border:1px solid var(--line);border-radius:7px;background:var(--panel2)}.source-dist{display:flex;gap:5px;flex-wrap:wrap;padding:8px}.source-dist .prov-chip{cursor:pointer}.source-dist .prov-chip:hover{border-color:var(--teal)}@media(max-width:1100px){.intel-strip{grid-template-columns:repeat(2,1fr)}}
+
+.ticker-os{margin-top:8px;overflow:hidden}.ticker-os-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;padding:8px}.os-card{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:9px}.os-card h4{margin:0 0 7px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.05em}.journey{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.journey-step{padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:var(--panel);font-size:9px;font-weight:900}.journey-step.hit{background:color-mix(in srgb,var(--green) 30%,var(--panel));border-color:var(--green)}.journey-arrow{color:var(--muted)}.confirm-grid{display:flex;gap:5px;flex-wrap:wrap}.confirm-badge{padding:4px 7px;border-radius:999px;border:1px solid var(--line);font-size:8px;font-weight:900;background:var(--panel)}.confirm-badge.on{background:color-mix(in srgb,var(--teal) 32%,var(--panel));border-color:var(--teal)}.timeline{display:grid;gap:6px}.timeline-item{display:grid;grid-template-columns:110px 1fr 90px;gap:8px;align-items:center;padding:7px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.timeline-item .family{font-size:8px;color:var(--muted);text-transform:uppercase}.strength{font-size:27px;font-weight:950}.strength-note{font-size:9px;color:var(--muted)}@media(max-width:1100px){.ticker-os-grid{grid-template-columns:1fr}}
+
+.v5nav{display:flex;align-items:center;gap:6px;padding:7px;margin-bottom:8px}.v5nav button{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:7px;padding:7px 10px;font-weight:800;font-size:11px}.v5nav button:disabled{opacity:.45}.v5nav .v5nav-active{background:var(--teal);color:white;border-color:transparent}.v5phase{margin-left:auto;color:var(--teal);font-size:10px;font-weight:900;letter-spacing:.08em}
+
+.screener-queue{display:grid;grid-template-columns:1.45fr repeat(4,1fr);gap:7px;margin-top:8px}.queue-card{padding:9px 11px;min-height:70px}.queue-hero{background:linear-gradient(135deg,color-mix(in srgb,var(--blue) 75%,#111),color-mix(in srgb,var(--teal) 75%,#111));color:#fff;border:0}.queue-hero .k,.queue-hero .n{color:#dceff5}.queue-card.clickable{cursor:pointer}.queue-card.clickable:hover{filter:brightness(1.08)}.quickfilters{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;padding-top:1px}.quickfilters .btn{padding:6px 8px;font-size:9px}.entry-tier{display:inline-block;padding:2px 6px;border-radius:999px;font-size:8px;font-weight:900;border:1px solid var(--line)}.entry-tier.elite{background:color-mix(in srgb,var(--green) 45%,var(--panel));border-color:var(--green)}.entry-tier.strong{background:color-mix(in srgb,var(--teal) 38%,var(--panel));border-color:var(--teal)}.entry-tier.review{background:color-mix(in srgb,var(--amber) 35%,var(--panel));border-color:var(--amber)}.entry-tier.below{background:var(--panel2);color:var(--muted)}.entry-meta{font-size:8px;color:var(--muted);margin-top:2px}.stock .entry-meta b{color:var(--text)}@media(max-width:1100px){.screener-queue{grid-template-columns:repeat(2,1fr)}.queue-hero{grid-column:span 2}}@media(max-width:700px){.screener-queue{grid-template-columns:1fr}.queue-hero{grid-column:span 1}}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="panel top">
+  <div>
+    <div class="eyebrow">Institutional Research Terminal · Modular Foundation</div>
+    <h1>NOW Institutional Research Terminal v5.3.0 Screener Bridge</h1>
+    <div class="sub">Market permission → opportunity ranking → chart validation → governed execution</div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="themeBtn">Toggle theme</button>
+    <button class="btn" id="refreshBtn">Refresh import</button>
+    <button class="btn teal" id="entryScanBtn">Latest Entry Scan</button>
+    <button class="btn danger" id="resetImportsBtn">Reset all imports</button>
+    <button class="btn teal" id="marketBtn">Sync Market OS</button>
+    <button class="btn primary" id="openTVBtn">Open selected in TradingView</button>
+  </div>
+</header>
+<nav class="panel v5nav" aria-label="Terminal modules">
+  <button class="v5nav-active">Decision Desk</button><button>Scan Ledger</button><button disabled>Research</button><button disabled>Portfolio</button><button disabled>Journal</button><button disabled>Market OS</button>
+  <span class="v5phase">PHASE 2.3 · NOW SCREENER v11.6.18 BRIDGE</span>
+</nav>
+
+
+<section class="market" id="marketStrip">
+  <div class="panel tile hero"><div class="k">Master market policy</div><div class="v" id="marketRegime">UNSYNCED</div><div class="n" id="marketNote">Ticker decisions remain Pine-led until market context is synced.</div></div>
+  <div class="panel tile"><div class="k">Permission</div><div class="v" id="marketPermission">—</div><div class="n">Portfolio posture</div></div>
+  <div class="panel tile"><div class="k">Exposure</div><div class="v" id="marketExposure">—</div><div class="n">Target gross range</div></div>
+  <div class="panel tile"><div class="k">Buy switch</div><div class="v" id="marketBuySwitch">—</div><div class="n">New-risk gate</div></div>
+  <div class="panel tile"><div class="k">Breadth</div><div class="v" id="marketBreadth">—</div><div class="n">Participation state</div></div>
+  <div class="panel tile"><div class="k">Risk budget</div><div class="v" id="marketRiskBudget">—</div><div class="n">Position-size governor</div></div>
+  <div class="panel tile"><div class="k">Market score</div><div class="v" id="marketScore">—</div><div class="n" id="marketFreshness">No source detected</div></div>
+</section>
+
+<section class="summary">
+  <div class="panel tile hero2"><div class="k">Imported Pine universe</div><div class="v" id="heroValue">WAITING FOR SCREENER</div><div class="n" id="heroNote">Use the NOW v5.2 extension to merge any supported TradingView Pine Screener batch into the Terminal.</div></div>
+  <div class="panel tile"><div class="k">Candidates</div><div class="v" id="candidateCount">0</div><div class="n">Unique imported tickers</div></div>
+  <div class="panel tile"><div class="k">Actionable</div><div class="v" id="actionableCount">0</div><div class="n">Start / Core / Add after governance</div></div>
+  <div class="panel tile"><div class="k">Risk review</div><div class="v" id="riskCount">0</div><div class="n">Protect / Trim / Exit</div></div>
+  <div class="panel tile"><div class="k">Timeframe</div><div class="v" id="timeframeValue">1D</div><div class="n">Imported scan timeframe</div></div>
+  <div class="panel tile"><div class="k">Freshness</div><div class="v" id="freshnessValue">—</div><div class="n">Latest extension import</div></div>
+</section>
+
+<section class="panel provenance" id="provenancePanel">
+  <div class="prov-head"><div><div class="k">Latest import / scan provenance</div><div class="prov-title" id="provTitle">No scan batch imported</div></div><div class="prov-meta" id="provChips"></div></div>
+  <div class="prov-body">
+    <div class="prov-stat"><span class="k">Batch tickers</span><b id="provTickers">0</b><span class="n">Rows in selected batch</span></div>
+    <div class="prov-stat"><span class="k">New to history</span><b id="provNew">0</b><span class="n">First seen in this batch</span></div>
+    <div class="prov-stat"><span class="k">Already present</span><b id="provExisting">0</b><span class="n">Seen in earlier batches</span></div>
+    <div class="prov-stat"><span class="k">Active filters</span><b id="provFilterCount">0</b><span class="n" id="provFilterText">—</span></div>
+    <div class="prov-stat"><span class="k">Batch ID</span><b id="provBatchId">—</b><span class="n" id="provImportedAt">—</span></div>
+  </div>
+</section>
+
+<section class="intel-strip" id="intelStrip">
+ <div class="panel intel-card"><div class="k">Active tickers</div><div class="v" id="intelActive">0</div><div class="n">Persistent universe</div></div>
+ <div class="panel intel-card"><div class="k">Scan sources</div><div class="v" id="intelSources">0</div><div class="n">Distinct filters</div></div>
+ <div class="panel intel-card"><div class="k">New today</div><div class="v" id="intelNewToday">0</div><div class="n">First-seen today</div></div>
+ <div class="panel intel-card"><div class="k">Multi-source</div><div class="v" id="intelMulti">0</div><div class="n">2+ scan families</div></div>
+ <div class="panel intel-card"><div class="k">Fresh ≤3</div><div class="v" id="intelFresh3">0</div><div class="n">Current opportunities</div></div>
+ <div class="panel intel-card"><div class="k">Fresh ≤8</div><div class="v" id="intelFresh8">0</div><div class="n">Still actionable</div></div>
+ <div class="panel intel-card"><div class="k">Risk review</div><div class="v" id="intelRisk">0</div><div class="n">Protect / Trim / Exit</div></div>
+</section>
+<section class="screener-queue" id="screenerQueue">
+  <div class="panel queue-card queue-hero"><div class="k">NOW Screener v11.6.18 intake</div><div class="v" id="queueImported">0 ENTRY-NOW NAMES</div><div class="n" id="queueNote">Waiting for ENTRY NOW / ENTRY STACK fields.</div></div>
+  <div class="panel queue-card clickable" data-queue-tier="ELITE"><div class="k">Immediate review</div><div class="v" id="queueElite">0</div><div class="n">ENTRY STACK ≥90</div></div>
+  <div class="panel queue-card clickable" data-queue-tier="STRONG"><div class="k">Strong secondary</div><div class="v" id="queueStrong">0</div><div class="n">ENTRY STACK 85–89.99</div></div>
+  <div class="panel queue-card clickable" data-queue-tier="REVIEW"><div class="k">Review tier</div><div class="v" id="queueReview">0</div><div class="n">ENTRY STACK 80–84.99</div></div>
+  <div class="panel queue-card"><div class="k">Damage veto clear</div><div class="v" id="queueClean">0</div><div class="n">VETO = 0 / clear</div></div>
+</section>
+<section class="panel section"><div class="head"><b>Scan Source Distribution</b><span class="n">Click a source to filter the active universe.</span></div><div class="source-dist" id="sourceDistribution"></div></section>
+<section class="panel adapter-registry"><div class="head"><div><b>Screener Family Adapter Registry</b><div class="n">Every import is detected, normalized and preserved through a family-specific adapter. Family counts overlap because one ticker may belong to multiple adapters.</div></div><span class="prov-chip" id="adapterSummary">0 active adapters</span></div><div class="adapter-grid" id="adapterRegistry"></div></section>
+
+<section class="panel section">
+  <div class="head"><b>Opportunity Pipeline</b><div class="head-right"><span class="n">Click a stage to filter.</span><div class="viewtabs"><button class="viewtab active" data-view="desk">Decision Desk</button><button class="viewtab" data-view="table">Table View</button><button class="viewtab" data-view="kanban">Kanban Pipeline</button><button class="viewtab" data-view="ledger">Scan Ledger</button></div></div></div>
+  <div class="pipeline" id="pipeline"></div>
+</section>
+
+<div class="desk" id="deskView">
+  <div class="workspace">
+    <aside class="panel">
+      <div class="head"><b>Qualified Watchlist</b><span class="n" id="watchCount"></span></div>
+      <div class="filters">
+        <input id="searchInput" placeholder="Ticker, driver or raw field">
+        <select id="stageFilter"><option value="">All stages</option></select>
+        <select id="gradeFilter"><option value="">All grades</option><option>A+</option><option>A</option><option>B</option><option>C</option><option>&lt;C</option></select>
+        <select id="sortSelect"><option value="score">ENTRY STACK / score high-low</option><option value="conviction">Conviction high-low</option><option value="rs">Leadership RS high-low</option><option value="rvol">RVOL high-low</option><option value="ticker">Ticker A-Z</option><option value="risk">Risk first</option></select>
+        <select id="batchFilter"><option value="ACTIVE">Active cumulative universe</option><option value="LATEST">Latest import only</option><option value="ALL">All import history</option></select>
+        <select id="sourceFilter"><option value="">All scan sources</option></select><select id="universeFilter"><option value="">All universes</option><option>SPY</option><option>QQQ</option><option>IWM</option><option>DIA</option><option>ETFs</option><option>Leveraged ETFs</option><option>Themes</option><option>Imported Pine</option></select>
+        <select id="entryTierFilter"><option value="">All entry tiers</option><option value="ELITE">Elite ≥90</option><option value="STRONG">Strong 85–89.99</option><option value="REVIEW">Review 80–84.99</option><option value="BELOW">Below 80</option></select>
+        <select id="entryNowFilter"><option value="">Entry Now: any</option><option value="1">ENTRY NOW FRESH = 1</option></select>
+        <select id="entryTypeFilter"><option value="">All entry types</option><option value="P1">P1</option><option value="P2">P2</option><option value="DONCHIAN">Donchian</option><option value="DARVAS">Darvas</option><option value="BGU">BGU</option><option value="VCP">VCP</option><option value="POCKET PIVOT">Pocket Pivot</option><option value="IPO">IPO</option><option value="RECLAIM">Reclaim</option><option value="BREAKOUT">Breakout</option><option value="PREMIUM">Premium</option></select>
+        <select id="masterActionFilter"><option value="">All Master Actions</option><option>AVOID</option><option>WATCH</option><option>START</option><option>BUY</option><option>HOLD</option><option>SCALE</option><option>ADD</option><option>PROTECT</option><option>TRIM</option><option>EXIT</option></select>
+        <select id="damageFilter"><option value="">Damage veto: any</option><option value="CLEAR">Damage veto = 0</option><option value="BLOCKED">Damage veto &gt; 0</option></select>
+        <input id="minStackInput" type="number" min="0" max="100" step="1" placeholder="Min ENTRY STACK">
+        <div class="quickfilters"><button class="btn teal" id="elitePresetBtn" type="button">Elite Entry ≥90</button><button class="btn" id="qualityPresetBtn" type="button">Quality ≥85</button><button class="btn" id="allEntryPresetBtn" type="button">All Entry Now</button><button class="btn" id="clearTriageBtn" type="button">Clear triage</button></div>
+      </div>
+      <div class="watchlist" id="watchlist"></div>
+    </aside>
+
+    <main>
+      <section class="panel chartPanel">
+        <div class="chartHead"><div><b id="chartTitle">No ticker selected</b> <span id="stageBadge"></span><span class="source-chip" id="scoreSource"></span></div><div class="right"><button class="btn" id="prevBtn">Previous</button><button class="btn" id="nextBtn">Next</button></div></div>
+        <div id="chart"></div>
+      </section>
+
+      <section class="panel command">
+        <div class="group context"><div class="gt">CONTEXT</div><div class="grid" id="contextGrid"></div></div>
+        <div class="group opportunity"><div class="gt">OPPORTUNITY</div><div class="grid" id="opportunityGrid"></div></div>
+        <div class="group execution"><div class="gt">EXECUTION</div><div class="grid" id="executionGrid"></div></div>
+      </section>
+
+      <div class="lower">
+        <section class="panel card"><h3>Calculated Trading Metrics</h3><div class="metrics" id="metrics"></div></section>
+        <section class="panel card"><h3>Validation Checklist</h3><div id="checks"></div></section>
+        <section class="panel card"><h3>Governed Trade Plan</h3><div id="plan"></div></section>
+      </div>
+
+      <section class="panel ticker-os"><div class="head"><b>Ticker Operating System</b><span class="n">Lifecycle path · scan families · confirmation strength</span></div><div class="ticker-os-grid"><div class="os-card"><h4>Promotion path</h4><div class="journey" id="tickerJourney"></div></div><div class="os-card"><h4>Multi-confirmation stack</h4><div class="confirm-grid" id="confirmationStack"></div></div><div class="os-card"><h4>Opportunity strength</h4><div class="strength" id="tickerStrength">0</div><div class="strength-note" id="tickerStrengthNote">No scan history</div></div></div></section><section class="panel raw"><details open><summary>Ticker Scan Timeline</summary><div class="scan-history" id="scanHistory"></div></details></section><section class="panel raw"><details><summary>All imported Pine Screener fields</summary><div id="rawFields"></div></details></section>
+    </main>
+  </div>
+</div>
+
+<section class="panel tableView" id="tableView"><div class="head"><b>Institutional Comparison Table</b><span class="n">Universe membership and scan provenance remain separate.</span></div><div class="table-wrap"><table class="institutional-table"><thead><tr><th>Ticker</th><th>Universe</th><th>Stage</th><th>Master Action</th><th>Governed</th><th>Entry Type</th><th>Entry Stack</th><th>Entry Grade</th><th>Tier</th><th>Damage Veto</th><th>Conviction</th><th>Leadership RS</th><th>RVOL</th><th>Participation</th><th>Freshness</th><th>Scan Sources</th><th>Risk</th><th>Allocation</th><th>Next</th></tr></thead><tbody id="institutionalTableBody"></tbody></table></div></section>
+<section class="panel ledgerView" id="ledgerView"><div class="head"><b>Chronological Scan Ledger</b><span class="n">Every batch is retained in IndexedDB.</span></div><div class="table-wrap"><table class="ledger-table"><thead><tr><th>Imported</th><th>Family</th><th>Signal</th><th>Scan label</th><th>Rows</th><th>Timeframe</th><th>Script</th><th>Active filters</th><th>Batch ID</th></tr></thead><tbody id="scanLedgerBody"></tbody></table></div></section>
+<section class="panel kanban" id="kanbanView">
+  <div class="head"><b>Lifecycle Kanban</b><span class="n">Raw Pine stage is preserved; governed command is shown on each card.</span></div>
+  <div class="kanban-wrap" id="kanbanBoard"></div>
+</section>
+
+<section class="panel section">
+  <div class="head"><b>Upstream Market Intelligence</b><span class="n">These pages determine portfolio permission; the Workbench handles ticker-level action.</span></div>
+  <div class="source-links">
+    <a class="source-link" href="nasi_institutional_command_center.html" target="_blank"><b>NASDAQ Institutional Breadth Laboratory</b><small>NASI, McClellan and participation.</small></a>
+    <a class="source-link" href="index.html" target="_blank"><b>Institutional Market Operating System</b><small>Regime, exposure and permission.</small></a>
+    <a class="source-link" href="stockbee_market_monitor_live.html" target="_blank"><b>Stockbee Market Monitor</b><small>Momentum, breadth and danger signals.</small></a>
+    <a class="source-link" href="Capital_Allocation_Regime.html" target="_blank"><b>Capital Allocation Regime</b><small>Macro, factors and risk appetite.</small></a>
+  </div>
+</section>
+
+<div class="footer">v5.3.0 · NOW Screener v11.6.18 bridge.  Verified Pine provenance with modular Adapter Registry. Structure Pivot and VCS normalization are active alongside Darvas, NOW, Donchian, EMA Squeeze, The Strat, FTFC/AVWAP and RS/Volume detection. Ticker Operating System. Persistent cumulative scan ledger. New imports merge into the active universe, preserve multi-scan provenance and never silently remove earlier candidates. Browser-calculated chart metrics and market governance are supporting decision layers and never rewrite the raw screener record.</div>
+</div>
+
+<div class="modal" id="marketModal" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-head"><b>Market OS Integration</b><button class="btn" id="closeMarket">Close</button></div>
+    <div class="form">
+      <label>Regime<input id="fRegime" placeholder="ROTATION / CHOP"></label>
+      <label>Permission<input id="fPermission" placeholder="SELECTIVE / REDUCED"></label>
+      <label>Exposure<input id="fExposure" placeholder="30–50%"></label>
+      <label>Buy switch<input id="fBuySwitch" placeholder="ON · SELECTIVE"></label>
+      <label>Breadth<input id="fBreadth" placeholder="TRANSITION"></label>
+      <label>Risk budget<input id="fRiskBudget" placeholder="HALF"></label>
+      <label>Market score<input id="fScore" placeholder="60"></label>
+      <label>As of<input id="fAsOf" type="date"></label>
+      <label class="wide">Source<input id="fSource" placeholder="Institutional Market OS"></label>
+      <label class="wide">Paste market JSON (optional)<textarea id="fJson" rows="6" placeholder='{"regime":"ROTATION / CHOP","permission":"SELECTIVE"}'></textarea></label>
+    </div>
+    <div class="modal-actions"><button class="btn" id="autoDetectBtn">Auto-detect same-origin data</button><button class="btn danger" id="clearMarketBtn">Clear</button><button class="btn primary" id="saveMarketBtn">Save policy</button></div>
+  </div>
+</div>
+
+<script>
+(function(global){
+'use strict';
+const NOW=global.NOWTerminal=global.NOWTerminal||{};
+NOW.version='5.3.0-screener-v11.6.18-bridge';
+NOW.events=new EventTarget();
+NOW.emit=(name,detail)=>NOW.events.dispatchEvent(new CustomEvent(name,{detail}));
+NOW.on=(name,handler)=>NOW.events.addEventListener(name,e=>handler(e.detail));
+NOW.config={dbName:'NOWResearchTerminalDB',dbVersion:1,legacyDbName:'NOWWorkbenchDB'};
+NOW.modules={};
+NOW.register=(name,api)=>{NOW.modules[name]=api;NOW.emit('module:registered',{name});return api};
+NOW.get=name=>NOW.modules[name];
+NOW.register('Storage',{
+ async open(){return new Promise((resolve,reject)=>{const q=indexedDB.open(NOW.config.dbName,NOW.config.dbVersion);q.onupgradeneeded=()=>{const db=q.result;['imports','tickers','market','portfolio','journal','meta'].forEach(n=>{if(!db.objectStoreNames.contains(n))db.createObjectStore(n)})};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)})},
+ async put(store,key,value){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).put(value,key);tx.oncomplete=()=>{db.close();resolve(value)};tx.onerror=()=>{db.close();reject(tx.error)}})},
+ async get(store,key){const db=await this.open();return new Promise((resolve,reject)=>{const tx=db.transaction(store,'readonly'),q=tx.objectStore(store).get(key);q.onsuccess=()=>{db.close();resolve(q.result)};q.onerror=()=>{db.close();reject(q.error)}})}
+});
+NOW.register('Importer',{adapters:new Map(),registerAdapter(id,adapter){this.adapters.set(id,adapter)},detect(payload){for(const [id,a] of this.adapters){if(a.detect?.(payload))return id}return'generic'},normalize(payload){return{batchId:payload?.batchId||crypto.randomUUID(),importedAt:payload?.importedAt||new Date().toISOString(),scriptName:payload?.scriptName||'Unknown Pine Script',scanLabel:payload?.scanLabel||payload?.filterName||'PINE SCREENER IMPORT',timeframe:payload?.timeframe||'1D',filters:Array.isArray(payload?.filters)?payload.filters:[],records:Array.isArray(payload?.records)?payload.records:[]}}});
+NOW.register('MarketOS',{current:null,set(policy){this.current=policy;NOW.emit('market:changed',policy)},get(){return this.current}});
+NOW.register('TickerEngine',{stages:['DISCOVERY','READY','START','CORE','ADD','PROTECT','TRIM','EXIT'],evaluate(record){return record}});
+NOW.register('DecisionEngine',{govern(raw,market){return{raw,market,command:raw?.command||'WATCH'}}});
+NOW.register('ChartEngine',{render(){NOW.emit('chart:render')}});
+NOW.register('Portfolio',{positions:new Map()});
+NOW.register('Journal',{entries:[]});
+console.info('[NOW Terminal]',NOW.version,'platform loaded');
+})(window);
+
+</script>
+<script>
+'use strict';
+const IMPORT_KEYS=['now_workbench_import_v3','now_workbench_import_v2'];
+const MARKET_KEY='now_workbench_market_context_v1';
+const BATCHES_KEY='now_workbench_import_batches_v1';
+const STAGES=['DISCOVERY','READY','START','CORE','ADD','PROTECT','TRIM','EXIT'];
+const STAGE_NOTE={DISCOVERY:'Early setup',READY:'Checks improving',START:'Initial campaign',CORE:'Trend confirmed',ADD:'Scale candidate',PROTECT:'Defend gains',TRIM:'Reduce risk',EXIT:'Campaign closed'};
+const COMMAND_MAP={0:'AVOID',1:'EXIT',2:'TRIM',3:'PROTECT',4:'HOLD',5:'ADD',6:'SCALE',7:'START',8:'BUY',9:'WATCH'};
+const MASTER_ACTION_V11618={0:'AVOID',1:'WATCH',2:'START',3:'BUY',4:'HOLD',5:'SCALE',6:'ADD',7:'PROTECT',8:'TRIM',9:'EXIT'};
+const ENTRY_TYPE_MAP={0:'NONE',1:'P1',2:'P2',3:'DONCHIAN',4:'DARVAS',5:'BGU',6:'VCP',7:'POCKET PIVOT',8:'IPO',9:'RECLAIM',10:'BREAKOUT',11:'PREMIUM'};
+const ENTRY_GRADE_MAP={0:'<C',1:'C',2:'B',3:'A',4:'A+'};
+const POSITION_STATE_MAP={0:'FLAT',1:'READY',2:'ENTERED',3:'ADDING',4:'MANAGE',5:'PROTECT',6:'TRIM',7:'EXIT'};
+const CAMPAIGN_STATE_MAP={0:'OFF',1:'SEED',2:'STARTER',3:'CORE',4:'MATURE'};
+const ALLOCATION_STAGE_MAP={0:'FLAT',1:'STARTER',2:'CORE',3:'ADD1',4:'ADD2'};
+const WORKFLOW_MAP={0:'DISCOVERY',1:'DISCOVERY',2:'READY',3:'READY',4:'START',5:'CORE',6:'TRIM',7:'EXIT'};
+let payload=null,stocks=[],filtered=[],selectedIndex=0,chartObj=null,resizeObserver=null,chartCache=new Map(),marketContext={},allBatches=[],activeBatch=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const normalize=s=>String(s??'').toLowerCase().replace(/[·:()%/$=+\-]+/g,' ').replace(/\s+/g,' ').trim();
+const parseNum=v=>{const m=String(v??'').replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null};
+const truthy=v=>{const n=parseNum(v);if(n!==null)return n>0;return /true|yes|on|pass|ready|active|forming|fire|buy|start|add|hold|protect|trim|exit/i.test(String(v??''))};
+function classForStage(stage){return'b-'+stage.toLowerCase()}
+function readBatchHistory(){try{const x=JSON.parse(localStorage.getItem(BATCHES_KEY)||'[]');return Array.isArray(x)?x.filter(b=>b&&Array.isArray(b.records)&&b.records.length):[]}catch{return[]}}
+async function clearIndexedImports(){
+  return new Promise(resolve=>{try{const q=indexedDB.open('NOWWorkbenchDB',1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('imports'))q.result.createObjectStore('imports')};q.onerror=()=>resolve(false);q.onsuccess=()=>{const db=q.result,tx=db.transaction('imports','readwrite'),st=tx.objectStore('imports');st.clear();tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();resolve(false)}}}catch{resolve(false)}})
+}
+async function resetAllImports(){
+  if(!confirm('Reset the complete NOW Workbench import history? This removes all Pine Screener batches and returns the Workbench to a blank state. Market OS policy and theme settings will be preserved.'))return;
+  await clearIndexedImports();
+  [...IMPORT_KEYS,BATCHES_KEY,'now_workbench_batch_view'].forEach(k=>localStorage.removeItem(k));
+  payload=null;allBatches=[];activeBatch=null;stocks=[];filtered=[];selectedIndex=0;
+  populateBatchControls();
+  renderAll();
+  alert('All Pine Screener imports were cleared. The Workbench is now blank and ready for a new scan sequence.');
+}
+async function readIndexedImports(){
+  return new Promise(resolve=>{try{const q=indexedDB.open('NOWWorkbenchDB',1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains('imports'))q.result.createObjectStore('imports')};q.onerror=()=>resolve({latest:null,batches:[]});q.onsuccess=()=>{const db=q.result,tx=db.transaction('imports','readonly'),st=tx.objectStore('imports'),a=st.get('latest'),b=st.get('batches');tx.oncomplete=()=>{const latest=a.result||null,batches=Array.isArray(b.result)?b.result:[];db.close();resolve({latest,batches})};tx.onerror=()=>{db.close();resolve({latest:null,batches:[]})}}}catch{resolve({latest:null,batches:[]})}})
+}
+
+function batchText(b){
+  const filters=(b?.filters||[]).map(f=>f?.text||f?.label||f?.name||String(f)).join(' ');
+  const headers=(b?.capturedHeaders||[]).join(' ');
+  const rowKeys=(b?.records||[]).slice(0,8).flatMap(r=>Object.keys(r?.columns||{})).join(' ');
+  const explicit=[b?._canonicalSignal?.family,b?._canonicalSignal?.signal,b?.primarySignal?.family,b?.primarySignal?.signal,...(b?.canonicalSignals||[]).flatMap(x=>[x?.family,x?.signal,x?.label])].filter(Boolean).join(' '); return [explicit,b?.scriptName,b?.scanLabel,b?.filterName,b?.scanName,filters,headers,rowKeys].filter(Boolean).join(' ').toUpperCase();
+}
+function detectPineFamily(b){
+  const explicit=String(b?._canonicalSignal?.family||b?.primarySignal?.family||'').toUpperCase().trim();
+  const t=batchText(b);
+  if(/ENTRY STACK|ENTRY TYPE|ENTRY NOW FRESH|ENTRY CANDIDATE|MASTER ACTION 0/.test(t))return'NOW SCREENER v11.6.18';
+  if(explicit)return explicit;
+  if(/NOW MASTER OS|NOW SCREENER|NOW INSTITUTIONAL|CAMPAIGN STARTER|CAMPAIGN CORE|PREMIUM FIRE|SQUEEZE FRESH/.test(t))return'NOW MASTER OS';
+  if(/1ST PIVOT|FIRST PIVOT|2ND PIVOT|SECOND PIVOT|STRUCTURE PIVOT|ORATNEK.*PIVOT|ASP/.test(t))return'STRUCTURE PIVOT';
+  if(/DARVAS/.test(t))return'DARVAS';
+  if(/DONCHIAN|TURTLE/.test(t))return'DONCHIAN';
+  if(/EMA SQUEEZE|SQUEEZE DISCOVERY|SQUEEZE ANTICIPATION|SQUEEZE FIRE|VCS.*SQUEEZE/.test(t))return'EMA SQUEEZE';
+  if(/\bVCS\b|VOLATILITY CONTRACTION|COMPRESSION PIVOT/.test(t))return'VCS';
+  if(/THE STRAT|2DG|2UR|3U|3D|HAMMER|SHOOTER|INSIDE BAR|OUTSIDE BAR/.test(t))return'THE STRAT';
+  if(/FTFC|FULL TIME FRAME CONTINUITY|ANCHORED VWAP|AVWAP/.test(t))return'FTFC / AVWAP';
+  if(/RELATIVE STRENGTH|RS NEW HIGH|VOLUME BUZZ|RVOL|LEADERSHIP/.test(t))return'RS / VOLUME';
+  return'GENERIC PINE';
+}
+function detectSignalName(b){
+  const explicit=String(b?._canonicalSignal?.signal||b?.primarySignal?.signal||'').toUpperCase().trim();
+  const t=batchText(b);
+  if(/ENTRY NOW FRESH/.test(t))return'ENTRY NOW';
+  if(explicit)return explicit;
+  const rules=[
+    [/ENTRY NOW FRESH/,'ENTRY NOW'],[/ENTRY CANDIDATE/,'ENTRY CANDIDATE'],[/ENTRY STACK PASS/,'ENTRY STACK PASS'],
+    [/1ST PIVOT BREAK|FIRST PIVOT BREAK|PIVOT 1 BREAK/,'1ST PIVOT BREAK'],[/2ND PIVOT BREAK|SECOND PIVOT BREAK|PIVOT 2 BREAK/,'2ND PIVOT BREAK'],
+    [/BULLISH BREAKOUT/,'BULLISH BREAKOUT'],[/BEARISH BREAKOUT/,'BEARISH BREAKOUT'],[/RETEST CONFIRMED|DARVAS RETEST/,'RETEST CONFIRMED'],
+    [/VCS[^A-Z0-9]*(RETEST|PULLBACK)|COMPRESSION RETEST/,'VCS RETEST'],[/VCS[^A-Z0-9]*(BREAKOUT|RELEASE|FIRE)|COMPRESSION RELEASE/,'VCS BREAKOUT'],[/VCS[^A-Z0-9]*(COMPRESSION|CONTRACTION|FORMING)|VOLATILITY CONTRACTION/,'VCS COMPRESSION'],[/DONCHIAN BO|DONCHIAN BREAKOUT/,'DONCHIAN BREAKOUT'],[/PREMIUM FIRE/,'PREMIUM FIRE'],[/SQUEEZE FIRE/,'SQUEEZE FIRE'],
+    [/SQUEEZE ANTICIPATION/,'SQUEEZE ANTICIPATION'],[/SQUEEZE DISCOVERY/,'SQUEEZE DISCOVERY'],[/CAMPAIGN STARTER/,'CAMPAIGN STARTER'],
+    [/CAMPAIGN CORE/,'CAMPAIGN CORE'],[/START FRESH 3/,'START FRESH ≤3'],[/START FRESH 8/,'START FRESH ≤8'],[/BUY FRESH 3/,'BUY FRESH ≤3'],
+    [/SCALE FRESH 3/,'SCALE FRESH ≤3'],[/ADD FRESH 3/,'ADD FRESH ≤3'],[/PROTECT FRESH 3/,'PROTECT FRESH ≤3'],[/TRIM FRESH 3/,'TRIM FRESH ≤3'],[/EXIT FRESH 3/,'EXIT FRESH ≤3'],
+    [/HAMMER/,'HAMMER'],[/SHOOTER/,'SHOOTER'],[/2DG/,'2dG'],[/2UR/,'2uR'],[/FTFC.*BULL|BULLISH FTFC/,'BULLISH FTFC'],[/FTFC.*BEAR|BEARISH FTFC/,'BEARISH FTFC'],
+    [/RS NEW HIGH/,'RS NEW HIGH'],[/VOLUME BUZZ|RVOL/,'VOLUME EDGE']
+  ];
+  for(const [re,name] of rules)if(re.test(t))return name;
+  const raw=String(b?.scanLabel||b?.filterName||b?.scanName||'').trim();
+  return raw&&!/^PINE SCREENER IMPORT$/i.test(raw)?raw.toUpperCase():'GENERAL SCREEN';
+}
+
+const ADAPTER_REGISTRY=[
+  {id:'NOW SCREENER v11.6.18',status:'ACTIVE',signals:['ENTRY NOW','ENTRY STACK','ENTRY TYPE','ENTRY GRADE','MASTER ACTION']},
+  {id:'NOW MASTER OS',status:'ACTIVE',signals:['CAMPAIGN STARTER','CAMPAIGN CORE','PREMIUM FIRE','START / BUY / SCALE / ADD']},
+  {id:'STRUCTURE PIVOT',status:'ACTIVE',signals:['1ST PIVOT BREAK','2ND PIVOT BREAK']},
+  {id:'VCS',status:'ACTIVE',signals:['COMPRESSION','BREAKOUT / RELEASE','RETEST']},
+  {id:'DARVAS',status:'ACTIVE',signals:['BULLISH BREAKOUT','BEARISH BREAKOUT','RETEST CONFIRMED']},
+  {id:'EMA SQUEEZE',status:'DETECTED',signals:['DISCOVERY','ANTICIPATION','FIRE','PREMIUM FIRE']},
+  {id:'THE STRAT',status:'DETECTED',signals:['2dG','2uR','3u / 3d','HAMMER / SHOOTER']},
+  {id:'FTFC / AVWAP',status:'DETECTED',signals:['BULLISH FTFC','BEARISH FTFC','AVWAP']},
+  {id:'DONCHIAN',status:'DETECTED',signals:['DONCHIAN BREAKOUT','TURTLE']},
+  {id:'RS / VOLUME',status:'DETECTED',signals:['RS NEW HIGH','VOLUME EDGE']},
+  {id:'GENERIC PINE',status:'FALLBACK',signals:['RAW FIELDS PRESERVED']}
+];
+const STAGE_RANK={DISCOVERY:0,READY:1,START:2,CORE:3,ADD:4,PROTECT:5,TRIM:6,EXIT:7};
+function adapterStageCandidate(family,signal){
+  family=String(family||'').toUpperCase();signal=String(signal||'').toUpperCase();
+  if(family==='NOW SCREENER V11.6.18'){
+    return{stage:'START',driver:'NOW ENTRY STACK',setup:'ENTRY NOW',event:'ENTRY NOW',trigger:'SCREEN',next:'Rank by ENTRY STACK, confirm the chart in Master OS, then govern position size',confidenceBoost:0};
+  }
+  if(family==='STRUCTURE PIVOT'){
+    if(/2ND|SECOND/.test(signal))return{stage:'CORE',driver:'2ND STRUCTURE PIVOT',setup:'2ND PIVOT BREAK',event:'PIVOT 2 BREAK',trigger:'CONFIRM',next:'Confirm trend persistence; build core only if the second pivot holds',confidenceBoost:8};
+    if(/1ST|FIRST/.test(signal))return{stage:'START',driver:'1ST STRUCTURE PIVOT',setup:'1ST PIVOT BREAK',event:'PIVOT 1 BREAK',trigger:'BREAKOUT',next:'Validate first institutional entry and risk against the pivot',confidenceBoost:6};
+    return{stage:'READY',driver:'STRUCTURE PIVOT',setup:'STRUCTURE PIVOT',event:'PIVOT WATCH',trigger:'WAIT',next:'Identify whether the first or second pivot is breaking',confidenceBoost:3};
+  }
+  if(family==='VCS'){
+    if(/RETEST/.test(signal))return{stage:'CORE',driver:'VCS RETEST',setup:'VCS RETEST',event:'VCS RETEST',trigger:'RETEST',next:'Confirm support, contraction and renewed demand before building core',confidenceBoost:7};
+    if(/BREAKOUT|RELEASE|FIRE/.test(signal))return{stage:'START',driver:'VCS RELEASE',setup:'VCS BREAKOUT',event:'VCS RELEASE',trigger:'BREAKOUT',next:'Validate expansion from contraction; use the compression low for risk',confidenceBoost:7};
+    if(/COMPRESSION|CONTRACTION|SQUEEZE|FORMING/.test(signal))return{stage:'DISCOVERY',driver:'VCS COMPRESSION',setup:'VCS COMPRESSION',event:'VCS FORMING',trigger:'WAIT',next:'Monitor contraction quality and wait for a qualified release',confidenceBoost:3};
+    return{stage:'DISCOVERY',driver:'VCS',setup:'VCS',event:'VCS WATCH',trigger:'WAIT',next:'Review contraction, pivot and breakout status',confidenceBoost:2};
+  }
+  if(family==='DARVAS'){
+    const isBear=/BEARISH/.test(signal),isRetest=/RETEST/.test(signal);
+    return isRetest?{stage:'CORE',driver:'DARVAS RETEST',setup:'RETEST CONFIRMED',event:'DARVAS RETEST',trigger:'RETEST',next:'Validate retest hold and volume response',confidenceBoost:6}:isBear?{stage:'PROTECT',driver:'DARVAS BEARISH BREAKOUT',setup:'BEARISH BREAKOUT',event:'DARVAS BEAR BO',trigger:'BREAKDOWN',next:'Avoid longs / review downside break',confidenceBoost:5}:{stage:'START',driver:'DARVAS BREAKOUT',setup:'BULLISH BREAKOUT',event:'DARVAS BO',trigger:'BREAKOUT',next:'Validate breakout quality or first retest',confidenceBoost:6};
+  }
+  return null;
+}
+function chooseAdapterCandidate(stock){
+  const candidates=(stock.provenanceList||[]).map((p,i)=>{const c=adapterStageCandidate(p.scanFamily,p.signalName);return c?{...c,family:p.scanFamily,signal:p.signalName,label:p.scanLabel,index:i}:null}).filter(Boolean);
+  if(!candidates.length)return null;
+  candidates.sort((a,b)=>STAGE_RANK[b.stage]-STAGE_RANK[a.stage]||b.confidenceBoost-a.confidenceBoost||a.index-b.index);
+  return candidates[0];
+}
+function renderAdapterRegistry(){
+  const counts=new Map(),signals=new Map();
+  for(const b of allBatches){const a=adapterInfo(b);counts.set(a.family,(counts.get(a.family)||0)+(b.records||[]).length);if(!signals.has(a.family))signals.set(a.family,new Set());signals.get(a.family).add(a.signal)}
+  const active=[...counts.keys()].filter(x=>x!=='GENERIC PINE').length;
+  if($('adapterSummary'))$('adapterSummary').textContent=`${active} active adapter${active===1?'':'s'} · ${allBatches.length} batches`;
+  if($('adapterRegistry'))$('adapterRegistry').innerHTML=ADAPTER_REGISTRY.map(a=>{const c=counts.get(a.id)||0,ss=[...(signals.get(a.id)||[])];return`<div class="adapter-card ${c?'active':''}" data-adapter="${esc(a.id)}" title="${c?'Click to filter this adapter':'No imported members yet'}"><div class="name">${esc(a.id)}</div><div class="status">${c?'ACTIVE IN LEDGER · CLICK TO FILTER':a.status}</div><div class="count">${c}</div><div class="signals">${esc(ss.length?ss.join(' · '):a.signals.join(' · '))}</div></div>`}).join('');document.querySelectorAll('.adapter-card.active').forEach(card=>card.onclick=()=>{const family=card.dataset.adapter;const option=[...$('sourceFilter').options].find(o=>o.value.startsWith(family+' ::'));if(option){$('sourceFilter').value=option.value;selectedIndex=0;applyBatchSelection();renderAll()}else{$('searchInput').value=family;selectedIndex=0;renderAll()}});
+}
+
+function canonicalScanLabel(b){
+  const family=detectPineFamily(b),signal=detectSignalName(b);
+  return signal==='GENERAL SCREEN'?family:`${family} · ${signal}`;
+}
+function adapterInfo(b){return{family:detectPineFamily(b),signal:detectSignalName(b),label:canonicalScanLabel(b)}}
+
+function batchLabel(b){return canonicalScanLabel(b)}
+function sourceKey(b){const a=adapterInfo(b);return `${a.family} :: ${a.signal}`.toUpperCase()}
+function enrichRows(b){const a=adapterInfo(b);return (b?.records||[]).map(r=>({...r,_provenance:{batchId:b.batchId||'',scanLabel:a.label,scanFamily:a.family,signalName:a.signal,filters:b.filters||[],timeframe:b.timeframe||'1D',scriptName:b.scriptName||'Pine Screener',importedAt:b.importedAt||'',isLatest:allBatches[0]===b}}))}
+function mergedHistoryRows(){const map=new Map();for(const b of allBatches){for(const r of enrichRows(b)){const key=(r.symbol||r.ticker||'').toUpperCase();if(!key)continue;if(!map.has(key))map.set(key,{...r,_provenanceList:[]});const x=map.get(key);x._provenanceList.push(r._provenance);x.columns={...(r.columns||{}),...(x.columns||{})};x.rawCells=[...(x.rawCells||[]),...(r.rawCells||[])];}}return[...map.values()]}
+function populateBatchControls(){const bf=$('batchFilter'),sf=$('sourceFilter');const prev=bf?.value||localStorage.getItem('now_workbench_batch_view')||'ACTIVE';if(bf){bf.innerHTML='<option value="ACTIVE">Active cumulative universe</option><option value="LATEST">Latest import only</option><option value="ALL">All import history</option>'+allBatches.map(b=>`<option value="${esc(b.batchId)}">${esc(batchLabel(b))} · ${new Date(b.importedAt||Date.now()).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</option>`).join('');bf.value=[...bf.options].some(o=>o.value===prev)?prev:'ACTIVE'}if(sf){const sources=[...new Set(allBatches.map(sourceKey))];const old=sf.value;sf.innerHTML='<option value="">All scan sources</option>'+sources.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');sf.value=sources.includes(old)?old:''}}
+function expandCanonicalBatches(batches){
+  const out=[];
+  for(const b of batches||[]){
+    const sigs=Array.isArray(b?.canonicalSignals)?b.canonicalSignals.filter(x=>x?.family&&x?.signal):[];
+    if(!sigs.length){out.push(b);continue}
+    for(let i=0;i<sigs.length;i++){
+      const c=sigs[i],label=c.label||`${c.family} · ${c.signal}`;
+      out.push({...b,_canonicalSignal:c,primarySignal:c,scanLabel:label,filterName:label,batchId:`${b.batchId||'BATCH'}::SIG${i+1}`,_parentBatchId:b.batchId||'',_verifiedProvenance:true});
+    }
+  }
+  return out;
+}
+function provenanceConflict(b){
+  const active=(b?.activeFilters||b?.filters||[]).filter(f=>f?.active!==false&&(/^(1(?:\.0+)?|true)$/i.test(String(f?.value||''))||/\=\s*(?:1|TRUE)\b/i.test(String(f?.text||''))));
+  const explicit=String(b?._canonicalSignal?.signal||b?.primarySignal?.signal||'').toUpperCase();
+  if(!explicit||!active.length)return false;
+  const text=active.map(f=>String(f?.label||f?.text||'').toUpperCase()).join(' | ');
+  const keys=explicit.replace(/≤/g,'').split(/\s+/).filter(x=>x.length>2&&!['FRESH','BREAKOUT','STRUCTURE'].includes(x));
+  return keys.length&&!keys.some(k=>text.includes(k));
+}
+async function loadPayload(){
+  payload=null;allBatches=[];
+  const idb=await readIndexedImports();
+  if(idb.latest?.records?.length)payload=idb.latest;
+  if(Array.isArray(idb.batches))allBatches=idb.batches.filter(b=>b&&Array.isArray(b.records)&&b.records.length);
+  if(!payload){allBatches=readBatchHistory();for(const key of IMPORT_KEYS){try{const x=JSON.parse(localStorage.getItem(key)||'null');if(x?.records?.length){payload=x;break}}catch{}}}
+  if(payload?.records?.length&&!allBatches.some(b=>b.batchId===payload.batchId)){allBatches.unshift({...payload,batchId:payload.batchId||('LEGACY-'+Date.now()),scanLabel:payload.scanLabel||'LATEST / LEGACY IMPORT'})}
+  allBatches=expandCanonicalBatches(allBatches).filter(b=>!provenanceConflict(b));
+  payload=allBatches[0]||null;
+  allBatches.sort((a,b)=>new Date(b.importedAt||0)-new Date(a.importedAt||0));populateBatchControls();applyBatchSelection();$('stageFilter').innerHTML='<option value="">All stages</option>'+STAGES.map(s=>`<option value="${s}">${s}</option>`).join('');loadMarketContext();renderAll()
+}
+function applyBatchSelection(){const mode=$('batchFilter')?.value||'ACTIVE',source=$('sourceFilter')?.value||'';localStorage.setItem('now_workbench_batch_view',mode);let batches=allBatches;if(source)batches=batches.filter(b=>sourceKey(b)===source);if(mode==='LATEST')batches=batches.slice(0,1);else if(mode!=='ALL'&&mode!=='ACTIVE')batches=batches.filter(b=>b.batchId===mode);activeBatch=batches[0]||allBatches[0]||payload||null;payload=activeBatch;const cumulative=(mode==='ACTIVE'||mode==='ALL'||(source&&batches.length>1));if(cumulative){const old=allBatches;allBatches=batches;stocks=mergedHistoryRows().map(makeStock);allBatches=old}else{const b=batches[0];stocks=(b?.records||[]).map(r=>makeStock({...r,_provenance:{batchId:b?.batchId||'',scanLabel:batchLabel(b),scanFamily:detectPineFamily(b),signalName:detectSignalName(b),filters:b?.filters||[],timeframe:b?.timeframe||'1D',scriptName:b?.scriptName||'Pine Screener',importedAt:b?.importedAt||'',isLatest:allBatches[0]===b},_provenanceList:[{batchId:b?.batchId||'',scanLabel:batchLabel(b),scanFamily:detectPineFamily(b),signalName:detectSignalName(b),filters:b?.filters||[],timeframe:b?.timeframe||'1D',scriptName:b?.scriptName||'Pine Screener',importedAt:b?.importedAt||'',isLatest:allBatches[0]===b}]}))}renderProvenance(batches,mode)}
+function columnIndex(columns){const out=[];Object.entries(columns||{}).forEach(([label,value])=>out.push({label,value:String(value??'').trim(),key:normalize(label)}));return out}
+function pick(items,patterns,fallback='—'){for(const p of patterns){const hit=items.find(x=>p.test(x.key));if(hit&&hit.value!=='')return{value:hit.value,label:hit.label,origin:'imported'}}return{value:fallback,label:'',origin:'derived'}}
+function pickNum(items,patterns){const x=pick(items,patterns,'');const n=parseNum(x.value);return n===null?null:{...x,num:n}}
+function signal(items,patterns){const x=pick(items,patterns,'');return{x,active:x.value!==''&&truthy(x.value)}}
+function commandInfo(items,rowText){const master=pickNum(items,[/^master action/]);if(master&&MASTER_ACTION_V11618[master.num]!==undefined)return{code:master.num,name:MASTER_ACTION_V11618[master.num],origin:'imported',label:master.label,decoder:'v11.6.18'};const exact=pickNum(items,[/^command /,/position command/,/^command$/,/0 avoid 1 exit/]);if(exact&&COMMAND_MAP[exact.num]!==undefined)return{code:exact.num,name:COMMAND_MAP[exact.num],origin:'imported',label:exact.label};const text=(pick(items,[/position command/,/^command$/],'').value+' '+rowText).toUpperCase();for(const [code,name] of Object.entries(COMMAND_MAP)){if(new RegExp(`\\b${name}\\b`).test(text))return{code:Number(code),name,origin:'imported',label:'row text'}}return{code:null,name:'WAIT',origin:'derived',label:''}}
+function stageFromSignals(items,rowText,command){if(command?.name==='EXIT')return{stage:'EXIT',origin:'imported'};if(command?.name==='TRIM')return{stage:'TRIM',origin:'imported'};if(command?.name==='PROTECT')return{stage:'PROTECT',origin:'imported'};if(command?.name==='ADD')return{stage:'ADD',origin:'imported'};if(command?.name==='SCALE')return{stage:'CORE',origin:'imported'};if(command?.name==='START'||command?.name==='BUY')return{stage:'START',origin:'imported'};const wf=pickNum(items,[/workflow/,/lifecycle code/,/stage code/]);if(wf&&WORKFLOW_MAP[wf.num])return{stage:WORKFLOW_MAP[wf.num],origin:'imported'};if(command.code!==null){if(command.code===1)return{stage:'EXIT',origin:'imported'};if(command.code===2)return{stage:'TRIM',origin:'imported'};if(command.code===3)return{stage:'PROTECT',origin:'imported'};if(command.code===5)return{stage:'ADD',origin:'imported'};if(command.code===6)return{stage:'CORE',origin:'imported'};if(command.code===7||command.code===8)return{stage:'START',origin:'imported'}}
+  const premium=signal(items,[/premium fire(?! fresh)/]);const fire=signal(items,[/squeeze fire(?! fresh)/,/any fire/]);const anticipation=signal(items,[/squeeze anticipation/,/anticipation setup/]);const discovery=signal(items,[/squeeze discovery/,/early discovery/]);const all=(rowText||'').toUpperCase();
+  const universalStart=signal(items,[/bullish breakout/,/donchian bo/,/donchian breakout/,/2nd pivot break/,/second pivot break/,/campaign starter ready/,/buy signal/]);
+  const universalReady=signal(items,[/retest confirmed/,/1st pivot break/,/first pivot break/,/vcs/,/hammer/,/2dg/,/2ur/,/bullish ftfc/]);
+  const universalRisk=signal(items,[/bearish breakout/,/sell signal/,/bearish ftfc/]);
+  if(universalRisk.active)return{stage:'PROTECT',origin:'imported'};
+  if(premium.active||fire.active||universalStart.active||/PREMIUM FIRE|SQUEEZE FIRE|BULLISH BREAKOUT|DONCHIAN BREAKOUT/.test(all))return{stage:'START',origin:'imported'};
+  if(anticipation.active||universalReady.active||/READY|RECLAIM|PULLBACK|RETEST CONFIRMED|1ST PIVOT BREAK/.test(all))return{stage:'READY',origin:'imported'};
+  if(discovery.active)return{stage:'DISCOVERY',origin:'imported'};
+  const owned=signal(items,[/position owned/,/owned position/]);const core=signal(items,[/filter core/,/scale to core/]);if(command.code===4&&(owned.active||core.active))return{stage:'CORE',origin:'imported'};
+  return{stage:'DISCOVERY',origin:'derived'};
+}
+function importedScore(items){const candidates=[[/^entry stack(?: 0 100)?/,100],[/institutional score/,100],[/validation 0 100/,100],[/validation/,100],[/opportunity 0 6/,6],[/readiness 0 100/,100],[/confidence/,100],[/grade 0 17/,17],[/trend 0 100/,100]];for(const [re,max] of candidates){const x=pickNum(items,[re]);if(x){let val=x.num;if(max!==100)val=val/max*100;return{value:Math.max(0,Math.min(100,val)),origin:'imported',label:x.label}}}return null}
+function deriveScore(items,stage,command){let s={DISCOVERY:58,READY:70,START:82,CORE:80,ADD:84,PROTECT:66,TRIM:48,EXIT:25}[stage]||55;const positives=[/premium fire/,/squeeze fire/,/fresh 3/,/relative strength positive/,/liquidity pass/,/darvas breakout/,/validation/];const negatives=[/damage veto/,/risk action/,/warning/,/extension/];positives.forEach(re=>{const x=pick(items,[re],'');if(x.value!==''&&truthy(x.value))s+=4});negatives.forEach(re=>{const x=pickNum(items,[re]);if(x&&x.num>0)s-=Math.min(10,x.num*2)});if(command.name==='BUY'||command.name==='START')s+=4;return{value:Math.max(0,Math.min(100,s)),origin:'derived',label:'Workbench composite'}}
+function grade(score){return score>=92?'A+':score>=84?'A':score>=74?'B':score>=60?'C':'D'}
+function driverFrom(items){const ordered=[[/premium fire/,'PREMIUM FIRE'],[/squeeze fire(?! fresh)/,'EMA SQUEEZE FIRE'],[/squeeze anticipation/,'EMA SQUEEZE ANTICIPATION'],[/squeeze discovery/,'EMA SQUEEZE DISCOVERY'],[/bullish breakout/,'BULLISH BREAKOUT'],[/bearish breakout/,'BEARISH BREAKOUT'],[/donchian bo|donchian breakout/,'DONCHIAN BREAKOUT'],[/darvas breakout/,'DARVAS BREAKOUT'],[/retest confirmed|darvas retest/,'DARVAS RETEST'],[/2nd pivot break|second pivot break/,'2ND STRUCTURE PIVOT'],[/1st pivot break|first pivot break|pivot break/,'1ST STRUCTURE PIVOT'],[/bullish ftfc/,'BULLISH FTFC'],[/bearish ftfc/,'BEARISH FTFC'],[/hammer/,'THE STRAT HAMMER'],[/shooter/,'THE STRAT SHOOTER'],[/pullback/,'21EMA PULLBACK'],[/reclaim/,'EMA RECLAIM'],[/pivot break/,'STRUCTURE PIVOT'],[/relative strength/,'RELATIVE STRENGTH']];for(const [re,name] of ordered){const x=pick(items,[re],'');if(x.value!==''&&truthy(x.value))return{value:name,origin:'imported',label:x.label}}const raw=pick(items,[/^driver$/,/primary reason/],'');return raw.value!==''?raw:{value:'PINE SCREEN SIGNAL',origin:'derived',label:''}}
+function freshnessFrom(items){const candidates=[[/premium fresh 3/,'≤3 bars'],[/fire fresh 3/,'≤3 bars'],[/anticipation fresh 3/,'≤3 bars'],[/squeeze fresh 3/,'≤3 bars'],[/squeeze fresh 8/,'≤8 bars']];for(const [re,label] of candidates){const x=pick(items,[re],'');if(x.value!==''&&truthy(x.value))return{value:label,origin:'imported',label:x.label}}return{value:'CURRENT ROW',origin:'derived',label:''}}
+function primaryProvenance(stock){return (stock.provenanceList||[])[0]||{} }
+function normalizeFamilyFields(stock){
+  const p=primaryProvenance(stock),candidate=chooseAdapterCandidate(stock);
+  stock.primaryFamily=String(candidate?.family||p.scanFamily||'GENERIC PINE').toUpperCase();
+  stock.primarySignal=String(candidate?.signal||p.signalName||'GENERAL SCREEN').toUpperCase();
+  stock.adapterMatches=(stock.provenanceList||[]).map(x=>({family:x.scanFamily||'GENERIC PINE',signal:x.signalName||'GENERAL SCREEN',normalized:adapterStageCandidate(x.scanFamily,x.signalName)}));
+  if(candidate){
+    stock.rawStage=candidate.stage;stock.stageOrigin='normalized';
+    stock.driver={value:candidate.driver,origin:'normalized',label:candidate.label||`${candidate.family} adapter`};
+    if(stock.setupType.origin!=='imported')stock.setupType={value:candidate.setup,origin:'normalized',label:candidate.label||`${candidate.family} adapter`};
+    if(stock.event.origin!=='imported')stock.event={value:candidate.event,origin:'normalized',label:candidate.label||`${candidate.family} adapter`};
+    if(stock.next.origin!=='imported')stock.next={value:candidate.next,origin:'normalized',label:candidate.label||`${candidate.family} adapter`};
+    if(stock.trigger.origin!=='imported')stock.trigger={value:candidate.trigger,origin:'normalized',label:candidate.label||`${candidate.family} adapter`};
+    if(candidate.family==='DARVAS'&&stock.darvas.origin!=='imported')stock.darvas={value:candidate.setup,origin:'normalized',label:candidate.label||'Darvas adapter'};
+    if(candidate.family==='STRUCTURE PIVOT'&&stock.pivot.origin!=='imported')stock.pivot={value:candidate.setup,origin:'normalized',label:candidate.label||'Structure Pivot adapter'};
+    if(candidate.family==='VCS'&&stock.squeeze.origin!=='imported')stock.squeeze={value:candidate.setup,origin:'normalized',label:candidate.label||'VCS adapter'};
+    stock.score=Math.min(100,stock.score+(candidate.confidenceBoost||0));stock.grade=grade(stock.score);
+  }
+  return stock;
+}
+function inferUniverse(row){const t=String(row.ticker||row.symbol||'').toUpperCase(),txt=String(row.rowText||'')+' '+Object.entries(row.columns||{}).map(x=>x.join(' ')).join(' ');if(/leveraged|2x|3x|ultra|bull 2x|bear 2x/i.test(txt)||/^(TQQQ|SQQQ|SOXL|SOXS|UPRO|SPXL|SPXS|NVDL|MUU|AMZU|SNXX|BITX|QLD|SSO)$/.test(t))return'Leveraged ETFs';if(/ ETF|exchange traded|ishares|proshares|direxion|vaneck|spdr/i.test(txt))return'ETFs';if(/theme|thematic/i.test(txt))return'Themes';return'Imported Pine'}
+
+function mappedField(items,patterns,map,fallback='—'){const x=pickNum(items,patterns);if(x&&Object.prototype.hasOwnProperty.call(map,x.num))return{value:map[x.num],num:x.num,origin:'imported',label:x.label};return{value:fallback,num:null,origin:'derived',label:''}}
+function boolField(items,patterns){const x=pick(items,patterns,'');const has=x.value!=='';return{value:has?(truthy(x.value)?'YES':'NO'):'—',active:has&&truthy(x.value),present:has,origin:has?'imported':'derived',label:x.label}}
+function entryTierFrom(v){const n=Number(v);if(!Number.isFinite(n))return'BELOW';if(n>=90)return'ELITE';if(n>=85)return'STRONG';if(n>=80)return'REVIEW';return'BELOW'}
+function screenerV11618Profile(items){
+  const entryStack=pickNum(items,[/^entry stack(?: 0 100)?/]);
+  const entryType=mappedField(items,[/^entry type/],ENTRY_TYPE_MAP,'NONE');
+  const entryGrade=mappedField(items,[/^entry grade/],ENTRY_GRADE_MAP,'—');
+  const masterAction=mappedField(items,[/^master action/],MASTER_ACTION_V11618,'—');
+  const positionState=mappedField(items,[/^position state/],POSITION_STATE_MAP,'—');
+  const campaignState=mappedField(items,[/^campaign state/],CAMPAIGN_STATE_MAP,'—');
+  const allocationStage=mappedField(items,[/^allocation stage/],ALLOCATION_STAGE_MAP,'—');
+  const entryNow=boolField(items,[/^filter entry now fresh/]);
+  const candidate=boolField(items,[/^filter entry candidate/]);
+  const stackPass=boolField(items,[/^filter entry stack pass/]);
+  const start3=boolField(items,[/^filter start fresh 3/]);
+  const start8=boolField(items,[/^filter start fresh 8/]);
+  const buy3=boolField(items,[/^filter buy fresh 3/]);
+  const p1=boolField(items,[/^filter p1 break fresh 3/]);
+  const p2=boolField(items,[/^filter p2 break fresh 3/]);
+  const donchian=boolField(items,[/^filter donchian bo fresh 3/]);
+  const darvas=boolField(items,[/^filter darvas bo fresh 3/]);
+  const bgu=boolField(items,[/^filter bgu fresh 3/]);
+  const vcp=boolField(items,[/^filter vcp break fresh 3/]);
+  const pocket=boolField(items,[/^filter pocket pivot fresh 3/]);
+  const ipo=boolField(items,[/^filter ipo break fresh 3/]);
+  const reclaim=boolField(items,[/^filter reclaim fresh 3/]);
+  const premium=boolField(items,[/^filter premium fire fresh 3/]);
+  const scaleAdd=boolField(items,[/^filter scale add fresh/]);
+  const riskAction=boolField(items,[/^filter risk action/]);
+  const earlyDiscovery=boolField(items,[/^filter early discovery/]);
+  const readySoon=boolField(items,[/^filter ready soon/]);
+  const damage=pickNum(items,[/^damage veto/]);
+  const damageClear=!damage||damage.num===0;
+  return{entryStack,entryType,entryGrade,masterAction,positionState,campaignState,allocationStage,entryNow,candidate,stackPass,start3,start8,buy3,p1,p2,donchian,darvas,bgu,vcp,pocket,ipo,reclaim,premium,scaleAdd,riskAction,earlyDiscovery,readySoon,damage,damageClear,tier:entryTierFrom(entryStack?.num)};
+}
+function stageFromScreenerProfile(p,base,command){
+  if(command?.name==='EXIT'||p.positionState.num===7)return{stage:'EXIT',origin:'v11.6.18'};
+  if(command?.name==='TRIM'||p.positionState.num===6)return{stage:'TRIM',origin:'v11.6.18'};
+  if(command?.name==='PROTECT'||p.positionState.num===5)return{stage:'PROTECT',origin:'v11.6.18'};
+  if(command?.name==='ADD'||p.positionState.num===3)return{stage:'ADD',origin:'v11.6.18'};
+  if(p.positionState.num===4||p.campaignState.num>=3||p.allocationStage.num>=2)return{stage:'CORE',origin:'v11.6.18'};
+  if(p.positionState.num===2||p.campaignState.num===2||p.allocationStage.num===1)return{stage:'START',origin:'v11.6.18'};
+  if(p.entryNow.active&&p.candidate.active&&p.stackPass.active&&p.damageClear)return{stage:'START',origin:'v11.6.18'};
+  if(p.start3.active||p.buy3.active||p.p1.active||p.p2.active||p.donchian.active||p.darvas.active||p.bgu.active||p.vcp.active||p.pocket.active||p.ipo.active||p.reclaim.active||p.premium.active)return{stage:'START',origin:'v11.6.18'};
+  if(p.readySoon.active||p.positionState.num===1)return{stage:'READY',origin:'v11.6.18'};
+  if(p.earlyDiscovery.active)return{stage:'DISCOVERY',origin:'v11.6.18'};
+  return base;
+}
+function entryDriverFromProfile(p,fallback){
+  const map={P1:'P1 BREAK',P2:'P2 BREAK',DONCHIAN:'DONCHIAN BO',DARVAS:'DARVAS BO',BGU:'BGU',VCP:'VCP BREAK','POCKET PIVOT':'POCKET PIVOT',IPO:'IPO BREAK',RECLAIM:'RECLAIM',BREAKOUT:'BREAKOUT',PREMIUM:'PREMIUM FIRE'};
+  if(p.entryNow.active&&p.entryType.value&&p.entryType.value!=='NONE')return{value:`ENTRY · ${map[p.entryType.value]||p.entryType.value}`,origin:'imported',label:p.entryType.label||'ENTRY TYPE'};
+  return fallback;
+}
+function makeStock(row){const items=columnIndex(row.columns),profile=screenerV11618Profile(items),command=commandInfo(items,row.rowText||''),baseStage=stageFromSignals(items,row.rowText||'',command),stageInfo=stageFromScreenerProfile(profile,baseStage,command),scoreInfo=importedScore(items)||deriveScore(items,stageInfo.stage,command);let driver=entryDriverFromProfile(profile,driverFrom(items));const allText=[row.ticker,row.symbol,row.rowText,...items.map(x=>`${x.label} ${x.value}`)].join(' ');
+  const importedGrade=profile.entryGrade.origin==='imported'&&profile.entryGrade.value!=='—'?profile.entryGrade.value:null;
+  const stock={...row,items,allText,universe:inferUniverse(row),rawCommand:command,rawStage:stageInfo.stage,stageOrigin:stageInfo.origin,score:scoreInfo.value,scoreOrigin:scoreInfo.origin,scoreLabel:scoreInfo.label,grade:importedGrade||grade(scoreInfo.value),driver,freshness:freshnessFrom(items),screener:profile};
+  stock.entryStack=profile.entryStack?{value:profile.entryStack.num,origin:'imported',label:profile.entryStack.label}:{value:'—',origin:'derived',label:''};stock.entryType=profile.entryType;stock.entryGrade=profile.entryGrade;stock.entryTier={value:profile.tier,origin:profile.entryStack?'imported':'derived',label:'ENTRY STACK'};stock.masterAction=profile.masterAction;stock.positionState=profile.positionState;stock.campaignState=profile.campaignState;stock.allocationStage=profile.allocationStage;stock.entryCandidate={value:profile.candidate.present?(profile.candidate.active?'YES':'NO'):'—',origin:profile.candidate.origin,label:profile.candidate.label};stock.entryStackPass={value:profile.stackPass.present?(profile.stackPass.active?'YES':'NO'):'—',origin:profile.stackPass.origin,label:profile.stackPass.label};stock.entryNow={value:profile.entryNow.present?(profile.entryNow.active?'YES':'NO'):'—',origin:profile.entryNow.origin,label:profile.entryNow.label};stock.damageVeto={value:profile.damage?profile.damage.num:'—',origin:profile.damage?'imported':'derived',label:profile.damage?.label||''};
+  stock.permission=pick(items,[/^permission/,/market gate/]);stock.marketBudget=pick(items,[/^market budget/],'—');stock.trend=pick(items,[/^trend score/,/^trend 0 100/,/^trend$/]);stock.weekly=pick(items,[/^weekly score/,/weekly/]);stock.sponsor=pick(items,[/sponsor/,/avwap/]);stock.rs=pick(items,[/^leadership rs proxy/,/^rs$/,/leadership/,/relative strength/]);stock.participation=pick(items,[/^participation 0 100/,/^participation/],'—');stock.liquidity=pick(items,[/liquidity/]);stock.state=pick(items,[/^state$/,/lifecycle/],stageInfo.stage);stock.trigger=pick(items,[/trigger/],profile.entryNow.active?'ENTRY NOW':'WAIT');stock.checks=pick(items,[/checks/,/validation/],profile.stackPass.active?'STACK PASS':'—');stock.location=pick(items,[/location/,/entry location/],'—');stock.pivot=pick(items,[/asp p1 price/,/asp p2 price/,/pivot price/,/^pivot$/,/distance from pivot/],'—');stock.squeeze=pick(items,[/^squeeze state/,/premium fire/,/squeeze fire/,/squeeze anticipation/,/squeeze discovery/,/^squeeze$/],'OFF');stock.darvas=pick(items,[/^darvas phase/,/darvas/],'—');stock.risk=pick(items,[/^risk code/,/risk action/,/^risk$/,/warning severity/],'—');stock.conviction=pick(items,[/^conviction 0 100/,/^conviction/],Math.round(stock.score));stock.confidence=stock.conviction.origin==='imported'?stock.conviction:pick(items,[/confidence/],Math.round(stock.score)+'%');stock.stop=pick(items,[/^stop$/,/stop level/],'—');stock.next=pick(items,[/^next$/,/next action/],profile.entryNow.active?'Inspect chart in Master OS; execute only if entry structure remains valid':'Review chart');stock.entry=pick(items,[/^entry$/,/entry price/],'—');stock.target1=pick(items,[/target 1/,/^t1$/,/tp1/],'—');stock.target2=pick(items,[/target 2/,/^t2$/,/tp2/],'—');stock.allocation=pick(items,[/^allocation %/,/allocation percent/,/^alloc$/,/position size/],'—');stock.progress=pick(items,[/progress/],'—');stock.positionOwned=signal(items,[/position owned/,/owned position/]);stock.warning=pick(items,[/warning/,/damage veto/],profile.damageClear?'CLEAR':'—');stock.extension=pick(items,[/^atr extension vs ema21/,/atr extension/,/distance to sma50/],'—');stock.setupType=pick(items,[/setup type/,/primary setup/],driver.value);stock.event=pick(items,[/^event$/,/event code/],profile.entryNow.active?'ENTRY NOW':'—');stock.volume=pick(items,[/^rvol pace/,/relative volume/,/rvol/],'—');stock.adr=pick(items,[/adr/],'—');stock.mcdx=pick(items,[/^mcdx state/],'—');
+  stock.provenanceList=row._provenanceList||[row._provenance].filter(Boolean);stock.scanSources=[...new Set(stock.provenanceList.map(p=>p.scanLabel).filter(Boolean))];stock.batchIds=stock.provenanceList.map(p=>p.batchId).filter(Boolean);stock.allText+=' '+stock.scanSources.join(' ');normalizeFamilyFields(stock);if(profile.entryNow.active&&profile.entryType.value!=='NONE'){stock.driver=driver;stock.setupType={value:driver.value,origin:'imported',label:profile.entryType.label||'ENTRY TYPE'};stock.rawStage=stageInfo.stage;stock.stageOrigin=stageInfo.origin;stock.score=scoreInfo.value;stock.grade=importedGrade||grade(stock.score)}stock.allText+=' '+[stock.primaryFamily,stock.primarySignal,stock.driver.value,stock.setupType.value,stock.event.value,stock.entryType.value,stock.entryTier.value,stock.masterAction.value].join(' ');return stock}
+function loadMarketContext(){try{marketContext=JSON.parse(localStorage.getItem(MARKET_KEY)||'{}')||{}}catch{marketContext={}}if(!marketContext.regime)marketContext=autoDetectMarketContext(false)||{};applyGovernance()}
+function flattenObject(obj,prefix='',out={}){if(!obj||typeof obj!=='object')return out;for(const [k,v] of Object.entries(obj)){const key=normalize(prefix?`${prefix} ${k}`:k);if(v&&typeof v==='object'&&!Array.isArray(v))flattenObject(v,key,out);else if(['string','number','boolean'].includes(typeof v))out[key]=v}return out}
+function findFlat(flat,patterns){for(const p of patterns){const k=Object.keys(flat).find(x=>p.test(x));if(k)return flat[k]}return''}
+function autoDetectMarketContext(save=true){const merged={};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i)||'';if(!/market|regime|breadth|nasi|stockbee|capital|daily|intelligence|plan/i.test(key)||/workbench_import/i.test(key))continue;try{Object.assign(merged,flattenObject(JSON.parse(localStorage.getItem(key)||'{}'),key))}catch{}}
+  const ctx={regime:String(findFlat(merged,[/master conclusion/,/market regime/,/regime$/,/market mode/])||''),permission:String(findFlat(merged,[/portfolio permission/,/permission$/,/portfolio posture/])||''),exposure:String(findFlat(merged,[/target gross exposure/,/exposure$/,/risk budget range/])||''),buySwitch:String(findFlat(merged,[/buy switch/])||''),breadth:String(findFlat(merged,[/breadth state/,/breadth regime/,/breadth$/])||''),riskBudget:String(findFlat(merged,[/risk budget$/,/market budget/])||''),score:String(findFlat(merged,[/master score/,/market score/])||''),asOf:String(findFlat(merged,[/as of/,/latest common date/,/latest date/])||''),source:'Same-origin dashboard storage',detectedAt:new Date().toISOString()};
+  if(!ctx.regime&&!ctx.permission&&!ctx.buySwitch)return null;if(save)localStorage.setItem(MARKET_KEY,JSON.stringify(ctx));return ctx}
+function policyLevel(ctx){const text=[ctx.regime,ctx.permission,ctx.buySwitch,ctx.riskBudget].join(' ').toUpperCase();if(/RISK.?OFF|DETERIORATION|BLOCKED|DEFENSIVE|BUY SWITCH.?OFF|\bOFF\b/.test(text))return'RISK_OFF';if(/FULL|OFFENSIVE|AGGRESSIVE/.test(text)&&!/LIMITED|SELECTIVE/.test(text))return'OFFENSIVE';if(/SELECTIVE|LIMITED|HALF|ROTATION|CHOP|TRANSITION/.test(text))return'SELECTIVE';return'NEUTRAL'}
+function governedDecision(stock){
+  const level=policyLevel(marketContext),raw=stock.rawCommand.name;
+  const families=new Set((stock.provenanceList||[]).map(p=>String(p.scanFamily||'').toUpperCase()));
+  const signals=(stock.provenanceList||[]).map(p=>String(p.signalName||'').toUpperCase());
+  const hasP1=families.has('STRUCTURE PIVOT')&&signals.some(x=>/1ST|FIRST/.test(x));
+  const hasP2=families.has('STRUCTURE PIVOT')&&signals.some(x=>/2ND|SECOND/.test(x));
+  const hasExplicitScale=(stock.provenanceList||[]).some(p=>String(p.scanFamily||'').toUpperCase()==='NOW MASTER OS'&&/SCALE|CORE|ADD/.test(String(p.signalName||p.scanLabel||'').toUpperCase()));
+  let cmd=raw,reason='Raw Pine command preserved';
+  if(stock.rawStage==='DISCOVERY'){cmd=level==='RISK_OFF'?'AVOID':'WATCH';reason='Discovery is a review state, not an owned-position HOLD'}
+  else if(stock.rawStage==='READY'&&['HOLD','AVOID','WAIT'].includes(raw)){cmd=level==='RISK_OFF'?'AVOID':'WATCH';reason='Ready setup awaits a confirmed trigger'}
+  else if(stock.rawStage==='START'&&raw==='HOLD'){cmd='START';reason='Fresh entry lifecycle overrides non-owned HOLD wording'}
+  if(hasP1&&!hasExplicitScale&&['SCALE','ADD','HOLD'].includes(cmd)){cmd='START';reason='First structure-pivot breakout opens a starter; scaling requires an owned campaign or explicit NOW scale signal'}
+  if(hasP2&&!hasExplicitScale&&cmd==='SCALE'&&stock.rawStage!=='CORE'){cmd='START';reason='Second pivot without confirmed CORE ownership remains a starter until trend persistence is validated'}
+  if(level==='RISK_OFF'){if(['BUY','START','ADD','SCALE'].includes(cmd)){cmd=stock.score>=85?'WATCH':'AVOID';reason='Market risk-off blocks new capital'}else if(cmd==='HOLD'&&stock.score<75){cmd='PROTECT';reason='Weak holding under risk-off policy'}}
+  else if(level==='SELECTIVE'){if(cmd==='BUY'&&stock.score<80){cmd='WATCH';reason='Selective market requires higher entry score'}if(cmd==='ADD'&&stock.score<86){cmd='HOLD';reason='Selective market reserves adds for elite setups'}if(cmd==='SCALE'&&stock.score<82){cmd='START';reason='Scale reduced to starter under half budget'}}
+  else if(level==='OFFENSIVE'){if(cmd==='WATCH'&&stock.score>=86&&['READY','START'].includes(stock.rawStage)){cmd='START';reason='Offensive policy permits starter'}}
+  let allocation='—';if(cmd==='AVOID'||cmd==='EXIT')allocation='0%';else if(cmd==='WATCH')allocation='WATCH ONLY';else if(cmd==='START'||cmd==='BUY')allocation=level==='OFFENSIVE'?'25–40%':level==='SELECTIVE'?'10–25%':'10–20%';else if(cmd==='SCALE'||cmd==='ADD')allocation=level==='OFFENSIVE'?'50–75%':'25–50%';else if(cmd==='HOLD')allocation='CURRENT';else if(cmd==='PROTECT')allocation='REDUCE RISK';else if(cmd==='TRIM')allocation='TRIM 25–50%';
+  return{command:cmd,allocation,reason,level,hasP1,hasP2,hasExplicitScale}
+}
+function applyGovernance(){stocks.forEach(s=>s.governed=governedDecision(s))}
+function renderMarket(){const c=marketContext||{},level=policyLevel(c);$('marketRegime').textContent=c.regime||'UNSYNCED';$('marketPermission').textContent=c.permission||'—';$('marketExposure').textContent=c.exposure||'—';$('marketBuySwitch').textContent=c.buySwitch||'—';$('marketBreadth').textContent=c.breadth||'—';$('marketRiskBudget').textContent=c.riskBudget||'—';$('marketScore').textContent=c.score||'—';$('marketFreshness').textContent=c.asOf?`As of ${c.asOf}`:(c.source||'No source detected');$('marketNote').textContent=level==='RISK_OFF'?'New entries are blocked or downgraded; protect capital first.':level==='SELECTIVE'?'Only high-quality starters and verified adds are permitted.':level==='OFFENSIVE'?'Full-quality entries and position progression are permitted.':'Ticker decisions remain Pine-led until market context is synced.'}
+function renderProvenance(batches,mode='ACTIVE'){const b=batches?.[0]||activeBatch;if(!b){$('provTitle').textContent='No scan batch imported';return}if(mode==='ACTIVE'||mode==='ALL'){$('provTitle').textContent=mode==='ACTIVE'?'ACTIVE CUMULATIVE SCAN LEDGER':'ALL IMPORT HISTORY';const uniq=new Set();const sources=new Set();for(const x of batches||[]){sources.add(batchLabel(x));for(const r of x.records||[])uniq.add((r.symbol||r.ticker||'').toUpperCase())}$('provTickers').textContent=uniq.size;$('provNew').textContent=(b.records||[]).filter(r=>!allBatches.slice(1).some(x=>(x.records||[]).some(y=>(y.symbol||y.ticker||'').toUpperCase()===(r.symbol||r.ticker||'').toUpperCase()))).length;$('provExisting').textContent=Math.max(0,uniq.size-Number($('provNew').textContent||0));$('provFilterCount').textContent=sources.size;$('provFilterText').textContent=[...sources].slice(0,4).join(' · ')+(sources.size>4?` · +${sources.size-4} more`:'');$('provBatchId').textContent=`${batches.length} batches`;$('provImportedAt').textContent=b.importedAt?new Date(b.importedAt).toLocaleString():'—';$('provChips').innerHTML=[`<span class="prov-chip">${uniq.size} active names</span>`,`<span class="prov-chip">${sources.size} scan sources</span>`,`<span class="prov-chip">Latest: ${esc(batchLabel(b))}</span>`].join('');return}const allEarlier=new Set();for(const x of allBatches){if(new Date(x.importedAt||0)<new Date(b.importedAt||0))(x.records||[]).forEach(r=>allEarlier.add((r.symbol||r.ticker||'').toUpperCase()))}const keys=new Set((b.records||[]).map(r=>(r.symbol||r.ticker||'').toUpperCase()));const existing=[...keys].filter(k=>allEarlier.has(k)).length,newCount=Math.max(0,keys.size-existing),filters=b.filters||[];$('provTitle').textContent=batchLabel(b);$('provTickers').textContent=keys.size;$('provNew').textContent=newCount;$('provExisting').textContent=existing;$('provFilterCount').textContent=filters.length;$('provFilterText').textContent=filters.length?filters.map(f=>f.text||f.label||String(f)).slice(0,3).join(' · '):'No filter text captured';$('provBatchId').textContent=(b.batchId||'—').slice(-18);$('provImportedAt').textContent=b.importedAt?new Date(b.importedAt).toLocaleString():'—';$('provChips').innerHTML=[`<span class="prov-chip">${esc(detectPineFamily(b))}</span>`,`<span class="prov-chip">${esc(detectSignalName(b))}</span>`,`<span class="prov-chip">${esc(b.timeframe||'1D')}</span>`,`<span class="prov-chip">${keys.size} rows</span>`].join('')}
+function renderScreenerQueue(){if(!$('queueImported'))return;const hasEntry=stocks.filter(s=>s.screener?.entryNow?.active||s.entryStack?.value!=='—');const elite=hasEntry.filter(s=>s.entryTier?.value==='ELITE').length,strong=hasEntry.filter(s=>s.entryTier?.value==='STRONG').length,review=hasEntry.filter(s=>s.entryTier?.value==='REVIEW').length,clean=hasEntry.filter(s=>s.screener?.damageClear).length;$('queueImported').textContent=`${hasEntry.length} ENTRY-NOW NAMES`;$('queueElite').textContent=elite;$('queueStrong').textContent=strong;$('queueReview').textContent=review;$('queueClean').textContent=clean;$('queueNote').textContent=hasEntry.length?`${elite} immediate · ${strong} strong · ${review} review. ENTRY STACK is the primary ranking field; Master OS remains the chart-validation authority.`:'Waiting for ENTRY NOW / ENTRY STACK fields from NOW Screener v11.6.18.';document.querySelectorAll('[data-queue-tier]').forEach(el=>el.onclick=()=>{$('entryTierFilter').value=el.dataset.queueTier;selectedIndex=0;renderAll()})}
+function renderSummary(){const actionable=stocks.filter(s=>['START','BUY','SCALE','ADD','HOLD'].includes(s.governed?.command)).length,risk=stocks.filter(s=>['PROTECT','TRIM','EXIT','AVOID'].includes(s.governed?.command)).length;$('candidateCount').textContent=stocks.length;$('actionableCount').textContent=actionable;$('riskCount').textContent=risk;$('timeframeValue').textContent=payload?.timeframe||'1D';$('freshnessValue').textContent=payload?.importedAt?new Date(payload.importedAt).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';$('heroValue').textContent=stocks.length?`${stocks.length} REAL PINE SCREENER NAMES`:'WAITING FOR SCREENER';$('heroNote').textContent=stocks.length?`${payload?.capturedHeaders?.length||Object.keys(stocks[0]?.columns||{}).length} visible Pine fields captured. Raw records remain authoritative.`:'Use the NOW v5.2 extension to merge any supported TradingView Pine Screener batch into the Terminal.'}
+function renderPipeline(){const active=$('stageFilter').value;$('pipeline').innerHTML=STAGES.map(s=>`<div class="stage ${active===s?'active':''}" data-stage="${s}"><div class="count">${stocks.filter(x=>x.rawStage===s).length}</div><b>${s}</b><small>${STAGE_NOTE[s]}</small></div>`).join('');document.querySelectorAll('.stage').forEach(el=>el.onclick=()=>{$('stageFilter').value=$('stageFilter').value===el.dataset.stage?'':el.dataset.stage;selectedIndex=0;renderAll()})}
+function riskRank(s){return{EXIT:5,TRIM:4,PROTECT:3,AVOID:2,HOLD:1}[s.governed?.command]||0}
+function renderList(){const q=$('searchInput').value.trim().toLowerCase(),stage=$('stageFilter').value,g=$('gradeFilter').value,sort=$('sortSelect').value,u=$('universeFilter')?.value||'',tier=$('entryTierFilter')?.value||'',entryNowOnly=$('entryNowFilter')?.value||'',etype=$('entryTypeFilter')?.value||'',ma=$('masterActionFilter')?.value||'',damage=$('damageFilter')?.value||'',minStack=parseNum($('minStackInput')?.value);
+  filtered=stocks.filter(s=>(!q||s.allText.toLowerCase().includes(q)||s.driver.value.toLowerCase().includes(q))&&(!stage||s.rawStage===stage)&&(!g||s.grade===g)&&(!u||s.universe===u)&&(!tier||s.entryTier?.value===tier)&&(!entryNowOnly||s.screener?.entryNow?.active)&&(!etype||s.entryType?.value===etype)&&(!ma||s.rawCommand?.name===ma)&&(!damage||(damage==='CLEAR'?s.screener?.damageClear:!s.screener?.damageClear))&&(minStack===null||Number(s.entryStack?.value)>=minStack));
+  const num=(f)=>parseNum(f?.value)??-999;
+  if(sort==='ticker')filtered.sort((a,b)=>a.ticker.localeCompare(b.ticker));else if(sort==='risk')filtered.sort((a,b)=>riskRank(b)-riskRank(a)||b.score-a.score);else if(sort==='conviction')filtered.sort((a,b)=>num(b.conviction)-num(a.conviction)||b.score-a.score);else if(sort==='rs')filtered.sort((a,b)=>num(b.rs)-num(a.rs)||b.score-a.score);else if(sort==='rvol')filtered.sort((a,b)=>num(b.volume)-num(a.volume)||b.score-a.score);else filtered.sort((a,b)=>(num(b.entryStack)-num(a.entryStack))||b.score-a.score||(b.provenanceList?.length||0)-(a.provenanceList?.length||0));
+  selectedIndex=Math.min(selectedIndex,Math.max(0,filtered.length-1));$('watchCount').textContent=`${filtered.length} names`;$('watchlist').innerHTML=filtered.length?filtered.map((s,i)=>`<div class="stock ${i===selectedIndex?'selected':''}" data-i="${i}"><div><div class="ticker">${esc(s.ticker)}</div><span class="badge ${classForStage(s.rawStage)}">${s.rawStage}</span></div><div><div class="name">${esc(s.symbol||s.ticker)}</div><div class="n">${esc(s.governed.command)} · ${esc(s.driver.value)}</div><div class="entry-meta"><span class="entry-tier ${String(s.entryTier?.value||'BELOW').toLowerCase()}">${esc(s.entryTier?.value||'—')}</span> <b>${esc(s.entryType?.value||'—')}</b> · Stack ${esc(s.entryStack?.value??'—')} · ${esc(s.grade)}</div><div class="source-badges">${(s.provenanceList||[]).slice(0,3).map(p=>`<span class="scan-badge ${p.isLatest?'latest':''}">${esc((p.scanFamily||'PINE')+' · '+(p.signalName||p.scanLabel||'SCREEN'))}</span>`).join('')}</div></div><div class="score">${esc(s.entryStack?.value??Math.round(s.score))}<div class="n">${esc(s.grade)}</div></div></div>`).join(''):'<div class="chart-empty">No imported candidates match this filter.</div>';document.querySelectorAll('.stock').forEach(el=>el.onclick=()=>{selectedIndex=Number(el.dataset.i);renderDetails();renderList()})}
+function fieldCell(label,field,sub=''){const f=typeof field==='object'?field:{value:field,origin:'derived'};return`<div class="cell"><div class="k">${esc(label)}</div><div class="cv" title="${esc(f.value)}">${esc(f.value)}</div><div class="origin ${esc(f.origin||'derived')}">${esc((f.origin||'derived').toUpperCase())}${sub?` · ${esc(sub)}`:''}</div></div>`}
+function renderCommandTables(s){$('contextGrid').innerHTML=[fieldCell('Market',marketContext.regime||'UNSYNCED','policy'),fieldCell('Permission',s.permission),fieldCell('Market budget',s.marketBudget),fieldCell('Trend',s.trend),fieldCell('Weekly',s.weekly),fieldCell('Leadership RS',s.rs),fieldCell('Participation',s.participation),fieldCell('RVOL',s.volume)].join('');$('opportunityGrid').innerHTML=[fieldCell('Entry type',s.entryType),fieldCell('Entry Stack',s.entryStack),fieldCell('Entry Grade',s.entryGrade),fieldCell('Entry Tier',s.entryTier),fieldCell('Entry Now',s.entryNow),fieldCell('Candidate',s.entryCandidate),fieldCell('Stack Pass',s.entryStackPass),fieldCell('Damage Veto',s.damageVeto),fieldCell('Pivot',s.pivot),fieldCell('Squeeze',s.squeeze),fieldCell('Darvas',s.darvas),fieldCell('Driver',s.driver),fieldCell('Freshness',s.freshness),fieldCell('Setup',s.setupType),fieldCell('Event',s.event),fieldCell('Extension',s.extension)].join('');$('executionGrid').innerHTML=[fieldCell('Master Action',{value:s.rawCommand.name,origin:s.rawCommand.origin}),fieldCell('Governed',{value:s.governed.command,origin:'governed'}),fieldCell('Position',s.positionState),fieldCell('Campaign',s.campaignState),fieldCell('Allocation stage',s.allocationStage),fieldCell('Stage',{value:s.rawStage,origin:s.stageOrigin}),fieldCell('Progress',s.progress),fieldCell('Allocation',{value:s.governed.allocation,origin:'governed'}),fieldCell('Risk',s.risk),fieldCell('Conviction',s.conviction),fieldCell('Stop',s.stop),fieldCell('Next',s.next)].join('')}
+function validationRows(s){const recognized=['NOW SCREENER V11.6.18','NOW MASTER OS','DARVAS','STRUCTURE PIVOT','VCS'].includes(String(s.primaryFamily||'').toUpperCase());const rows=[['NOW v11.6.18 fields recognized',s.entryStack?.origin==='imported'||s.entryType?.origin==='imported'],['ENTRY STACK imported',s.entryStack?.origin==='imported'],['ENTRY TYPE imported',s.entryType?.origin==='imported'],['ENTRY CANDIDATE pass',!s.screener?.candidate?.present||s.screener?.candidate?.active],['ENTRY STACK PASS',!s.screener?.stackPass?.present||s.screener?.stackPass?.active],['Damage veto clear',s.screener?.damageClear!==false],['Master Action decoded',s.rawCommand?.origin==='imported'],['Trend context imported',s.trend.origin==='imported'],['Weekly score imported',s.weekly.origin==='imported'],['Leadership RS imported',s.rs.origin==='imported'],['Family adapter applied',recognized],['Market policy synced',!!(marketContext.regime||marketContext.permission)]];return rows}
+function renderPlan(s){const rows=[['Entry Type',s.entryType?.value||'—'],['Entry Stack',s.entryStack?.value??'—'],['Entry Grade',s.entryGrade?.value||s.grade],['Entry Tier',s.entryTier?.value||'—'],['Master Action',s.rawCommand.name],['Governed command',s.governed.command],['Market policy',s.governed.level],['Suggested allocation',s.governed.allocation],['Damage veto',s.damageVeto?.value??'—'],['Primary driver',s.driver.value],['Stop',s.stop.value],['Next action',s.next.value],['Governance reason',s.governed.reason]];$('plan').innerHTML=rows.map(([a,b])=>`<div class="planrow"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}
+function renderRaw(s){const rows=Object.entries(s.columns||{});$('rawFields').innerHTML=rows.length?`<table class="rawtable">${rows.map(([k,v])=>`<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table>`:'<div class="chart-empty">No column data was captured for this row.</div>'}
+function ema(data,p){const out=[];if(!data.length)return out;const k=2/(p+1);let v=data[0].close;data.forEach((b,i)=>{v=i?v+(b.close-v)*k:b.close;if(i>=p-1)out.push({time:b.time,value:v})});return out}
+function sma(data,p){let sum=0,out=[];data.forEach((b,i)=>{sum+=b.close;if(i>=p)sum-=data[i-p].close;if(i>=p-1)out.push({time:b.time,value:sum/p})});return out}
+function atr(data,p=14){if(data.length<p+1)return null;const tr=[];for(let i=1;i<data.length;i++)tr.push(Math.max(data[i].high-data[i].low,Math.abs(data[i].high-data[i-1].close),Math.abs(data[i].low-data[i-1].close)));return tr.slice(-p).reduce((a,b)=>a+b,0)/p}
+function yahooTicker(s){const base=(s.ticker||'').replace(/\./g,'-');const ex=(s.exchange||'').toUpperCase();const suffix={TSX:'.TO',ASX:'.AX',LSE:'.L',TSE:'.T',HKEX:'.HK'}[ex]||'';return base+suffix}
+async function fetchMarketData(s){const t=yahooTicker(s);if(chartCache.has(t))return chartCache.get(t);const target=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(t)}?interval=1d&range=2y`;const urls=[`https://corsproxy.io/?${encodeURIComponent(target)}`,`https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`];for(const u of urls){try{const r=await fetch(u);if(!r.ok)continue;const j=await r.json(),x=j.chart?.result?.[0],q=x?.indicators?.quote?.[0];if(!x?.timestamp||!q)continue;const data=x.timestamp.map((ts,i)=>({time:new Date(ts*1000).toISOString().slice(0,10),open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i],volume:q.volume[i]})).filter(b=>[b.open,b.high,b.low,b.close].every(Number.isFinite));if(data.length>100){chartCache.set(t,data);return data}}catch{}}return null}
+function metricBlock(label,value,pct){return`<div class="metric"><div class="k">${esc(label)}</div><b>${esc(value)}</b><div class="bar"><span style="width:${Math.max(0,Math.min(100,pct))}%"></span></div></div>`}
+function renderMetrics(s,data){let vals=[['ADR%',s.adr.value,40],['ATR $','—',40],['ATR %','—',40],['Relative Volume',s.volume.value,40],['ATR Distance to SMA50',s.extension.value,40],['Liquidity',s.liquidity.value,70]];if(data){const last=data.at(-1),a=atr(data),s50=sma(data,50).at(-1)?.value,adr=data.slice(-20).reduce((z,b)=>z+(b.high/b.low-1)*100,0)/Math.min(20,data.length),avgVol=data.slice(-50).reduce((z,b)=>z+(b.volume||0),0)/Math.min(50,data.length),rv=avgVol?last.volume/avgVol:null,dist=a&&s50?(last.close-s50)/a:null;vals=[['ADR%',`${adr.toFixed(1)}%`,adr*12],['ATR $',a?`$${a.toFixed(2)}`:'—',a? a/last.close*1200:0],['ATR %',a?`${(a/last.close*100).toFixed(1)}%`:'—',a? a/last.close*1200:0],['Relative Volume',rv?`${rv.toFixed(2)}x`:'—',rv?rv*55:0],['ATR Distance to SMA50',dist!==null?`${dist.toFixed(2)} ATR`:'—',dist!==null?Math.abs(dist)*25:0],['Liquidity',s.liquidity.value,75]]}$('metrics').innerHTML=vals.map(v=>metricBlock(...v)).join('')}
+function addPriceLine(series,value,title,color){const n=parseNum(value);if(n!==null&&n>0)series.createPriceLine({price:n,color,lineWidth:1,lineStyle:2,axisLabelVisible:true,title})}
+async function buildChart(s){const el=$('chart');el.innerHTML='<div class="chart-empty">Loading verified daily market data…</div>';if(chartObj){try{resizeObserver?.disconnect();chartObj.remove()}catch{}chartObj=null}const data=await fetchMarketData(s);if(!data){el.innerHTML='<div class="chart-empty">Browser market-data proxy is unavailable. Imported Pine fields remain fully usable below.</div>';renderMetrics(s,null);return}const dark=document.documentElement.dataset.theme==='dark';el.innerHTML='';chartObj=LightweightCharts.createChart(el,{width:el.clientWidth,height:568,layout:{background:{type:'solid',color:dark?'#0b1119':'#fff'},textColor:dark?'#91a0b4':'#66768b'},grid:{vertLines:{color:dark?'#1d2734':'#edf1f6'},horzLines:{color:dark?'#1d2734':'#edf1f6'}},rightPriceScale:{borderVisible:false,scaleMargins:{top:.12,bottom:.19}},timeScale:{borderVisible:false}});resizeObserver=new ResizeObserver(e=>chartObj.applyOptions({width:e[0].contentRect.width,height:e[0].contentRect.height}));resizeObserver.observe(el);const vol=chartObj.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'',color:'#334155'});vol.priceScale().applyOptions({scaleMargins:{top:.82,bottom:0}});vol.setData(data.map(b=>({time:b.time,value:b.volume,color:b.close>=b.open?'rgba(20,184,166,.46)':'rgba(239,68,68,.34)'})));const bars=chartObj.addBarSeries({upColor:'#43b34e',downColor:'#43b34e',thinBars:false});bars.setData(data);[['EMA10',ema(data,10),'#3069d8'],['EMA21',ema(data,21),'#a43fc1'],['SMA50',sma(data,50),'#138f84'],['SMA200',sma(data,200),'#e33445']].forEach(x=>chartObj.addLineSeries({color:x[2],lineWidth:x[0]==='SMA200'?2:1,priceLineVisible:false,lastValueVisible:true}).setData(x[1]));const last=data.at(-1);if(last){bars.setMarkers([{time:last.time,position:'aboveBar',color:s.governed.command==='AVOID'||s.governed.command==='EXIT'?'#ef5360':'#f2b93b',shape:'arrowDown',text:`${s.governed.command} · ${s.driver.value}`}])}addPriceLine(bars,s.stop.value,'STOP','#e33445');addPriceLine(bars,s.entry.value,'ENTRY','#2d7ee8');addPriceLine(bars,s.target1.value,'T1','#16a36a');addPriceLine(bars,s.target2.value,'T2','#9a46bd');chartObj.timeScale().fitContent();el.insertAdjacentHTML('beforeend',`<div class="decision-float"><h3>NOW DECISION</h3><div class="dfrow"><span>Raw Pine</span><b>${esc(s.rawCommand.name)}</b></div><div class="dfrow"><span>Governed</span><b>${esc(s.governed.command)}</b></div><div class="dfrow"><span>Driver</span><b>${esc(s.driver.value)}</b></div><div class="dfrow"><span>Score</span><b>${Math.round(s.score)} · ${s.grade}</b></div><div class="dfrow"><span>Allocation</span><b>${esc(s.governed.allocation)}</b></div></div>`);renderMetrics(s,data)}
+function renderDetails(){if(!filtered.length){$('chartTitle').textContent='No ticker selected';$('stageBadge').textContent='';$('chart').innerHTML='<div class="chart-empty">Import TradingView Pine Screener rows using the NOW v4.1.2 verified-provenance extension.</div>';$('contextGrid').innerHTML='';$('opportunityGrid').innerHTML='';$('executionGrid').innerHTML='';$('metrics').innerHTML='';$('checks').innerHTML='';$('plan').innerHTML='';$('rawFields').innerHTML='';if($('scanHistory'))$('scanHistory').innerHTML='';if($('tickerJourney'))$('tickerJourney').innerHTML='';if($('confirmationStack'))$('confirmationStack').innerHTML='';if($('tickerStrength'))$('tickerStrength').textContent='0';return}const s=filtered[selectedIndex];$('chartTitle').textContent=`${s.ticker} · ${s.symbol||''}`;$('stageBadge').className=`badge ${classForStage(s.rawStage)}`;$('stageBadge').textContent=s.rawStage;$('scoreSource').textContent=(s.provenanceList?.length?`${new Set(s.provenanceList.map(p=>p.scanFamily||'GENERIC PINE')).size} scan families · ${(s.provenanceList||[]).length} confirmations · ${[...new Set(s.provenanceList.map(p=>(p.scanFamily||'GENERIC PINE')+' · '+(p.signalName||p.scanLabel||'SCREEN')))].join(' + ')} · `:'')+(s.scoreOrigin==='imported'?`Score: ${s.scoreLabel||'Pine'}`:'Score: Workbench derived');renderCommandTables(s);$('checks').innerHTML=validationRows(s).map(([a,ok])=>`<div class="check"><span>${esc(a)}</span><span class="${ok?'pass':'warnText'}">${ok?'PASS':'WARN'}</span></div>`).join('');renderPlan(s);renderRaw(s);renderScanHistory(s);buildChart(s)}
+function renderKanban(){const q=$('searchInput').value.trim().toLowerCase();$('kanbanBoard').innerHTML=STAGES.map(stage=>{const list=stocks.filter(s=>s.rawStage===stage&&(!q||s.allText.toLowerCase().includes(q)));return`<div class="lane"><div class="lane-head"><span>${stage}</span><span>${list.length}</span></div><div class="lane-cards">${list.map(s=>`<div class="kcard" data-ticker="${esc(s.ticker)}"><div class="kcard-top"><b>${esc(s.ticker)}</b><span class="badge ${classForStage(stage)}">${s.grade} · ${Math.round(s.score)}</span></div><div class="n">${esc(s.driver.value)}</div><div class="meta"><span>Raw <b>${esc(s.rawCommand.name)}</b></span><span>Governed <b>${esc(s.governed.command)}</b></span><span>Risk <b>${esc(s.risk.value)}</b></span><span>Fresh <b>${esc(s.freshness.value)}</b></span></div></div>`).join('')||'<div class="chart-empty" style="height:90px">No names</div>'}</div></div>`}).join('');document.querySelectorAll('.kcard').forEach(el=>el.onclick=()=>{const ticker=el.dataset.ticker;$('searchInput').value=ticker;switchView('desk');renderAll();const i=filtered.findIndex(s=>s.ticker===ticker);if(i>=0){selectedIndex=i;renderDetails();renderList()}})}
+function renderIntelligence(){const sources=new Map();for(const b of allBatches)sources.set(sourceKey(b),(sources.get(sourceKey(b))||0)+(b.records||[]).length);$('intelActive').textContent=stocks.length;$('intelSources').textContent=sources.size;$('intelMulti').textContent=stocks.filter(s=>(s.scanSources||[]).length>1).length;$('intelFresh3').textContent=stocks.filter(s=>/3/.test(s.freshness.value)).length;$('intelFresh8').textContent=stocks.filter(s=>/3|8/.test(s.freshness.value)).length;$('intelRisk').textContent=stocks.filter(s=>['PROTECT','TRIM','EXIT'].includes(s.rawStage)).length;const today=new Date().toISOString().slice(0,10);$('intelNewToday').textContent=stocks.filter(s=>{const dates=(s.provenanceList||[]).map(p=>(p.importedAt||'').slice(0,10)).filter(Boolean).sort();return dates[0]===today}).length;$('sourceDistribution').innerHTML=[...sources.entries()].sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="prov-chip" data-source="${esc(k)}">${esc(k)} · ${v}</span>`).join('')||'<span class="n">No scan sources imported.</span>';document.querySelectorAll('#sourceDistribution [data-source]').forEach(el=>el.onclick=()=>{$('sourceFilter').value=el.dataset.source;selectedIndex=0;applyBatchSelection();renderAll()})}
+function renderInstitutionalTable(){$('institutionalTableBody').innerHTML=filtered.map((s,i)=>`<tr data-i="${i}"><td><b>${esc(s.ticker)}</b></td><td><span class="universe-chip">${esc(s.universe)}</span></td><td><span class="badge ${classForStage(s.rawStage)}">${s.rawStage}</span></td><td>${esc(s.rawCommand.name)}</td><td>${esc(s.governed.command)}</td><td>${esc(s.entryType?.value||'—')}</td><td><b>${esc(s.entryStack?.value??'—')}</b></td><td>${esc(s.entryGrade?.value||s.grade)}</td><td><span class="entry-tier ${String(s.entryTier?.value||'BELOW').toLowerCase()}">${esc(s.entryTier?.value||'—')}</span></td><td>${esc(s.damageVeto?.value??'—')}</td><td>${esc(s.conviction?.value??'—')}</td><td>${esc(s.rs?.value??'—')}</td><td>${esc(s.volume?.value??'—')}</td><td>${esc(s.participation?.value??'—')}</td><td>${esc(s.freshness.value)}</td><td>${(s.scanSources||[]).map(x=>`<span class="scan-badge">${esc(x)}</span>`).join(' ')}</td><td>${esc(s.risk.value)}</td><td>${esc(s.governed.allocation)}</td><td>${esc(s.next.value)}</td></tr>`).join('');document.querySelectorAll('#institutionalTableBody tr').forEach(el=>el.onclick=()=>{selectedIndex=Number(el.dataset.i);switchView('desk');renderList();renderDetails()})}
+function renderLedger(){$('scanLedgerBody').innerHTML=allBatches.map(b=>{const a=adapterInfo(b);return `<tr><td>${b.importedAt?new Date(b.importedAt).toLocaleString():'—'}</td><td><b>${esc(a.family)}</b></td><td>${esc(a.signal)}${b._verifiedProvenance?' <span class="source-chip">VERIFIED</span>':''}</td><td>${esc(a.label)}</td><td>${(b.records||[]).length}</td><td>${esc(b.timeframe||'1D')}</td><td>${esc(b.scriptName||'Pine Screener')}</td><td>${esc((b.filters||[]).map(f=>f.text||f.label||String(f)).join(' · ')||'—')}</td><td>${esc((b.batchId||'—').slice(-24))}</td></tr>`}).join('')||'<tr><td colspan="9">No batches imported.</td></tr>'}
+function scanFamily(label,filters=[],explicitFamily=''){const t=[label,...(filters||[]).map(f=>f?.text||f?.label||String(f))].join(' ').toUpperCase();if(/1ST|FIRST|PIVOT 1/.test(t))return'PIVOT 1';if(/2ND|SECOND|PIVOT 2/.test(t))return'PIVOT 2';if(/VCS|COMPRESSION|CONTRACTION/.test(t))return'VCS';if(/PREMIUM FIRE|SQUEEZE FIRE|BREAKOUT|RELEASE/.test(t))return'FIRE';if(/SQUEEZE/.test(t))return'SQUEEZE';if(/CAMPAIGN STARTER|START FRESH/.test(t))return'START';if(/BUY FRESH/.test(t))return'BUY';if(/SCALE|CORE/.test(t))return'SCALE / CORE';if(/ADD/.test(t))return'ADD';if(/PROTECT/.test(t))return'PROTECT';if(/TRIM/.test(t))return'TRIM';if(/EXIT/.test(t))return'EXIT';if(/RS|LEADERSHIP/.test(t))return'LEADERSHIP';if(/VOLUME|RVOL/.test(t))return'VOLUME';if(/HAMMER|SHOOTER|2DG|2UR|3U|3D/.test(t))return'PRICE ACTION';if(explicitFamily==='DARVAS')return'DARVAS';return explicitFamily||detectPineFamily({scanLabel:label,filters})}
+function journeyStageFromFamily(f){if(['SQUEEZE','PRICE ACTION','LEADERSHIP','VOLUME','OTHER','VCS'].includes(f))return'DISCOVERY';if(f==='PIVOT 1')return'START';if(f==='PIVOT 2')return'CORE';if(['FIRE','START','BUY','DARVAS'].includes(f))return'START';if(f==='SCALE / CORE')return'CORE';if(f==='ADD')return'ADD';if(f==='PROTECT')return'PROTECT';if(f==='TRIM')return'TRIM';if(f==='EXIT')return'EXIT';return'DISCOVERY'}
+function renderTickerOS(s){if(!$('tickerJourney'))return;const history=(s?.provenanceList||[]).slice().sort((a,b)=>new Date(a.importedAt||0)-new Date(b.importedAt||0));const families=[...new Set(history.map(p=>scanFamily(p.scanLabel,p.filters,p.scanFamily)))];const reached=new Set(history.map(p=>journeyStageFromFamily(scanFamily(p.scanLabel,p.filters,p.scanFamily))));const path=['DISCOVERY','READY','START','CORE','ADD','PROTECT','TRIM','EXIT'];$('tickerJourney').innerHTML=path.map((x,i)=>`<span class="journey-step ${reached.has(x)||x===s.rawStage?'hit':''}">${x}</span>${i<path.length-1?'<span class="journey-arrow">→</span>':''}`).join('');const stack=['PIVOT 1','PIVOT 2','VCS','SQUEEZE','FIRE','START','BUY','SCALE / CORE','ADD','LEADERSHIP','VOLUME','PRICE ACTION'];$('confirmationStack').innerHTML=stack.map(x=>`<span class="confirm-badge ${families.includes(x)?'on':''}">${x}</span>`).join('');const progression=Math.max(0,path.indexOf(s.rawStage))*8;const familyPts=Math.min(45,families.length*7);const repeatPts=Math.min(15,Math.max(0,history.length-families.length)*3);const score=Math.min(100,30+progression+familyPts+repeatPts);$('tickerStrength').textContent=score;$('tickerStrengthNote').textContent=`${families.length} scan families · ${history.length} total confirmations · current ${s.rawStage}`}
+function renderScanHistory(s){if(!$('scanHistory'))return;const list=(s?.provenanceList||[]).slice().sort((a,b)=>new Date(b.importedAt||0)-new Date(a.importedAt||0));$('scanHistory').innerHTML=list.map(p=>{const fam=scanFamily(p.scanLabel,p.filters,p.scanFamily);const filterText=(p.filters||[]).map(f=>f.text||f.label||String(f)).join(' · ');return`<div class="timeline-item"><span>${p.importedAt?new Date(p.importedAt).toLocaleString():'—'}</span><div><b>${esc(p.scanLabel||'UNNAMED SCAN')}</b><div class="family">${esc(fam)}${filterText?' · '+esc(filterText):''}</div></div><span>${esc(p.timeframe||'1D')}</span></div>`}).join('')||'<div class="n">No scan provenance recorded.</div>';renderTickerOS(s)}
+function renderAll(){applyGovernance();renderMarket();renderSummary();renderScreenerQueue();renderPipeline();renderList();renderDetails();renderKanban();renderIntelligence();renderAdapterRegistry();renderInstitutionalTable();renderLedger()}
+function switchView(view){document.querySelectorAll('.viewtab').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('deskView').classList.toggle('hidden',view!=='desk');$('kanbanView').classList.toggle('active',view==='kanban');$('tableView').classList.toggle('active',view==='table');$('ledgerView').classList.toggle('active',view==='ledger')}
+function openMarketModal(){const c=marketContext||{};$('fRegime').value=c.regime||'';$('fPermission').value=c.permission||'';$('fExposure').value=c.exposure||'';$('fBuySwitch').value=c.buySwitch||'';$('fBreadth').value=c.breadth||'';$('fRiskBudget').value=c.riskBudget||'';$('fScore').value=c.score||'';$('fAsOf').value=(c.asOf||'').slice(0,10);$('fSource').value=c.source||'';$('fJson').value='';$('marketModal').classList.add('open');$('marketModal').setAttribute('aria-hidden','false')}
+function closeMarketModal(){$('marketModal').classList.remove('open');$('marketModal').setAttribute('aria-hidden','true')}
+function saveMarket(){let c={regime:$('fRegime').value.trim(),permission:$('fPermission').value,exposure:$('fExposure').value.trim(),buySwitch:$('fBuySwitch').value,breadth:$('fBreadth').value.trim(),riskBudget:$('fRiskBudget').value.trim(),score:$('fScore').value.trim(),asOf:$('fAsOf').value,source:$('fSource').value.trim()||'Manual Workbench policy',savedAt:new Date().toISOString()};const pasted=$('fJson').value.trim();if(pasted){try{const obj=JSON.parse(pasted),flat=flattenObject(obj);c={...c,regime:String(findFlat(flat,[/master conclusion/,/market regime/,/regime$/])||c.regime),permission:String(findFlat(flat,[/permission$/,/portfolio posture/])||c.permission),exposure:String(findFlat(flat,[/exposure$/,/target gross exposure/])||c.exposure),buySwitch:String(findFlat(flat,[/buy switch/])||c.buySwitch),breadth:String(findFlat(flat,[/breadth state/,/breadth$/])||c.breadth),riskBudget:String(findFlat(flat,[/risk budget$/])||c.riskBudget),score:String(findFlat(flat,[/master score/,/market score/])||c.score),asOf:String(findFlat(flat,[/as of/,/latest common date/])||c.asOf),source:c.source||'Pasted market JSON'}}catch(e){alert('Market JSON is invalid: '+e.message);return}}localStorage.setItem(MARKET_KEY,JSON.stringify(c));marketContext=c;closeMarketModal();renderAll()}
+['searchInput','stageFilter','gradeFilter','sortSelect','batchFilter','sourceFilter','universeFilter','entryTierFilter','entryNowFilter','entryTypeFilter','masterActionFilter','damageFilter','minStackInput'].forEach(id=>$(id).addEventListener('input',()=>{selectedIndex=0;if(['batchFilter','sourceFilter'].includes(id))applyBatchSelection();renderAll()}));
+function selectLatestEntryScan(){const b=allBatches.find(x=>/ENTRY NOW FRESH|ENTRY STACK|ENTRY TYPE/.test(batchText(x)));if(!b){alert('No NOW Screener v11.6.18 Entry batch is in the retained ledger yet. Import the TradingView scan with the existing verified-provenance bridge, then press Refresh import.');return}if($('batchFilter'))$('batchFilter').value=b.batchId;if($('sourceFilter'))$('sourceFilter').value='';selectedIndex=0;applyBatchSelection();$('entryTierFilter').value='';$('entryNowFilter').value='1';$('entryTypeFilter').value='';$('masterActionFilter').value='';$('damageFilter').value='CLEAR';$('minStackInput').value='80';renderAll()}
+$('entryScanBtn').onclick=selectLatestEntryScan;
+$('elitePresetBtn').onclick=()=>{$('entryTierFilter').value='ELITE';$('entryNowFilter').value='1';$('damageFilter').value='CLEAR';$('minStackInput').value='90';selectedIndex=0;renderAll()};
+$('qualityPresetBtn').onclick=()=>{$('entryTierFilter').value='';$('entryNowFilter').value='1';$('damageFilter').value='CLEAR';$('minStackInput').value='85';selectedIndex=0;renderAll()};
+$('allEntryPresetBtn').onclick=()=>{$('entryTierFilter').value='';$('entryNowFilter').value='1';$('damageFilter').value='CLEAR';$('minStackInput').value='';selectedIndex=0;renderAll()};
+$('clearTriageBtn').onclick=()=>{['entryTierFilter','entryNowFilter','entryTypeFilter','masterActionFilter','damageFilter'].forEach(id=>$(id).value='');$('minStackInput').value='';selectedIndex=0;renderAll()};
+$('prevBtn').onclick=()=>{if(filtered.length){selectedIndex=(selectedIndex-1+filtered.length)%filtered.length;renderDetails();renderList()}};$('nextBtn').onclick=()=>{if(filtered.length){selectedIndex=(selectedIndex+1)%filtered.length;renderDetails();renderList()}};
+$('themeBtn').onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';localStorage.setItem('now_workbench_theme',document.documentElement.dataset.theme);renderDetails()};
+$('refreshBtn').onclick=async()=>{await loadPayload();alert(`Import refreshed: ${stocks.length} active ticker${stocks.length===1?'':'s'} across ${allBatches.length} retained batch${allBatches.length===1?'':'es'}.`)};$('resetImportsBtn').onclick=resetAllImports;$('openTVBtn').onclick=()=>{const s=filtered[selectedIndex];if(s)window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(s.symbol||s.ticker)}`,'_blank')};$('marketBtn').onclick=openMarketModal;$('closeMarket').onclick=closeMarketModal;$('marketModal').onclick=e=>{if(e.target===$('marketModal'))closeMarketModal()};$('saveMarketBtn').onclick=saveMarket;$('clearMarketBtn').onclick=()=>{localStorage.removeItem(MARKET_KEY);marketContext={};closeMarketModal();renderAll()};$('autoDetectBtn').onclick=()=>{const c=autoDetectMarketContext(true);if(c){marketContext=c;openMarketModal()}else alert('No compatible same-origin market context was found. Enter the policy manually or paste JSON from an upstream dashboard.')};document.querySelectorAll('.viewtab').forEach(b=>b.onclick=()=>switchView(b.dataset.view));
+const savedTheme=localStorage.getItem('now_workbench_theme');if(savedTheme)document.documentElement.dataset.theme=savedTheme;
+loadPayload();
+</script>
+
+<script>
+(function(){
+  const syncWatchlistHeight=()=>{
+    const ws=document.querySelector('.desk.active .workspace')||document.querySelector('#deskView .workspace');
+    if(!ws) return;
+    const aside=ws.querySelector(':scope > aside');
+    const main=ws.querySelector(':scope > main');
+    if(!aside||!main) return;
+    if(window.innerWidth<=1100){ aside.style.height='auto'; return; }
+    aside.style.height=Math.ceil(main.getBoundingClientRect().height)+'px';
+  };
+  window.addEventListener('load',syncWatchlistHeight);
+  window.addEventListener('resize',syncWatchlistHeight);
+  const boot=()=>{
+    const main=document.querySelector('#deskView .workspace > main');
+    if(main && 'ResizeObserver' in window){ new ResizeObserver(syncWatchlistHeight).observe(main); }
+    document.addEventListener('toggle',syncWatchlistHeight,true);
+    setTimeout(syncWatchlistHeight,0);
+    setTimeout(syncWatchlistHeight,300);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+</script>
+
+</body>
+</html>
