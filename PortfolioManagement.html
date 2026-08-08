@@ -71,16 +71,45 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 @media(max-width:1200px){.memo{grid-template-columns:1fr}.intel-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.intel-grid{grid-template-columns:1fr}.exposure-split{grid-template-columns:1fr}}
 
+
+.ai-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn.ai{background:#10223a;border-color:#2b4a70;color:#d9eaff}
+.btn.ai.primary-ai{background:#1d8cff;border-color:#1d8cff;color:white;font-weight:800}
+.btn.ai.action-ai{background:#5a3c07;border-color:#805a13;color:#ffd783;font-weight:800}
+.sortable th{cursor:pointer;user-select:none}
+.sortable th:hover{background:#15263b;color:#dce8f5}
+.sortable th::after{content:" ↕";font-size:8px;color:#5f748f}
+.sortable th.sort-asc::after{content:" ▲";color:var(--cyan)}
+.sortable th.sort-desc::after{content:" ▼";color:var(--cyan)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(1,7,13,.78);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
+.modal-backdrop.show{display:flex}
+.modal{width:min(1100px,96vw);max-height:88vh;background:#0b1522;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.45)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+.modal-body{padding:12px;overflow:auto;max-height:72vh}
+.modal textarea{width:100%;min-height:58vh;resize:vertical;background:#07111d;color:#cfe1f5;border:1px solid var(--line);border-radius:8px;padding:12px;font:11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;padding:10px 14px;border-top:1px solid var(--line)}
+.ai-status{font-size:9px;color:var(--muted)}
+
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="topbar">
-    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.2 · Risk Intelligence</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
-    <div class="actions"><button class="btn" id="themeBtn">Light</button><button class="btn primary" id="refreshBtn">↻ Refresh Live Data</button></div>
+    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.3 · AI Brief + Sortable Tables</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
+    <div class="actions">
+  <div class="ai-actions">
+    <button class="btn ai primary-ai" id="askChatGPTBtn">Ask ChatGPT</button>
+    <button class="btn ai action-ai" id="actionOnlyBtn">Action Only</button>
+    <button class="btn ai" id="copyBriefBtn">Copy AI Brief</button>
+    <button class="btn ai" id="previewBriefBtn">Preview</button>
+    <button class="btn ai" id="downloadBriefBtn">Download</button>
+  </div>
+  <button class="btn" id="themeBtn">Light</button>
+  <button class="btn primary" id="refreshBtn">↻ Refresh Live Data</button>
+</div>
   </div>
 
-  <div class="source"><span class="statusdot"></span><b>LIVE DATA SOURCE</b> · Published Google Sheet CSV · <span id="freshness">waiting for response</span></div>
+  <div class="source"><span class="statusdot"></span><b>LIVE DATA SOURCE</b> · Published Google Sheet CSV · <span id="freshness">waiting for response</span> · <span class="ai-status" id="aiStatus">AI brief ready after data load</span></div>
 
   <div class="banner" id="masterBanner">
     <div class="banner-grid">
@@ -161,23 +190,37 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
   <section class="view" id="positions">
     <div class="panel">
       <div class="table-tools"><input id="search" placeholder="Search ticker or company…"><select id="statusFilter"><option value="OPEN">Open positions</option><option value="ALL">All records</option><option value="CLOSED">Closed only</option><option value="ACTION">Action required</option></select></div>
-      <div class="table-wrap"><table><thead><tr>
+      <div class="table-wrap"><table class="sortable" id="positionsTable"><thead><tr>
         <th>Ticker</th><th>Company</th><th>Status</th><th>Action</th><th>Exposure Basis</th><th>Dir</th><th>Lev</th><th>Economic Wt</th><th>Weight</th><th>Shares</th><th>Entry</th><th>Last</th><th>P/L</th><th>P/L %</th><th>Days</th><th>Value</th><th>ATR%</th><th>vs SMA50</th><th>Trend</th><th>Stop</th><th>Stop %</th><th>Risk $</th><th>Risk % NAV</th><th>Sector</th><th>Industry</th>
       </tr></thead><tbody id="positionRows"></tbody></table></div>
     </div>
   </section>
 
   <section class="view" id="journal">
-    <div class="panel"><div class="panel-head"><div class="section-title">Closed Trade Journal</div><span class="sub" id="journalCount"></span></div>
-      <div class="table-wrap"><table><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
+    <div class="panel"><div class="panel-head"><div class="section-title">Closed Trade Journal</div><div style="display:flex;gap:8px;align-items:center"><button class="btn ai" id="journalReviewBtn">Journal Review</button><span class="sub" id="journalCount"></span></div></div>
+      <div class="table-wrap"><table class="sortable" id="journalTable"><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
     </div>
   </section>
-  <div class="footer">NOW Portfolio Command Center v2.2 · Economic taxonomy + leverage-adjusted risk intelligence + daily action memo · For informational purposes only.</div>
+  <div class="footer">NOW Portfolio Command Center v2.3 · AI portfolio brief integration + sortable tables + leverage-adjusted risk intelligence · For informational purposes only.</div>
+</div>
+
+<div class="modal-backdrop" id="briefModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><div class="section-title">AI Portfolio Brief Preview</div><div class="sub">Structured source package + master portfolio-manager prompt</div></div>
+      <button class="btn" id="closeBriefModal">Close</button>
+    </div>
+    <div class="modal-body"><textarea id="briefPreviewText" readonly></textarea></div>
+    <div class="modal-foot">
+      <button class="btn ai" id="modalCopyBtn">Copy</button>
+      <button class="btn ai primary-ai" id="modalAskBtn">Ask ChatGPT</button>
+    </div>
+  </div>
 </div>
 
 <script>
 const CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vTvDsxwxJSatKaMzAUsdAGJT4ZhtiRQ0iHbyihBL9DOje7r4oVibcxYDOs-NYz3lBEXrevKMwq8duaH/pub?gid=2081359794&single=true&output=csv';
-let positions=[],charts={},summary={};
+let positions=[],charts={},summary={},tableSort={positions:{key:'',dir:1},journal:{key:'',dir:1}};
 
 const ETF_EXPOSURE_MAP = {
   // Open leveraged / thematic products — classify by economic exposure, not legal wrapper.
@@ -498,21 +541,221 @@ function renderTables(){
   const q=$('#search').value.toLowerCase(),f=$('#statusFilter').value;
   let arr=positions.filter(p=>(p.ticker+' '+p.company).toLowerCase().includes(q));
   if(f==='OPEN')arr=arr.filter(p=>p.status==='OPEN');if(f==='CLOSED')arr=arr.filter(p=>p.status==='CLOSED');if(f==='ACTION')arr=arr.filter(p=>['EXIT','REDUCE','PROTECT'].includes(actionFor(p).label));
+  if(tableSort.positions.key){
+    const k=tableSort.positions.key,d=tableSort.positions.dir;
+    arr=arr.slice().sort((a,b)=>compareValues(sortValuePosition(a,k),sortValuePosition(b,k))*d);
+  }
   $('#positionRows').innerHTML=arr.map(p=>{const a=actionFor(p);return `<tr><td><a class="tickerlink" target="_blank" href="https://www.tradingview.com/chart/?symbol=${encodeURIComponent(p.ticker)}">${esc(p.ticker)}</a></td><td>${esc(p.company)}</td><td><span class="pill ${p.status==='OPEN'?'p-hold':'p-closed'}">${p.status}</span></td><td><span class="pill ${a.cls}">${a.label}</span></td><td>${esc(p.underlying||p.instrument)}</td><td class="${p.directionSign<0?'red':'green'}">${directionLabel(p)}</td><td>${esc(p.leverage)}</td><td>${per(summary.nav?Math.abs(p.economicExposure)/summary.nav:0)}</td><td>${per(p.weight)}</td><td>${p.shares}</td><td>${money2(p.entry)}</td><td>${money2(p.last)}</td><td class="${p.pl>=0?'green':'red'}">${money(p.pl)}</td><td class="${p.plPct>=0?'green':'red'}">${per(p.plPct)}</td><td>${p.days||''}</td><td>${money(p.value)}</td><td>${per(p.atrPct)}</td><td class="${p.sma50Pct>=0?'green':'red'}">${per(p.sma50Pct)}</td><td>${trendText(p)}</td><td>${money2(p.stop2)}</td><td>${per(p.stopPct)}</td><td>${money(p.riskDollar)}</td><td>${per(summary.nav?p.riskDollar/summary.nav:0)}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`}).join('');
-  $('#journalRows').innerHTML=summary.closed.map(p=>`<tr><td class="tickerlink">${esc(p.ticker)}</td><td>${esc(p.company)}</td><td>${esc(p.underlying||p.instrument)}</td><td>${esc(p.purchased)}</td><td>${esc(p.exitDate)}</td><td>${money2(p.entry)}</td><td>${money2(p.exitPrice)}</td><td class="${p.realizedPL>=0?'green':'red'}">${money(p.realizedPL)}</td><td class="${p.realizedPct>=0?'green':'red'}">${per(p.realizedPct)}</td><td>${p.days}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`).join('');
+  let journalArr=summary.closed.slice();
+  if(tableSort.journal.key){
+    const k=tableSort.journal.key,d=tableSort.journal.dir;
+    journalArr.sort((a,b)=>compareValues(sortValueJournal(a,k),sortValueJournal(b,k))*d);
+  }
+  $('#journalRows').innerHTML=journalArr.map(p=>`<tr><td class="tickerlink">${esc(p.ticker)}</td><td>${esc(p.company)}</td><td>${esc(p.underlying||p.instrument)}</td><td>${esc(p.purchased)}</td><td>${esc(p.exitDate)}</td><td>${money2(p.entry)}</td><td>${money2(p.exitPrice)}</td><td class="${p.realizedPL>=0?'green':'red'}">${money(p.realizedPL)}</td><td class="${p.realizedPct>=0?'green':'red'}">${per(p.realizedPct)}</td><td>${p.days}</td><td>${esc(p.sector)}</td><td>${esc(p.industry)}</td></tr>`).join('');
   $('#journalCount').textContent=summary.closed.length+' closed records';
+  if(tableSort.positions.key)applySortIndicators('positions',tableSort.positions.key,tableSort.positions.dir);
+  if(tableSort.journal.key)applySortIndicators('journal',tableSort.journal.key,tableSort.journal.dir);
 }
+
+function masterAIPrompt(){
+  return `You are the Chief Portfolio Manager and Tactical Risk Officer at an institutional growth fund. Analyze the complete Portfolio Command Center as a portfolio-management and risk-control system. Use only the evidence contained in this source package.
+
+Evaluate current capital weight, leverage-adjusted economic gross exposure, net directional exposure, base portfolio heat, leverage-adjusted heat, cash, single-position concentration, sector and industry concentration, economic exposure clusters, long versus inverse exposure, stop-loss violations, SMA/trend deterioration, open P/L, position sizing, risk contribution, and the Daily Portfolio Action Memo.
+
+Separate true portfolio risk from simple capital weight, especially for leveraged and inverse ETFs. Identify positions that require EXIT, REDUCE, PROTECT, HOLD, or ADD ELIGIBLE treatment. Check whether apparent diversification is actually concentrated through correlated sector, industry, underlying, leveraged, or inverse exposure. Do not invent market-regime information that is not contained in this page.
+
+Finish with:
+PORTFOLIO STATE;
+CAPITAL DEPLOYMENT;
+ECONOMIC GROSS EXPOSURE;
+NET DIRECTIONAL EXPOSURE;
+BASE PORTFOLIO HEAT;
+LEVERAGE-ADJUSTED HEAT;
+CASH POSITION;
+CONCENTRATION RISK;
+TOP ECONOMIC RISK CLUSTERS;
+LONG/INVERSE CONFLICTS;
+STOP VIOLATIONS;
+TREND EXCEPTIONS;
+EXIT NOW;
+REDUCE;
+PROTECT;
+HOLD;
+ADD ELIGIBLE;
+POSITION-SIZING WARNINGS;
+NEW-RISK CAPACITY;
+WHAT CAN BE FUNDED;
+WHAT SHOULD NOT BE BOUGHT;
+PORTFOLIO ALIGNMENT;
+TOP 3 PRIORITIES TODAY;
+RISK PRESSURE 0-100;
+PORTFOLIO QUALITY 0-100;
+TODAY'S PORTFOLIO GRADE.`;
+}
+function actionOnlyPrompt(){
+  return `Analyze this portfolio and give me only executable actions for today. Rank every open position into EXIT, REDUCE, PROTECT, HOLD, or ADD ELIGIBLE. Then state how much new risk capacity exists, which existing positions should fund any new trades, the largest concentration risks, and the top three actions in priority order. Use only the supplied page data.`;
+}
+function journalPrompt(){
+  return `You are reviewing the closed-trade journal of an institutional swing-trading portfolio. Use only the supplied journal records. Evaluate realized results, win/loss distribution where supported, average holding period, sector/industry patterns, leveraged ETF performance, recurring strengths, recurring mistakes, and exit discipline. Identify the three most important process improvements for future trades. Do not invent missing entry thesis or exit reasons.`;
+}
+function positionForBrief(p){
+  const a=actionFor(p);
+  return {
+    ticker:p.ticker,company:p.company,status:p.status,action:a.label,action_reason:a.reason,
+    sector:p.sector,industry:p.industry,exposure_basis:p.underlying||p.instrument,
+    direction:directionLabel(p),leverage:p.leverage,capital_weight:p.weight,
+    economic_weight:summary.nav?Math.abs(p.economicExposure)/summary.nav:0,
+    entry:p.entry,last:p.last,pl:p.pl,pl_pct:p.plPct,days:p.days,value:p.value,
+    atr_pct:p.atrPct,vs_sma50:p.sma50Pct,trend_score:p.trend,trend_marks:trendText(p),
+    stop:p.stop2,stop_pct:p.stopPct,risk_dollar:p.riskDollar,
+    risk_pct_nav:summary.nav?p.riskDollar/summary.nav:0,
+    adjusted_risk_dollar:p.adjustedRisk,cluster:p.cluster
+  };
+}
+function briefPackage(mode='master'){
+  const s=summary;
+  const diagnostics=riskDiagnostics(s);
+  const packageObj={
+    page:"Portfolio Command Center",
+    version:"v2.3",
+    captured_at:new Date().toISOString(),
+    source:"Published Google Sheet CSV",
+    summary:{
+      open_positions:s.open.length,closed_records:s.closed.length,
+      capital_market_value:s.nav,open_pl:s.openPL,
+      base_heat_pct:s.heatPct,base_heat_dollar:s.heat,
+      adjusted_heat_pct:s.adjustedHeatPct,adjusted_heat_dollar:s.adjustedHeat,
+      economic_gross_pct:s.economicGrossPct,economic_net_pct:s.economicNetPct,
+      bull_economic_pct:s.nav?s.bullEconomic/s.nav:0,
+      inverse_economic_pct:s.nav?s.inverseEconomic/s.nav:0,
+      risk_pressure_score:riskPressureScore(s),
+      risk_capacity_score:riskCapacityPct(s)
+    },
+    sector_capital_exposure:Object.fromEntries(s.sector),
+    industry_capital_exposure:Object.fromEntries(s.industry),
+    leverage_adjusted_sector_exposure:Object.fromEntries(s.adjSector),
+    leverage_adjusted_industry_exposure:Object.fromEntries(s.adjIndustry),
+    economic_clusters:s.clusterList,
+    risk_diagnostics:diagnostics,
+    open_positions:s.open.map(positionForBrief),
+    closed_trades:s.closed.map(p=>({
+      ticker:p.ticker,company:p.company,sector:p.sector,industry:p.industry,
+      exposure_basis:p.underlying||p.instrument,purchased:p.purchased,exit_date:p.exitDate,
+      entry:p.entry,exit:p.exitPrice,realized_pl:p.realizedPL,realized_pct:p.realizedPct,days:p.days
+    }))
+  };
+  const prompt=mode==='action'?actionOnlyPrompt():mode==='journal'?journalPrompt():masterAIPrompt();
+  return `${prompt}
+
+SOURCE PACKAGE
+${JSON.stringify(packageObj,null,2)}`;
+}
+function openChatGPTWithBrief(mode='master'){
+  const text=briefPackage(mode);
+  try{
+    navigator.clipboard.writeText(text).catch(()=>{});
+  }catch(e){}
+  $('#aiStatus').textContent='AI brief copied; opening ChatGPT…';
+  const url='https://chatgpt.com/?q='+encodeURIComponent(text);
+  if(url.length<7500){window.open(url,'_blank','noopener');}
+  else{
+    window.open('https://chatgpt.com/','_blank','noopener');
+    alert('The full portfolio brief is too large for a URL and has been copied to your clipboard. Paste it into the ChatGPT window that just opened.');
+  }
+}
+async function copyBrief(mode='master'){
+  const text=briefPackage(mode);
+  try{
+    await navigator.clipboard.writeText(text);
+    $('#aiStatus').textContent='AI brief copied to clipboard';
+  }catch(e){
+    $('#briefPreviewText').value=text;
+    $('#briefModal').classList.add('show');
+    $('#aiStatus').textContent='Clipboard blocked — brief opened in Preview';
+  }
+}
+function previewBrief(mode='master'){
+  $('#briefPreviewText').value=briefPackage(mode);
+  $('#briefModal').classList.add('show');
+}
+function downloadBrief(mode='master'){
+  const blob=new Blob([briefPackage(mode)],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const stamp=new Date().toISOString().slice(0,10);
+  a.download=`NOW_Portfolio_AI_Brief_${stamp}.txt`;
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);
+  $('#aiStatus').textContent='AI brief downloaded';
+}
+function compareValues(a,b){
+  const an=typeof a==='number'?a:parseFloat(a), bn=typeof b==='number'?b:parseFloat(b);
+  const aNum=isFinite(an)&&String(a).trim()!==''; const bNum=isFinite(bn)&&String(b).trim()!=='';
+  if(aNum&&bNum)return an-bn;
+  return String(a??'').localeCompare(String(b??''),undefined,{numeric:true,sensitivity:'base'});
+}
+function sortData(kind,key){
+  const state=tableSort[kind];
+  if(state.key===key)state.dir*=-1;else{state.key=key;state.dir=1}
+  renderTables();
+  applySortIndicators(kind,key,state.dir);
+}
+function applySortIndicators(kind,key,dir){
+  const table=document.getElementById(kind==='positions'?'positionsTable':'journalTable');
+  if(!table)return;
+  [...table.querySelectorAll('th')].forEach(th=>th.classList.remove('sort-asc','sort-desc'));
+  const th=[...table.querySelectorAll('th')].find(x=>x.dataset.key===key);
+  if(th)th.classList.add(dir===1?'sort-asc':'sort-desc');
+}
+function bindSortableHeaders(){
+  const posKeys=['ticker','company','status','action','exposure','direction','leverageMultiple','economicWeight','weight','shares','entry','last','pl','plPct','days','value','atrPct','sma50Pct','trend','stop2','stopPct','riskDollar','riskPctNav','sector','industry'];
+  const journalKeys=['ticker','company','exposure','purchased','exitDate','entry','exitPrice','realizedPL','realizedPct','days','sector','industry'];
+  [['positionsTable','positions',posKeys],['journalTable','journal',journalKeys]].forEach(([id,kind,keys])=>{
+    const table=document.getElementById(id); if(!table)return;
+    [...table.querySelectorAll('thead th')].forEach((th,i)=>{
+      th.dataset.key=keys[i]||'';
+      th.title='Click to sort';
+      th.onclick=()=>th.dataset.key&&sortData(kind,th.dataset.key);
+    });
+  });
+}
+function sortValuePosition(p,key){
+  const a=actionFor(p);
+  const map={
+    action:a.label,exposure:p.underlying||p.instrument,direction:directionLabel(p),
+    economicWeight:summary.nav?Math.abs(p.economicExposure)/summary.nav:0,
+    riskPctNav:summary.nav?p.riskDollar/summary.nav:0
+  };
+  return key in map?map[key]:p[key];
+}
+function sortValueJournal(p,key){
+  if(key==='exposure')return p.underlying||p.instrument;
+  return p[key];
+}
+
 async function load(){
   $('#refreshBtn').disabled=true;$('#refreshBtn').textContent='Refreshing…';
   try{
     const res=await fetch(CSV_URL+'&t='+Date.now(),{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
-    const text=await res.text();positions=buildPositions(parseCSV(text));render();
+    const text=await res.text();positions=buildPositions(parseCSV(text));render();bindSortableHeaders();
   }catch(e){$('#metaLine').textContent='Live sheet connection failed';$('#stateText').textContent='DATA ERROR';$('#stateNarrative').textContent=e.message+' · Confirm the Google Sheet remains published as CSV.'}
   finally{$('#refreshBtn').disabled=false;$('#refreshBtn').textContent='↻ Refresh Live Data'}
 }
+
+$('#askChatGPTBtn').onclick=()=>openChatGPTWithBrief('master');
+$('#actionOnlyBtn').onclick=()=>openChatGPTWithBrief('action');
+$('#copyBriefBtn').onclick=()=>copyBrief('master');
+$('#previewBriefBtn').onclick=()=>previewBrief('master');
+$('#downloadBriefBtn').onclick=()=>downloadBrief('master');
+$('#journalReviewBtn').onclick=()=>openChatGPTWithBrief('journal');
+$('#closeBriefModal').onclick=()=>$('#briefModal').classList.remove('show');
+$('#briefModal').onclick=e=>{if(e.target===$('#briefModal'))$('#briefModal').classList.remove('show')};
+$('#modalCopyBtn').onclick=()=>copyBrief('master');
+$('#modalAskBtn').onclick=()=>openChatGPTWithBrief('master');
+
 $$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active')});
 $('#refreshBtn').onclick=load;$('#search').oninput=renderTables;$('#statusFilter').onchange=renderTables;
 $('#themeBtn').onclick=()=>{const light=document.body.classList.toggle('light');document.documentElement.style.setProperty('--bg',light?'#eef3f8':'#071018');document.documentElement.style.setProperty('--panel',light?'#ffffff':'#0d1726');document.documentElement.style.setProperty('--panel2',light?'#f5f8fc':'#101c2d');document.documentElement.style.setProperty('--line',light?'#ced8e5':'#203047');document.documentElement.style.setProperty('--text',light?'#142235':'#dce8f5');document.documentElement.style.setProperty('--muted',light?'#66778c':'#7f91a8');$('#themeBtn').textContent=light?'Dark':'Light';renderCharts()};
+bindSortableHeaders();
 load();
 </script>
 </body>
