@@ -192,12 +192,24 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 .settings-kpi .v{font-size:17px;font-weight:900;margin-top:4px}
 @media(max-width:700px){.settings-grid,.settings-kpis{grid-template-columns:1fr}}
 
+
+.help{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid #496079;color:#9db1c9;font-size:9px;font-weight:900;cursor:help;margin-left:5px;vertical-align:middle;position:relative}
+.help:hover{border-color:var(--cyan);color:var(--cyan)}
+.help[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
+  width:300px;max-width:70vw;background:#06101b;color:#d7e4f2;border:1px solid #29405b;border-radius:8px;
+  padding:9px 10px;font-size:10px;line-height:1.45;font-weight:500;letter-spacing:0;text-transform:none;
+  box-shadow:0 12px 35px rgba(0,0,0,.45);z-index:99999;white-space:normal;text-align:left
+}
+.metric-definition{font-size:9px;color:var(--muted);margin-top:3px}
+.policy-alert{margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:7px;background:#091523}
+
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="topbar">
-    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4.2 · Global Account Risk Settings</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
+    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4.3 · Risk Definitions & Tooltips</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
     <div class="actions">
   <div class="ai-actions">
     <button class="btn ai primary-ai" id="askChatGPTBtn">Ask ChatGPT</button>
@@ -247,7 +259,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
     <div class="kpis" id="kpis"></div>
     <div class="grid3">
       <div class="panel"><div class="panel-head"><div class="section-title">Required Action Queue</div><span class="sub">Risk-ranked</span></div><div class="panel-body"><div class="action-list" id="actionQueue"></div></div></div>
-      <div class="panel"><div class="panel-head"><div class="section-title">Portfolio Heat</div><span class="sub">Risk to active stops</span></div><div class="panel-body" id="heatPanel"></div></div>
+      <div class="panel"><div class="panel-head"><div class="section-title">Current Stop Risk <span class="help" data-tip="Current market-price-to-stop distance × shares, summed across all open positions. This is a live downside-to-stop measure, not the original per-trade risk budget.">?</span></div><span class="sub">Risk from current price to active stops</span></div><div class="panel-body" id="heatPanel"></div></div>
       <div class="panel"><div class="panel-head"><div class="section-title">Concentration Watch</div><span class="sub">Open positions only</span></div><div class="panel-body" id="concentrationPanel"></div></div>
     </div>
     <div class="grid2">
@@ -436,7 +448,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
       <div class="table-wrap"><table class="sortable" id="journalTable"><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
     </div>
   </section>
-  <div class="footer">NOW Portfolio Command Center v2.4.2 · Global account-size risk denominator + position sizing + pyramided campaign management + portfolio risk gate · USD framework · For informational purposes only.</div>
+  <div class="footer">NOW Portfolio Command Center v2.4.3 · Global account risk settings + $500/trade policy cap + metric tooltips + clarified stop-risk definitions · USD framework · For informational purposes only.</div>
 </div>
 
 
@@ -458,7 +470,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal" style="width:min(720px,96vw)">
     <div class="modal-head">
-      <div><div class="section-title">Portfolio Risk Settings</div><div class="sub">Global denominator used by heat and economic-risk calculations</div></div>
+      <div><div class="section-title">Portfolio Risk Settings <span class="help" data-tip="Account Size is the denominator for heat and economic exposure percentages. Max Risk Per Trade is the hard planned cash-risk ceiling used by Position Sizing.">?</span></div><div class="sub">Global denominator used by heat and economic-risk calculations</div></div>
       <button class="btn" id="closeSettingsModal">Close</button>
     </div>
     <div class="modal-body">
@@ -467,6 +479,11 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
           <label>Total Account Size ($)</label>
           <input id="globalAccountSize" type="number" min="1" step="1000" value="100000">
           <div class="settings-note">Use total brokerage/account equity. This is now the denominator for Base Heat, Adjusted Heat, Economic Gross, Risk % of Account, and risk-capacity calculations across the whole dashboard.</div>
+        </div>
+        <div class="sizing-field">
+          <label>Max Risk Per Trade ($)</label>
+          <input id="globalMaxRiskPerTrade" type="number" min="1" step="50" value="500">
+          <div class="settings-note">Your hard planned-risk policy. Position Sizing will never plan more than this amount for a new campaign, even when Account Size × Risk % would allow more.</div>
         </div>
         <div class="sizing-field">
           <label>Heat Policy</label>
@@ -479,7 +496,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
       <div class="settings-kpis">
         <div class="settings-kpi"><div class="section-title">Tracked Portfolio NAV</div><div class="v" id="settingsTrackedNav">—</div></div>
         <div class="settings-kpi"><div class="section-title">Tracked % of Account</div><div class="v" id="settingsTrackedPct">—</div></div>
-        <div class="settings-kpi"><div class="section-title">Account Size</div><div class="v cyan" id="settingsAccountSizeDisplay">—</div></div>
+        <div class="settings-kpi"><div class="section-title">Max Risk / Trade</div><div class="v amber" id="settingsMaxRiskDisplay">—</div></div>
       </div>
     </div>
     <div class="modal-foot">
@@ -667,6 +684,29 @@ function actionFor(p){
   return {label:'HOLD',cls:'p-hold',score:10,reason:'No immediate portfolio action required.'};
 }
 
+
+function getGlobalMaxRiskPerTrade(){
+  let v=500;
+  try{
+    const saved=parseFloat(localStorage.getItem('now-portfolio-max-risk-per-trade-usd'));
+    if(isFinite(saved)&&saved>0)v=saved;
+  }catch(e){}
+  const live=document.getElementById('globalMaxRiskPerTrade');
+  if(live){
+    const n=parseFloat(live.value);
+    if(isFinite(n)&&n>0)v=n;
+  }
+  return v;
+}
+function saveGlobalMaxRiskPerTrade(v){
+  const n=parseFloat(v);
+  if(!(isFinite(n)&&n>0))return false;
+  try{localStorage.setItem('now-portfolio-max-risk-per-trade-usd',String(n))}catch(e){}
+  const g=document.getElementById('globalMaxRiskPerTrade');
+  if(g)g.value=n;
+  return true;
+}
+
 function getGlobalAccountSize(){
   let v=100000;
   try{
@@ -746,6 +786,9 @@ function riskCapacityPct(s){
 }
 function riskDiagnostics(s){
   const d=[];
+  const maxTradeRisk=getGlobalMaxRiskPerTrade();
+  const breaches=s.open.filter(p=>p.riskDollar>maxTradeRisk);
+  if(breaches.length)d.push({level:'warn',text:`${breaches.length} position(s) currently have mark-to-stop risk above the ${money2(maxTradeRisk)} per-trade policy: ${breaches.map(p=>p.ticker+' '+money2(p.riskDollar)).join(', ')}.`});
   const topPos=s.open.slice().sort((a,b)=>b.value-a.value)[0];
   const topSec=s.sector[0];
   if(s.adjustedHeatPct>.08)d.push({level:'danger',text:`Leverage-adjusted heat ${per(s.adjustedHeatPct)} exceeds the 8% risk ceiling.`});
@@ -794,7 +837,7 @@ function render(){
   $('#openBadge').textContent=`Open ${s.open.length} · Closed ${s.closed.length}`;$('#heatBadge').textContent=`Adj Heat ${per(s.adjustedHeatPct)}`;$('#cashBadge').textContent=`Cash ${per(cash)}`;$('#actionBadge').textContent=`Actions ${s.required.length}`;
   const k=[
     ['Account Size',money(s.accountSize),'Global risk denominator','cyan'],['Open P/L',money(s.openPL),per(s.invested?s.openPL/(s.invested-s.openPL||1):0),s.openPL>=0?'green':'red'],
-    ['Economic Gross',per(s.economicGrossPct),'Leverage-adjusted / NAV',s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan'],['Adjusted Heat',per(s.adjustedHeatPct),money(s.adjustedHeat)+' leverage-adjusted risk',s.adjustedHeatPct>.08?'red':s.adjustedHeatPct>.06?'amber':'green'],
+    ['Economic Gross <span class="help" data-tip="Sum of absolute long and inverse economic exposure after applying ETF leverage, divided by Account Size. Example: $10,000 in a 3x ETF contributes about $30,000 economic gross. This is not expected cash loss.">?</span>',per(s.economicGrossPct),'Leverage-adjusted / Account',s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan'],['Leverage-Adjusted Stop Risk <span class="help" data-tip="A stress/sensitivity proxy: current mark-to-stop dollar risk multiplied by each position\'s leverage multiple. It is NOT your actual planned cash loss and should not be confused with the $500 max risk-per-trade policy.">?</span>',per(s.adjustedHeatPct),money(s.adjustedHeat)+' leverage-adjusted stop-risk proxy',s.adjustedHeatPct>.08?'red':s.adjustedHeatPct>.06?'amber':'green'],
     ['Tracked Portfolio NAV',money(s.trackedNav),`${per(s.accountSize?s.trackedNav/s.accountSize:0)} of account`,''],['Largest Position',largest?per(largest.value/s.invested):'—',largest?largest.ticker:'—','amber'],
     ['Top Sector',topSector?per(topSector[1]/s.invested):'—',topSector?topSector[0]:'—',''],['Avg Open Return',per(avgPL),'Equal-weighted',avgPL>=0?'green':'red']
   ];
@@ -823,10 +866,10 @@ function renderCharts(){chart('sectorChart',summary.sector);chart('industryChart
 function renderRisk(){
   const s=summary; const max=s.open.length?Math.max(...s.open.map(p=>p.adjustedRisk)):1;
   $('#riskKpis').innerHTML=[
-    ['Base Heat',per(s.heatPct),money(s.heat)+' stop risk',s.heatPct>.06?'red':'green'],
-    ['Adjusted Heat',per(s.adjustedHeatPct),money(s.adjustedHeat)+' leverage-adjusted',s.adjustedHeatPct>.08?'red':s.adjustedHeatPct>.06?'amber':'green'],
-    ['Economic Gross',per(s.economicGrossPct),'Absolute leverage-adjusted exposure',s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan'],
-    ['Net Direction',(s.economicNetPct>=0?'+':'')+per(s.economicNetPct),`Long ${per(s.accountSize?s.bullEconomic/s.accountSize:0)} · Inverse ${per(s.accountSize?s.inverseEconomic/s.accountSize:0)}`,s.economicNetPct>=0?'green':'red']
+    ['Current Stop Risk <span class="help" data-tip="Sum of current market-price-to-active-stop distance × shares across open positions. This is the amount the portfolio could lose from NOW to those stops, not necessarily the original risk taken when each trade was entered.">?</span>',per(s.heatPct),money(s.heat)+' current-to-stop risk',s.heatPct>.06?'red':'green'],
+    ['Leverage-Adjusted Stop Risk <span class="help" data-tip="Current stop risk multiplied by 2x/3x leverage for leveraged products. This is an economic stress proxy, not the cash amount you planned to risk per trade.">?</span>',per(s.adjustedHeatPct),money(s.adjustedHeat)+' economic stress proxy',s.adjustedHeatPct>.08?'red':s.adjustedHeatPct>.06?'amber':'green'],
+    ['Economic Gross <span class="help" data-tip="Absolute long + inverse economic exposure after leverage, divided by Account Size. Long and inverse positions both add to Gross because both consume risk capacity.">?</span>',per(s.economicGrossPct),'Absolute leverage-adjusted exposure',s.economicGrossPct>1.75?'red':s.economicGrossPct>1.25?'amber':'cyan'],
+    ['Net Direction <span class="help" data-tip="Long economic exposure minus inverse/bear economic exposure, divided by Account Size. Positive means net long; negative means net short/inverse.">?</span>',(s.economicNetPct>=0?'+':'')+per(s.economicNetPct),`Long ${per(s.accountSize?s.bullEconomic/s.accountSize:0)} · Inverse ${per(s.accountSize?s.inverseEconomic/s.accountSize:0)}`,s.economicNetPct>=0?'green':'red']
   ].map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[3]}">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
 
   const totalGross=s.bullEconomic+s.inverseEconomic||1, longPct=s.bullEconomic/totalGross*100, shortPct=s.inverseEconomic/totalGross*100;
@@ -1128,7 +1171,9 @@ function buildSizingPlan(){
   if(stopDistance<=0)return {invalid:isLong?'For a long trade, Stop must be below Entry.':'For a short trade, Stop must be above Entry.',ticker,mode,nav};
   if(rewardDistance<=0)return {invalid:isLong?'For a long trade, Target must be above Entry.':'For a short trade, Target must be below Entry.',ticker,mode,nav};
 
-  const plannedRisk=nav*riskPct;
+  const riskByPercent=nav*riskPct;
+  const maxRiskPerTrade=getGlobalMaxRiskPerTrade();
+  const plannedRisk=Math.min(riskByPercent,maxRiskPerTrade);
   const remainingBase=Math.max(0,nav*baseHeatCap-summary.heat);
   const remainingAdj=Math.max(0,nav*adjHeatCap-summary.adjustedHeat);
   const allowedByAdj=remainingAdj/lev;
@@ -1242,7 +1287,7 @@ function renderSizing(){
   const nav=summary.nav;
   const baseCap=sizingNum('szBaseHeatCap',6)/100, adjCap=sizingNum('szAdjHeatCap',8)/100;
   const capacity=Math.max(0,Math.min(nav*baseCap-summary.heat,(nav*adjCap-summary.adjustedHeat)/Math.max(1,sizingNum('szLeverage',1))));
-  const riskPct=sizingNum('szRiskPct',.5)/100, planned=nav*riskPct;
+  const riskPct=sizingNum('szRiskPct',.5)/100, planned=Math.min(nav*riskPct,getGlobalMaxRiskPerTrade());
 
   $('#szCashRisk').textContent=money2(planned);
   $('#szPermittedRisk').textContent=money2(Math.max(0,Math.min(planned,capacity)));
@@ -1411,7 +1456,7 @@ function briefPackage(mode='master'){
     captured_at:new Date().toISOString(),
     source:"Published Google Sheet CSV",
     summary:{
-      open_positions:s.open.length,closed_records:s.closed.length,account_size:s.accountSize,tracked_portfolio_nav:s.trackedNav,tracked_pct_of_account:s.accountSize?s.trackedNav/s.accountSize:0,
+      open_positions:s.open.length,closed_records:s.closed.length,account_size:s.accountSize,max_risk_per_trade:getGlobalMaxRiskPerTrade(),tracked_portfolio_nav:s.trackedNav,tracked_pct_of_account:s.accountSize?s.trackedNav/s.accountSize:0,
       capital_market_value:s.nav,open_pl:s.openPL,
       base_heat_pct:s.heatPct,base_heat_dollar:s.heat,
       adjusted_heat_pct:s.adjustedHeatPct,adjusted_heat_dollar:s.adjustedHeat,
@@ -1549,8 +1594,10 @@ function refreshSettingsModal(){
   const tracked=summary?.trackedNav||0;
   const g=document.getElementById('globalAccountSize');
   if(g)g.value=acc;
+  const mr=document.getElementById('globalMaxRiskPerTrade'); if(mr)mr.value=getGlobalMaxRiskPerTrade();
   const a=document.getElementById('settingsAccountSizeDisplay');
   if(a)a.textContent=money2(acc);
+  const mrD=document.getElementById('settingsMaxRiskDisplay'); if(mrD)mrD.textContent=money2(getGlobalMaxRiskPerTrade());
   const t=document.getElementById('settingsTrackedNav');
   if(t)t.textContent=money2(tracked);
   const p=document.getElementById('settingsTrackedPct');
@@ -1565,6 +1612,8 @@ $('#settingsModal').onclick=e=>{if(e.target===$('#settingsModal'))$('#settingsMo
 $('#saveSettingsBtn').onclick=()=>{
   const v=document.getElementById('globalAccountSize').value;
   if(!saveGlobalAccountSize(v)){alert('Please enter a valid Account Size greater than $0.');return;}
+  const mr=document.getElementById('globalMaxRiskPerTrade').value;
+  if(!saveGlobalMaxRiskPerTrade(mr)){alert('Please enter a valid Max Risk Per Trade greater than $0.');return;}
   summary=calcSummary();
   render();
   refreshSettingsModal();
@@ -1572,6 +1621,7 @@ $('#saveSettingsBtn').onclick=()=>{
 };
 $('#resetAccountSizeBtn').onclick=()=>{
   saveGlobalAccountSize(100000);
+  saveGlobalMaxRiskPerTrade(500);
   summary=calcSummary();
   render();
   refreshSettingsModal();
