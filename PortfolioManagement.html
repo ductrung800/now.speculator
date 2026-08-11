@@ -209,7 +209,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
 <body>
 <div class="shell">
   <div class="topbar">
-    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4.3 · Risk Definitions & Tooltips</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
+    <div><div class="eyebrow">NOW Institutional Portfolio OS · v2.4.4 · Source Column Mapping Fix</div><h1>Portfolio Command Center</h1><div class="sub" id="metaLine">Connecting to live portfolio sheet…</div></div>
     <div class="actions">
   <div class="ai-actions">
     <button class="btn ai primary-ai" id="askChatGPTBtn">Ask ChatGPT</button>
@@ -448,7 +448,7 @@ th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tb
       <div class="table-wrap"><table class="sortable" id="journalTable"><thead><tr><th>Ticker</th><th>Company</th><th>Exposure Basis</th><th>Purchased</th><th>Exit Date</th><th>Entry</th><th>Exit</th><th>Realized P/L</th><th>Realized %</th><th>Days</th><th>Sector</th><th>Industry</th></tr></thead><tbody id="journalRows"></tbody></table></div>
     </div>
   </section>
-  <div class="footer">NOW Portfolio Command Center v2.4.3 · Global account risk settings + $500/trade policy cap + metric tooltips + clarified stop-risk definitions · USD framework · For informational purposes only.</div>
+  <div class="footer">NOW Portfolio Command Center v2.4.4 · Correct source-column mapping + global account risk settings + $500/trade policy cap + metric tooltips · USD framework · For informational purposes only.</div>
 </div>
 
 
@@ -586,7 +586,16 @@ function findHeader(rows){
   return 27;
 }
 function colMap(headers){
-  const m={};headers.forEach((h,i)=>{const k=clean(h); if(k)m[k]=i});return m;
+  // IMPORTANT: the portfolio sheet contains duplicate top-level headers,
+  // including an early ENTRY column (actual trade entry) and a later
+  // green ENTRY ladder block. Preserve the FIRST occurrence so the
+  // actual trade columns win instead of being overwritten by later blocks.
+  const m={};
+  headers.forEach((h,i)=>{
+    const k=clean(h);
+    if(k && m[k]===undefined) m[k]=i;
+  });
+  return m;
 }
 function pick(row,map,names,fallback){
   for(const n of names){const k=clean(n);if(map[k]!==undefined&&row[map[k]]!==undefined)return row[map[k]]}
@@ -643,7 +652,10 @@ function buildPositions(rows){
       ticker, company:pick(row,map,['Company Name','Company'],1), sector:pick(row,map,['Sector'],2)||'Unclassified',
       industry:pick(row,map,['Industry'],3)||'Unclassified', weight:pct(pick(row,map,['Weight'],4)),
       shares:num(pick(row,map,['Shares'],5)), cost:num(pick(row,map,['Total Cost','Cost'],6)),
-      purchased:pick(row,map,['Purchase day','Purchased'],7), entry:num(pick(row,map,['ENTRY Actual','Entry'],9)),
+      purchased:pick(row,map,['Purchase day','Purchased'],7),
+      // Column J is the portfolio's actual trade-entry column. The sheet also
+      // has a later ENTRY ladder block; never use that ladder as trade entry.
+      entry:num(row[9]!==undefined && row[9]!=='' ? row[9] : pick(row,map,['ENTRY Actual','Entry'],9)),
       last:num(pick(row,map,['Price Last','Last'],10)), chg:pct(pick(row,map,['% Chg','%Chg'],11)),
       pl:num(pick(row,map,['P/L'],12)), plPct:pct(pick(row,map,['P/L %'],13)),
       exitDate:pick(row,map,['Exit Date'],14), exitPrice:num(pick(row,map,['Exit Price'],15)),
@@ -657,6 +669,10 @@ function buildPositions(rows){
       sma50:num(pick(row,map,['SMA50'],32))
     };
     p.status=p.exitDate?'CLOSED':'OPEN';
+    // Source integrity check: when Total Cost and Shares are present, their
+    // implied average entry should normally match ENTRY Actual.
+    p.impliedEntry=(p.shares>0&&p.cost>0)?p.cost/p.shares:0;
+    p.entrySourceMismatch=(p.entry>0&&p.impliedEntry>0&&Math.abs(p.entry-p.impliedEntry)/p.impliedEntry>0.02);
     if(!p.value&&p.status==='OPEN')p.value=p.shares*p.last;
     p.instrument=classifyETF(p.ticker,p.company,p.sector,p.industry);
     applyExposureTaxonomy(p);
@@ -843,7 +859,11 @@ function render(){
   ];
   $('#kpis').innerHTML=k.map(x=>`<div class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[3]}">${x[1]}</div><div class="note">${x[2]}</div></div>`).join('');
   renderMemo();renderActions();renderHeat();renderConcentration();renderCharts();renderRisk();renderBars();renderTables();renderSizing();
-  $('#metaLine').textContent=`${s.open.length} open · ${s.closed.length} closed · Account size ${money(s.accountSize)} · Source: live published sheet`; if($('#accountStatus'))$('#accountStatus').textContent='Risk base '+money(s.accountSize);
+  const sourceMismatches=positions.filter(p=>p.entrySourceMismatch);
+  $('#metaLine').textContent=`${s.open.length} open · ${s.closed.length} closed · Account size ${money(s.accountSize)} · Source: live published sheet`;
+  if($('#accountStatus'))$('#accountStatus').textContent=sourceMismatches.length
+    ? `⚠ ${sourceMismatches.length} entry/source mismatch${sourceMismatches.length===1?'':'es'}`
+    : 'Entry mapping verified · Risk base '+money(s.accountSize);
   $('#freshness').textContent='refreshed '+new Date().toLocaleString('en-AU');
 }
 function renderActions(){
