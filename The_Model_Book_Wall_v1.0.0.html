@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1d140f">
+<title>The Model Book — Market Cycle Wall</title>
+<style>
+:root {
+  --espresso:#1a120d; --espresso-2:#251a12; --board:#392b20; --board-2:#2b2018;
+  --cream:#f2ead4; --cream-2:#e5dcc4; --kraft:#d5b36b; --ink:#221d18; --ink-soft:#6c5d4b;
+  --sidebar-text:#bd9e6a; --sidebar-muted:#77624a; --gold:#d2a94f; --line:rgba(242,234,212,.10);
+  --bear:#a33726; --bull:#1b6b51; --string-bear:rgba(151,48,31,.68); --string-bull:rgba(20,96,71,.65);
+  --font-serif: Georgia, 'Times New Roman', serif; --font-mono: 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box} html,body,#root{margin:0;width:100%;height:100%;overflow:hidden} body{font-family:Arial,Helvetica,sans-serif;background:var(--espresso);color:var(--cream)} button,input,textarea,select{font:inherit}
+button{cursor:pointer}.app{width:100vw;height:100vh;display:grid;grid-template-columns:220px minmax(0,1fr);background:var(--espresso)}
+.sidebar{position:relative;z-index:5;background:#17100c;border-right:1px solid rgba(255,255,255,.06);padding:22px 18px 24px;display:flex;flex-direction:column;min-height:0}.brand-mark{font:700 21px/1.05 var(--font-serif);letter-spacing:.01em;color:#eadbbd}.brand-mark span{color:var(--gold)}.brand-tag{margin-top:8px;font:12px/1.4 var(--font-mono);color:#a78960}.nav-group{margin-top:26px;display:flex;flex-direction:column;gap:2px}.nav-label{margin:23px 10px 5px;font:10px var(--font-mono);letter-spacing:.16em;color:#8e6d42}.nav-item{width:100%;border:0;background:transparent;color:#a88d67;padding:8px 10px;border-radius:4px;display:flex;align-items:center;gap:9px;text-align:left;font-size:14px}.nav-item:hover{background:rgba(210,169,79,.08);color:#d7bc8c}.nav-item.active{background:rgba(210,169,79,.14);color:#d7b969}.nav-dot{width:7px;height:7px;border-radius:50%;background:#746556;flex:0 0 auto}.nav-item.active .nav-dot{background:var(--gold)}.nav-count{margin-left:auto;opacity:.55;font:11px var(--font-mono)}.sidebar-footer{margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);font:italic 12px/1.55 var(--font-serif);color:#826d50}
+.main{position:relative;min-width:0;min-height:0;background:var(--board-2)}.topbar{position:absolute;z-index:4;left:0;right:0;top:0;height:94px;background:linear-gradient(180deg,#2b1e15,#2c2017);border-bottom:1px solid rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;padding:0 34px}.topbar h1{margin:0;font:28px/1.1 var(--font-serif);font-weight:400;color:#e4d2ad}.topbar p{margin:6px 0 0;color:#a8865a;font:13px var(--font-mono)}.search{width:225px;height:38px;border-radius:22px;border:1px solid rgba(218,185,130,.15);background:rgba(18,13,9,.48);display:flex;align-items:center;padding:0 13px;gap:8px;color:#aa8c62}.search input{width:100%;border:0;outline:0;background:transparent;color:#d8c29a;font:12px var(--font-mono)}.search input::placeholder{color:#8d724f}
+.board-scroll{position:absolute;left:0;right:0;top:94px;bottom:63px;overflow:auto;overscroll-behavior:contain;scrollbar-color:#66513d #221811;scrollbar-width:thin}.board{position:relative;min-width:100%;min-height:100%;background:radial-gradient(circle at 30% 20%,rgba(115,87,59,.15),transparent 38%),repeating-linear-gradient(118deg,rgba(255,255,255,.012) 0 1px,transparent 1px 4px),linear-gradient(115deg,#3b2e23,#2d2119 58%,#32241a);box-shadow:inset 0 0 110px rgba(0,0,0,.32)}.connections{position:absolute;inset:0;pointer-events:none;overflow:visible}.connections path{filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
+.card{position:absolute;width:236px;min-height:126px;border:0;padding:0;background:transparent;color:var(--ink);text-align:left;filter:drop-shadow(0 8px 8px rgba(0,0,0,.28));transition:transform .16s ease,filter .16s ease;z-index:2}.card:hover,.card:focus-visible{z-index:3;filter:drop-shadow(0 14px 12px rgba(0,0,0,.38));outline:none}.card:hover{transform:rotate(0deg)!important scale(1.025)}.card.selected{z-index:4}.card-body{position:relative;background:linear-gradient(100deg,#eee6d1,#f4ecd7 56%,#e4dbc3);padding:24px 15px 15px;min-height:126px;border-radius:2px;overflow:hidden}.card-body:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 24px,rgba(88,66,46,.08) 24px 25px);pointer-events:none}.card.index .card-body{clip-path:polygon(0 0,100% 0,100% 94%,95% 100%,90% 94%,84% 100%,78% 94%,72% 100%,66% 94%,60% 100%,54% 94%,48% 100%,42% 94%,36% 100%,30% 94%,24% 100%,18% 94%,12% 100%,6% 94%,0 100%)}.card.ticker .card-body{min-height:138px;clip-path:polygon(0 0,100% 2%,100% 92%,94% 100%,88% 94%,82% 100%,76% 94%,70% 100%,64% 94%,58% 100%,52% 94%,46% 100%,40% 94%,34% 100%,28% 94%,22% 100%,16% 94%,10% 100%,4% 94%,0 99%)}.card.chart .card-body{min-height:130px}.card.chart svg{display:block;width:100%;height:55px;margin:-6px 0 3px}.pin{position:absolute;z-index:2;top:-7px;left:calc(50% - 8px);width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f0d590 0 18%,#c6983e 42%,#72501e 76%);box-shadow:0 2px 4px rgba(0,0,0,.6),inset 0 1px rgba(255,255,255,.5)}.card-eyebrow{position:relative;z-index:1;color:#8b6338;font:9px/1.25 var(--font-mono);letter-spacing:.11em;text-transform:uppercase}.card-title{position:relative;z-index:1;margin-top:7px;font:17px/1.18 var(--font-serif);color:#241b13}.card-excerpt{position:relative;z-index:1;margin-top:10px;color:#5d5144;font:13px/1.55 var(--font-serif)}.card-stat{position:relative;z-index:1;margin-top:3px;font:700 30px/1 var(--font-mono);letter-spacing:-.04em;color:#131519}.card-sub{position:relative;z-index:1;margin-top:7px;font:10px/1.4 var(--font-mono);color:#7a5a38}.dir-down .card-stat{color:#1a1a1a}.dir-up .card-stat{color:#131a17}
+.scroll-hint{position:absolute;right:10px;top:66%;z-index:3;writing-mode:vertical-rl;color:#9d8058;font:10px var(--font-mono);letter-spacing:.05em;opacity:.85}.bottom-bar{position:absolute;z-index:5;left:0;right:0;bottom:0;height:63px;background:#140e0a;border-top:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:26px;padding:0 34px}.bottom-label{font:10px var(--font-mono);letter-spacing:.12em;color:#6e5a43}.recent-item{border:0;background:#e3ddcf;color:#30271f;border-radius:3px;padding:8px 12px;font-size:12px}.recent-item:hover{background:#f1eadb}.bottom-spacer{flex:1}.add-btn,.backup-btn{border:0;border-radius:22px;padding:10px 18px;font-weight:700;font-size:12px}.add-btn{background:#d1aa53;color:#20170f}.backup-btn{background:transparent;border:1px solid rgba(210,169,79,.35);color:#b89966}.backup-btn:hover{background:rgba(210,169,79,.1)}
+.scrim{position:fixed;inset:0;pointer-events:none;z-index:9;background:rgba(0,0,0,0);transition:background .18s}.scrim.open{pointer-events:auto;background:rgba(0,0,0,.23)}.detail-panel{position:fixed;z-index:10;right:0;top:0;bottom:0;width:min(370px,92vw);background:#f3eee3;color:var(--ink);transform:translateX(100%);transition:transform .22s ease;box-shadow:-12px 0 30px rgba(0,0,0,.22)}.detail-panel.open{transform:translateX(0)}.detail-header{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}.detail-close{border:0;background:transparent;font-size:24px;color:#76634e;padding:0}.detail-date{font:10px var(--font-mono);color:#9a7d59}.detail-body{padding:0 27px 30px;overflow:auto;height:calc(100% - 62px)}.detail-eyebrow{font:10px var(--font-mono);letter-spacing:.12em;color:#a13d2c;text-transform:uppercase}.detail-title{margin:10px 0 14px;font:26px/1.15 var(--font-serif);font-weight:400}.detail-stat{font:700 22px var(--font-mono);margin:4px 0 12px}.detail-stat span{font-size:11px;font-weight:400;color:#7e6b56}.detail-text{white-space:pre-line;font:15px/1.58 var(--font-serif);color:#453a30}.detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0 18px;font:11px/1.25 var(--font-mono);color:#675746}.detail-stats b{display:block;color:#281f18}.detail-actions{display:flex;flex-wrap:wrap;gap:10px}.btn{border:1px solid #6b5a48;background:transparent;border-radius:20px;padding:9px 13px;color:#211811;font-weight:700;font-size:12px}.btn.primary{background:#21170f;color:#f7f1e7;border-color:#21170f}.btn.danger{color:#8e2e24;border-color:#b86459}.btn:hover{transform:translateY(-1px)}
+.modal-scrim{position:fixed;z-index:20;inset:0;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:24px}.modal{width:min(420px,94vw);background:#f6f0e3;color:#2a2018;border-radius:7px;padding:25px 26px;box-shadow:0 25px 70px rgba(0,0,0,.45)}.modal h2{margin:0;font:700 21px var(--font-serif)}.modal .sub{margin:5px 0 18px;color:#6e604f;font-size:13px;line-height:1.4}.field{display:flex;flex-direction:column;gap:5px;margin:12px 0}.field label{font:10px var(--font-mono);letter-spacing:.08em;color:#7c6548}.field input,.field select,.field textarea{border:1px solid #d5c6ad;border-radius:4px;background:#fffdfa;color:#2f261f;padding:9px 10px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#c39642;box-shadow:0 0 0 2px rgba(195,150,66,.22)}.field textarea{min-height:124px;resize:vertical;line-height:1.45}.modal-actions{margin-top:18px;display:flex;justify-content:flex-end;gap:9px}.backup-actions{display:grid;gap:10px}.backup-actions .btn{width:100%}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){.app{grid-template-columns:176px minmax(0,1fr)}.sidebar{padding-left:12px;padding-right:12px}.topbar{padding:0 20px}.topbar h1{font-size:23px}.topbar p{display:none}.search{width:190px}.bottom-bar{padding:0 20px;gap:10px}.bottom-label{display:none}.recent-item:nth-of-type(n+4){display:none}}
+@media(max-width:650px){.app{grid-template-columns:1fr}.sidebar{display:none}.topbar{height:76px}.board-scroll{top:76px}.search{width:160px}.bottom-bar{overflow-x:auto}.recent-item{display:none}.scroll-hint{display:none}}
+
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script id="wall-data" type="application/json">{"BOARD_SIZE":{"width":2380,"height":1320},"CATEGORIES":[{"id":"all","label":"Wall"},{"id":"journal","label":"My Journal"},{"id":"bear","label":"Bear Cycles"},{"id":"bull","label":"Bull Cycles"},{"id":"tops","label":"Tops"},{"id":"bottoms","label":"Bottoms"},{"id":"ftd","label":"Follow-Through Days"},{"id":"powertrend","label":"Power Trends"},{"id":"leadership","label":"Leadership"}],"SKETCHES":{"climaxTop":"M3,44 C18,38 28,33 37,24 C45,15 52,4 60,10 C66,16 69,23 83,20","distributionTop":"M3,29 C15,24 29,18 42,17 C52,15 56,8 65,13 C70,18 72,24 83,28","climaxBottom":"M3,14 C25,16 38,18 44,40 C48,51 52,51 57,31 C62,15 69,11 83,7","dryupBottom":"M3,7 C15,10 20,44 31,35 C39,26 44,47 53,37 C63,24 66,45 83,36","powerTrend":"M3,43 C14,39 20,34 29,30 C38,28 42,21 52,19 C61,12 69,11 83,8","baseBreakout":"M3,40 C13,37 22,37 31,34 C42,31 48,31 58,24 C67,14 74,9 83,6"},"OPEN_SLOTS":[{"x":1480,"y":1020,"rot":-1.5},{"x":1725,"y":1080,"rot":1.2},{"x":2020,"y":930,"rot":-0.8},{"x":1120,"y":1060,"rot":1.8},{"x":760,"y":1090,"rot":-1.1},{"x":360,"y":1060,"rot":1}],"ENTRIES":[{"id":"depression-bear","category":"bear","type":"ticker","x":910,"y":68,"rot":1.3,"title":"1929–1932 Crash","meta":"Apr 10, 1930 → Jun 1, 1932","stat":"−83.0%","sub":"783 days · deepest on record","date":"Historical Bear Cycle","stats":{"studied":38,"referenced":11,"saved":20},"body":"The deepest closing-basis S&P bear market in the model book. Use it as an extreme reference point: prolonged Stage 4 decline, repeated failed rallies, and a magnitude far beyond the post-war norm. The lesson is not to predict another −83% decline; it is to respect how long a damaged market can stay damaged."},{"id":"gfc-bear","category":"bear","type":"ticker","x":1275,"y":690,"rot":-1.4,"title":"Global Financial Crisis","meta":"Oct 9, 2007 → Mar 9, 2009","stat":"−56.9%","sub":"517 days · deepest post-war bear","date":"Historical Bear Cycle","stats":{"studied":34,"referenced":14,"saved":22},"body":"A prolonged distribution-led bear market. The 2007 top was not a single blow-off; it developed through repeated failed attempts near the highs, deterioration in leadership, and heavier-volume breaks. The eventual March 2009 low is a useful study in how severe damage can precede a durable new bull cycle."},{"id":"covid-bear","category":"bear","type":"ticker","x":1538,"y":772,"rot":-2.4,"title":"COVID Crash","meta":"Feb 19, 2020 → Mar 23, 2020","stat":"−33.9%","sub":"33 days · fastest bear on record","date":"Historical Bear Cycle","stats":{"studied":31,"referenced":16,"saved":21},"body":"The shortest bear market in the table and a textbook exhaustive selling-climax study. The decline compressed enormous damage into 33 calendar days, culminating in capitulation-style volume and a rapid reversal that was later confirmed by a new rally sequence."},{"id":"black-monday-bear","category":"bear","type":"ticker","x":1790,"y":128,"rot":-1.7,"title":"Black Monday","meta":"Aug 25, 1987 → Dec 4, 1987","stat":"−33.5%","sub":"101 days · single-day −20.5% on Oct 19","date":"Historical Bear Cycle","stats":{"studied":28,"referenced":8,"saved":15},"body":"A fast climax-style break after an extended advance. Study the acceleration and extension into the 1987 top, then the violent transition from Stage 2 to Stage 4. It is a reminder that parabolic late-cycle behavior can reverse much faster than a distribution top."},{"id":"bear-2022","category":"bear","type":"ticker","x":515,"y":925,"rot":1.1,"title":"2022 Bear Market","meta":"Jan 3, 2022 → Oct 12, 2022","stat":"−25.4%","sub":"282 days · grinding decline","date":"Historical Bear Cycle","stats":{"studied":24,"referenced":10,"saved":18},"body":"A useful extended dry-up case study: repeated rally attempts, repeated undercuts, and a long choppy decline rather than one final crash. This is the kind of environment where patience matters and multiple failed Follow-Through Days are normal before one finally sticks."},{"id":"90s-bull","category":"bull","type":"ticker","x":405,"y":72,"rot":1,"title":"’90s Secular Bull","meta":"Dec 4, 1987 → Mar 24, 2000","stat":"+582.1%","sub":"4,494 days · largest gain in table","date":"Historical Bull Cycle","stats":{"studied":42,"referenced":17,"saved":24},"body":"The largest bull-market gain in the model-book table. The key study is not the final 582% figure; it is the long sequence of Stage 2 advances, corrections, leadership changes, and renewed breakouts that rewarded staying aligned with the primary trend."},{"id":"post-gfc-bull","category":"bull","type":"ticker","x":1570,"y":432,"rot":1.2,"title":"2009–2020 Bull Market","meta":"Mar 9, 2009 → Feb 19, 2020","stat":"+400.5%","sub":"3,999 days · longest bull in table","date":"Historical Bull Cycle","stats":{"studied":36,"referenced":15,"saved":20},"body":"A decade-long bull market born after the Global Financial Crisis. Study the first months off the low: confirmation, expanding breadth, fresh leadership, and repeated successful pullbacks. Long bull markets contain many corrections without automatically becoming bear markets."},{"id":"covid-bull","category":"bull","type":"ticker","x":1980,"y":980,"rot":-1,"title":"2020–2022 Bull Market","meta":"Mar 23, 2020 → Jan 3, 2022","stat":"+114.4%","sub":"651 days · rapid post-crash advance","date":"Historical Bull Cycle","stats":{"studied":27,"referenced":12,"saved":18},"body":"A fast new bull phase that followed the COVID selling climax. It is a strong example of why new leadership, expanding breadth, and a confirmed rally can matter more than the emotional memory of the preceding crash."},{"id":"climax-top-def","category":"tops","type":"chart","x":118,"y":257,"rot":-3,"title":"Climax Top","meta":"PATTERN · TOPS","sketch":"climaxTop","date":"Model Rule","stats":{"studied":29,"referenced":7,"saved":16},"body":"Acceleration of the trend and visible extension above key moving averages just before distribution overtakes the market. Watch for a sharp increase in slope, roughly 15–25%+ extension above the 50-day moving average, and increasingly one-sided bullish sentiment. Historical examples in the book: August 1987, October 1929, January 1973."},{"id":"distribution-top-def","category":"tops","type":"chart","x":1320,"y":205,"rot":1.2,"title":"Distribution Top","meta":"PATTERN · TOPS","sketch":"distributionTop","date":"Model Rule","stats":{"studied":33,"referenced":14,"saved":19},"body":"Multiple attempts at new highs get rejected while volume quietly favors down days. Watch for stalling near highs, 5+ distribution days in a rolling four-week window, and a weak rally attempt that fails on below-average volume before a heavier-volume breakdown. Historical examples: March 2000, October 2007, February 2020."},{"id":"climax-bottom-def","category":"bottoms","type":"chart","x":1790,"y":565,"rot":-1,"title":"Exhaustive Selling Climax","meta":"FRAMEWORK · BOTTOMS","sketch":"climaxBottom","date":"Model Rule","stats":{"studied":26,"referenced":8,"saved":14},"body":"A huge spike in volume and wide downside price spread — capitulation. Watch for the largest down-volume day of the decline, a final undercut of a prior low on climactic volume, and an intraday recovery. Historical examples: March 2020, December 2018, February 2016, October 1987."},{"id":"dryup-bottom-def","category":"bottoms","type":"index","x":118,"y":555,"rot":-1.6,"title":"Extended Dry-Up Bottom","meta":"FRAMEWORK · BOTTOMS","date":"Model Rule","stats":{"studied":25,"referenced":9,"saved":14},"body":"A grinding downtrend — failed rally attempts, repeated undercuts of prior lows, and numerous failed FTDs — until volume simply dries up. Watch for declining volume as price makes marginal new lows, multiple failed FTDs, and a long choppy stretch near the lows. Historical examples: 2022, 2011, 2001–2002, 1994."},{"id":"ftd-rule","category":"ftd","type":"index","x":662,"y":420,"rot":-1.7,"title":"Follow-Through Day Rule","meta":"RULE · FOLLOW-THROUGH DAYS","date":"Pinned Aug 15, 2026","stats":{"studied":21,"referenced":9,"saved":17},"body":"Day 1 of a rally attempt: any day the index closes higher after making a new correction/bear-market low. Starting Day 4 (generally through about Day 7–10), watch for a session where the index gains 1.5%+ on volume higher than the prior session. That is the Follow-Through Day — evidence that demand has overwhelmed supply. Not every FTD works: use it as permission to test the long side in small size, not a green light to go all-in."},{"id":"power-trend-signature","category":"powertrend","type":"chart","x":660,"y":730,"rot":-2,"title":"Power Trend Signature","meta":"SKETCH · POWER TRENDS","sketch":"powerTrend","date":"Model Rule","stats":{"studied":24,"referenced":9,"saved":15},"body":"An extended stretch where an index or leading stock trends higher while consistently holding above a short-term moving average, commonly the 21-day EMA. Pullbacks stay shallow, up-volume dominates, distribution remains rare, and the market spends most of its time in the healthiest sub-phase of Stage 2."},{"id":"bull-signposts","category":"powertrend","type":"index","x":1040,"y":330,"rot":-0.8,"title":"Bull Market Signposts","meta":"CHECKLIST · FIRST 2 YEARS OFF A LOW","date":"Model Rule","stats":{"studied":23,"referenced":8,"saved":14},"body":"• Confirmed FTD within weeks of the low\n• New leadership — different names than the prior cycle\n• New-highs list expanding week over week\n• Distribution days staying low for extended stretches\n• Successful retests of the low that hold above the prior undercut level"},{"id":"new-leadership-checklist","category":"leadership","type":"index","x":115,"y":860,"rot":-0.7,"title":"New Leadership Checklist","meta":"FRAMEWORK · LEADERSHIP","date":"Model Rule","stats":{"studied":25,"referenced":11,"saved":16},"body":"The stocks that lead off a bottom are rarely the prior cycle’s leaders. Look for relative-strength new highs while the index is still below its own high; accumulation volume; accelerating EPS and sales; a tight, orderly base after the FTD; and confirmation from more than one stock in the same industry group."},{"id":"base-breakout-signature","category":"leadership","type":"chart","x":1080,"y":790,"rot":1.8,"title":"Base-and-Breakout Signature","meta":"SKETCH · LEADERSHIP","sketch":"baseBreakout","date":"Model Rule","stats":{"studied":22,"referenced":10,"saved":15},"body":"Fresh leadership often appears as tight bases near highs while the index is still recovering. The highest-value clue is relative strength: leaders make new highs or sit close to them before the broad market fully confirms. Pair base quality with volume and group behavior rather than treating any breakout as sufficient."},{"id":"cycle-tracker","category":"journal","type":"index","x":1515,"y":1070,"rot":-2,"title":"Current Cycle Tracker","meta":"MY JOURNAL · TEMPLATE","date":"Starter Journal","userCreated":true,"stats":{"studied":5,"referenced":0,"saved":0},"body":"Today’s date:\nBull or bear market? (traffic-light filter):\nDays/weeks since last confirmed FTD:\nDistribution days in trailing 25 sessions:\n% off 52-week high (SPX / QQQ):\nNew highs vs. new lows:\nCurrent leadership (2–3 names):\nMy read: which Stage are we in?"},{"id":"ftd-log","category":"journal","type":"index","x":760,"y":1090,"rot":1,"title":"FTD Observation Log","meta":"MY JOURNAL · TEMPLATE","date":"Starter Journal","userCreated":true,"stats":{"studied":4,"referenced":0,"saved":0},"body":"Date:\nIndex:\nDay # of rally attempt:\n% gain:\nVolume vs prior day:\nResult (worked / failed):\nWhat leadership appeared after the signal?"}],"CONNECTIONS":[["distribution-top-def","gfc-bear"],["climax-top-def","black-monday-bear"],["dryup-bottom-def","90s-bull"],["ftd-rule","post-gfc-bull"],["ftd-rule","covid-bull"],["power-trend-signature","90s-bull"],["new-leadership-checklist","90s-bull"],["climax-bottom-def","covid-bull"]],"DEFAULT_RECENTS":["ftd-rule","gfc-bear","distribution-top-def"]}</script>
+<script>
+(function () {
+  const DATA = JSON.parse(document.getElementById('wall-data').textContent);
+  const { CATEGORIES, CONNECTIONS, SKETCHES, BOARD_SIZE, OPEN_SLOTS, DEFAULT_RECENTS } = DATA;
+  const DEFAULT_ENTRIES = JSON.parse(JSON.stringify(DATA.ENTRIES));
+  const STORAGE_KEY = 'rainking-model-book-wall-v1';
+  const SELFTEST = new URLSearchParams(location.search).get('selftest') === '1';
+
+  let ENTRIES = JSON.parse(JSON.stringify(DEFAULT_ENTRIES));
+  let category = 'all';
+  let query = '';
+  let selectedId = null;
+  let recentIds = DEFAULT_RECENTS.slice();
+  let slotCursor = 0;
+  let editingId = null;
+  let modalKind = null;
+  let backupOpen = false;
+
+  const root = document.getElementById('root');
+
+  function loadState() {
+    if (SELFTEST) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (saved && Array.isArray(saved.entries)) {
+        ENTRIES = saved.entries;
+        recentIds = Array.isArray(saved.recentIds) ? saved.recentIds : DEFAULT_RECENTS.slice();
+        slotCursor = Number.isInteger(saved.slotCursor) ? saved.slotCursor : 0;
+      }
+    } catch (err) {
+      console.warn('Could not load Model Book state', err);
+    }
+  }
+
+  function saveState() {
+    if (SELFTEST) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries: ENTRIES, recentIds, slotCursor }));
+  }
+
+  function byId(id) { return ENTRIES.find((e) => e.id === id); }
+  function esc(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
+  function excerpt(text, n = 132) { const flat = String(text || '').replace(/\n+/g, ' '); return flat.length > n ? flat.slice(0, n).trim() + '…' : flat; }
+  function cardWidth(entry) { return entry.type === 'tag' ? 176 : 236; }
+  function center(entry) { return { x: entry.x + cardWidth(entry) / 2, y: entry.y + 30 }; }
+  function sketchColor(entry) { return ['bottoms','powertrend','leadership','bull'].includes(entry.category) ? 'var(--bull)' : 'var(--bear)'; }
+  function nowLabel() { return new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
+
+  function counts() {
+    const out = { all: ENTRIES.length };
+    ENTRIES.forEach((e) => { out[e.category] = (out[e.category] || 0) + 1; });
+    return out;
+  }
+
+  function renderSidebar() {
+    const cts = counts();
+    const item = (c) => `<button class="nav-item${category === c.id ? ' active' : ''}" data-cat="${c.id}"><span class="nav-dot"></span><span>${esc(c.label)}</span><span class="nav-count">${cts[c.id] || 0}</span></button>`;
+    return `<aside class="sidebar">
+      <div class="brand"><div class="brand-mark">The Model<br>Book<span>.</span></div><div class="brand-tag">Pin the pattern.<br>Study the cycle.</div></div>
+      <div class="nav-group">${CATEGORIES.slice(0,2).map(item).join('')}</div>
+      <div class="nav-label">EXPLORE</div>
+      <div class="nav-group">${CATEGORIES.slice(2).map(item).join('')}</div>
+      <div class="sidebar-footer">“The setups you’ll recognize live are the ones you’ve already studied a hundred times here.”</div>
+    </aside>`;
+  }
+
+  function renderCard(entry) {
+    const style = `left:${entry.x}px;top:${entry.y}px;transform:rotate(${entry.rot}deg)`;
+    const pin = entry.type !== 'tag' ? '<span class="pin" aria-hidden="true"></span>' : '';
+    let inner = '';
+    if (entry.type === 'ticker') {
+      const dir = String(entry.stat || '').trim().startsWith('−') ? 'dir-down' : 'dir-up';
+      inner = `<div class="card-body ${dir}"><div class="card-eyebrow">${esc(entry.meta)}</div><div class="card-stat">${esc(entry.stat || '')}</div><div class="card-title">${esc(entry.title)}</div><div class="card-sub">${esc(entry.sub || '')}</div></div>`;
+    } else if (entry.type === 'chart') {
+      inner = `<div class="card-body"><svg viewBox="0 0 84 50" preserveAspectRatio="none"><path d="${esc(SKETCHES[entry.sketch] || SKETCHES.powerTrend)}" fill="none" stroke="${sketchColor(entry)}" stroke-width="2.4" stroke-linecap="round"></path></svg><div class="card-eyebrow">${esc(entry.meta)}</div><div class="card-title">${esc(entry.title)}</div></div>`;
+    } else {
+      inner = `<div class="card-body"><div class="card-eyebrow">${esc(entry.meta)}</div><div class="card-title">${esc(entry.title)}</div><div class="card-excerpt">${esc(excerpt(entry.body))}</div></div>`;
+    }
+    return `<button class="card ${entry.type}${entry.id === selectedId ? ' selected' : ''}" style="${style}" data-id="${esc(entry.id)}">${pin}${inner}</button>`;
+  }
+
+  function filteredEntries() {
+    const q = query.trim().toLowerCase();
+    return ENTRIES.filter((e) => {
+      const inCategory = category === 'all' || e.category === category;
+      const hay = `${e.title || ''} ${e.body || ''} ${e.meta || ''} ${e.date || ''} ${e.sub || ''}`.toLowerCase();
+      return inCategory && (!q || hay.includes(q));
+    });
+  }
+
+  function renderConnections(visibleIds) {
+    const paths = CONNECTIONS.map(([fromId, toId]) => {
+      const a = byId(fromId), b = byId(toId);
+      if (!a || !b || !visibleIds.has(fromId) || !visibleIds.has(toId)) return '';
+      const p1 = center(a), p2 = center(b), midX = (p1.x + p2.x) / 2;
+      const sag = 26 + Math.abs(p1.x - p2.x) * 0.04;
+      const bullish = ['bull','powertrend','leadership','bottoms','ftd'].includes(a.category) || ['bull','powertrend'].includes(b.category);
+      const color = bullish ? 'var(--string-bull)' : 'var(--string-bear)';
+      const d = `M ${p1.x} ${p1.y} Q ${midX} ${Math.max(p1.y,p2.y)+sag}, ${p2.x} ${p2.y}`;
+      return `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.6"></path>`;
+    }).join('');
+    return `<svg class="connections" width="${BOARD_SIZE.width}" height="${BOARD_SIZE.height}" viewBox="0 0 ${BOARD_SIZE.width} ${BOARD_SIZE.height}">${paths}</svg>`;
+  }
+
+  function renderBoard() {
+    const visible = filteredEntries();
+    const visibleIds = new Set(visible.map((e) => e.id));
+    return `<div class="board-scroll"><div class="board" style="width:${BOARD_SIZE.width}px;height:${BOARD_SIZE.height}px">${renderConnections(visibleIds)}${visible.map(renderCard).join('')}</div></div>`;
+  }
+
+  function renderBottomBar() {
+    const recent = recentIds.map(byId).filter(Boolean).slice(0,6);
+    return `<div class="bottom-bar"><span class="bottom-label">RECENTLY REVIEWED</span>${recent.map((e)=>`<button class="recent-item" data-open="${esc(e.id)}">${esc(e.title)}</button>`).join('')}<div class="bottom-spacer"></div><button class="backup-btn" id="backup-btn">Backup</button><button class="add-btn" id="add-btn">+ Log a new entry</button></div>`;
+  }
+
+  function renderDetail() {
+    const entry = byId(selectedId);
+    if (!entry) return `<div class="scrim"></div><div class="detail-panel"></div>`;
+    const isJournal = entry.category === 'journal';
+    return `<div class="scrim open"></div><aside class="detail-panel open"><div class="detail-header"><button class="detail-close" id="detail-close" aria-label="Close">×</button><div class="detail-date">${esc(entry.date || '')}</div></div><div class="detail-body"><div class="detail-eyebrow">${esc(entry.meta)}</div><h2 class="detail-title">${esc(entry.title)}</h2>${entry.stat ? `<div class="detail-stat">${esc(entry.stat)} <span>${esc(entry.sub || '')}</span></div>` : ''}<div class="detail-text">${esc(entry.body)}</div><div class="detail-stats"><span><b>${entry.stats?.studied || 0}</b> studied</span><span><b>${entry.stats?.referenced || 0}</b> referenced in trades</span><span><b>${entry.stats?.saved || 0}</b> saved</span></div><div class="detail-actions"><button class="btn" id="mark-studied">◆ Mark studied</button>${isJournal ? '<button class="btn primary" id="edit-entry">Edit note</button>' : '<button class="btn primary" id="save-entry">Save to journal</button>'}${isJournal && entry.userCreated ? '<button class="btn danger" id="delete-entry">Delete</button>' : ''}</div></div></aside>`;
+  }
+
+  const TEMPLATES = [
+    { id:'ftd', label:'Follow-Through Day log', meta:'FTD · MY JOURNAL', type:'ticker', body:'Date:\nIndex:\nDay # of rally attempt:\n% gain:\nVolume vs prior day:\nResult (worked / failed):\nLeadership emerging after FTD:' },
+    { id:'cycle', label:'Current cycle tracker', meta:'CYCLE · MY JOURNAL', type:'index', body:'Today’s date:\nBull or bear market? (traffic-light filter):\nDays/weeks since last confirmed FTD:\nDistribution days in trailing 25 sessions:\n% off 52-week high (SPX / QQQ):\nNew highs vs. new lows:\nCurrent leadership (2–3 names):\nMy read: which Stage are we in?' },
+    { id:'leadership', label:'New leadership log', meta:'LEADERSHIP · MY JOURNAL', type:'index', body:'Ticker:\nSector / industry:\nBase type:\nDays after FTD:\nRS at breakout:\nVolume signature:\nResult:' },
+    { id:'chart', label:'Chart study note', meta:'CHART STUDY · MY JOURNAL', type:'chart', body:'Ticker / Index:\nDate range:\nPattern type:\nWhat did I see?\nWhat would confirm / invalidate the pattern?' },
+    { id:'blank', label:'Blank note', meta:'MY JOURNAL', type:'index', body:'' },
+  ];
+
+  function renderModal() {
+    if (backupOpen) {
+      return `<div class="modal-scrim" id="modal-scrim"><div class="modal backup-modal"><h2>Backup & restore</h2><p class="sub">Your study stats and journal live in this browser. Export a JSON backup before moving devices or clearing site data.</p><div class="backup-actions"><button class="btn primary" id="export-backup">Export JSON backup</button><button class="btn" id="import-backup">Import backup</button><input class="sr-only" id="backup-file" type="file" accept="application/json,.json"><button class="btn danger" id="reset-defaults">Reset to model-book defaults</button></div><div class="modal-actions"><button class="btn" id="modal-cancel">Close</button></div></div></div>`;
+    }
+    if (!modalKind) return '';
+    const editing = editingId ? byId(editingId) : null;
+    const t = TEMPLATES[0];
+    return `<div class="modal-scrim" id="modal-scrim"><form class="modal" id="modal-form"><h2>${editing ? 'Edit journal entry' : 'Log a new entry'}</h2><p class="sub">Write it the way you’d want future-you to find it on the wall.</p>${editing ? '' : `<div class="field"><label>TEMPLATE</label><select id="m-template">${TEMPLATES.map((x)=>`<option value="${x.id}">${esc(x.label)}</option>`).join('')}</select></div>`}<div class="field"><label>TITLE</label><input id="m-title" value="${esc(editing?.title || '')}" placeholder="e.g. NVDA base breakout test" required></div><div class="field"><label>NOTES</label><textarea id="m-body" placeholder="What did you see? Dates, levels, volume, what confirmed it…">${esc(editing?.body || t.body)}</textarea></div><div class="modal-actions"><button type="button" class="btn" id="modal-cancel">Cancel</button><button type="submit" class="btn primary">${editing ? 'Save changes' : 'Pin to the wall'}</button></div></form></div>`;
+  }
+
+  function render(options = {}) {
+    const prev = root.querySelector('.board-scroll');
+    const scrollLeft = prev ? prev.scrollLeft : 0;
+    const scrollTop = prev ? prev.scrollTop : 0;
+    root.innerHTML = `<div class="app">${renderSidebar()}<main class="main"><header class="topbar"><div><h1>Pin the pattern.</h1><p>Study the wall before every market-filter decision — not just once.</p></div><label class="search"><span aria-hidden="true">⌕</span><input id="search-input" placeholder="Search entries, dates, tickers…" value="${esc(query)}"></label></header>${renderBoard()}<div class="scroll-hint">SCROLL TO EXPLORE THE FULL WALL →</div>${renderBottomBar()}</main></div>${renderDetail()}${renderModal()}`;
+    const next = root.querySelector('.board-scroll');
+    if (next) { next.scrollLeft = scrollLeft; next.scrollTop = scrollTop; }
+    bind();
+    if (options.focusSearch) {
+      const input = root.querySelector('#search-input');
+      if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+    }
+  }
+
+  function openEntry(id) {
+    selectedId = id;
+    recentIds = [id, ...recentIds.filter((x)=>x!==id)].slice(0,8);
+    saveState();
+    render();
+  }
+
+  function updateEntry(id, updater) {
+    ENTRIES = ENTRIES.map((e)=>e.id===id ? updater(JSON.parse(JSON.stringify(e))) : e);
+    saveState(); render();
+  }
+
+  function markStudied() {
+    if (!selectedId) return;
+    updateEntry(selectedId, (e)=>({ ...e, stats:{ ...e.stats, studied:(e.stats?.studied || 0)+1 } }));
+  }
+
+  function saveToJournal() {
+    const source = byId(selectedId);
+    if (!source || source.category === 'journal') return;
+    const existing = ENTRIES.find((e)=>e.category==='journal' && e.referenceSourceId===source.id);
+    ENTRIES = ENTRIES.map((e)=>e.id===source.id ? ({ ...e, stats:{ ...e.stats, saved:(e.stats?.saved || 0)+1 } }) : e);
+    if (existing) { selectedId = existing.id; category = 'journal'; recentIds = [existing.id, ...recentIds.filter((x)=>x!==existing.id)].slice(0,8); saveState(); render(); return; }
+    const slot = OPEN_SLOTS[slotCursor % OPEN_SLOTS.length];
+    const id = 'journal-' + Date.now();
+    const entry = { id, category:'journal', type:'index', x:slot.x, y:slot.y, rot:slot.rot, title:`Study — ${source.title}`, meta:'SAVED STUDY · MY JOURNAL', date:`Pinned ${nowLabel()}`, userCreated:true, referenceSourceId:source.id, stats:{studied:0,referenced:0,saved:0}, body:`Source model: ${source.title}\n\nWhy it matters to me:\n\nWhat would I recognize live next time?\n\nOriginal model note:\n${source.body}` };
+    ENTRIES.push(entry); slotCursor += 1; category='journal'; selectedId=id; recentIds=[id,...recentIds].slice(0,8); saveState(); render();
+  }
+
+  function openNewModal(id) { editingId = id || null; modalKind = 'entry'; backupOpen=false; render(); }
+  function closeModal() { editingId=null; modalKind=null; backupOpen=false; render(); }
+
+  function createOrEditFromForm() {
+    const title = root.querySelector('#m-title').value.trim();
+    const body = root.querySelector('#m-body').value.trim();
+    if (!title) return;
+    if (editingId) {
+      const current = byId(editingId);
+      ENTRIES = ENTRIES.map((e)=>e.id===editingId ? ({...e,title,body,meta:current.meta,type:current.type}) : e);
+      modalKind=null; editingId=null; saveState(); render(); return;
+    }
+    const t = TEMPLATES.find((x)=>x.id===root.querySelector('#m-template').value) || TEMPLATES[0];
+    const slot = OPEN_SLOTS[slotCursor % OPEN_SLOTS.length];
+    const id = 'entry-' + Date.now();
+    const entry = { id, category:'journal', type:t.type, x:slot.x, y:slot.y, rot:slot.rot, title, meta:t.meta, date:`Pinned ${nowLabel()}`, userCreated:true, stats:{studied:0,referenced:0,saved:0}, body:body || 'No notes yet — edit this card when you review it.', stat:t.type==='ticker'?'—':undefined, sub:t.type==='ticker'?'Fill in the numbers when you review this.':undefined, sketch:t.type==='chart'?'powerTrend':undefined };
+    ENTRIES.push(entry); slotCursor += 1; category='journal'; selectedId=id; recentIds=[id,...recentIds].slice(0,8); modalKind=null; saveState(); render();
+  }
+
+  function deleteSelected() {
+    const entry = byId(selectedId);
+    if (!entry?.userCreated) return;
+    if (!SELFTEST && !confirm(`Delete “${entry.title}”?`)) return;
+    ENTRIES = ENTRIES.filter((e)=>e.id!==entry.id); recentIds=recentIds.filter((id)=>id!==entry.id); selectedId=null; saveState(); render();
+  }
+
+  function exportBackup() {
+    const payload = JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:ENTRIES,recentIds,slotCursor},null,2);
+    const url = URL.createObjectURL(new Blob([payload],{type:'application/json'}));
+    const a = document.createElement('a'); a.href=url; a.download='model-book-wall-backup.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+
+  async function importBackup(file) {
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!Array.isArray(parsed.entries)) throw new Error('This file does not contain Model Book entries.');
+      ENTRIES=parsed.entries; recentIds=Array.isArray(parsed.recentIds)?parsed.recentIds:DEFAULT_RECENTS.slice(); slotCursor=Number.isInteger(parsed.slotCursor)?parsed.slotCursor:0; selectedId=null; category='all'; query=''; backupOpen=false; saveState(); render();
+    } catch (err) { alert('Could not import backup: '+err.message); }
+  }
+
+  function resetDefaults() {
+    if (!SELFTEST && !confirm('Reset study stats and journal entries to the supplied model-book defaults?')) return;
+    ENTRIES=JSON.parse(JSON.stringify(DEFAULT_ENTRIES)); recentIds=DEFAULT_RECENTS.slice(); slotCursor=0; selectedId=null; category='all'; query=''; backupOpen=false; localStorage.removeItem(STORAGE_KEY); saveState(); render();
+  }
+
+  function bind() {
+    root.querySelectorAll('.nav-item').forEach((btn)=>btn.addEventListener('click',()=>{category=btn.dataset.cat;render();}));
+    root.querySelectorAll('.card').forEach((card)=>card.addEventListener('click',()=>openEntry(card.dataset.id)));
+    root.querySelectorAll('[data-open]').forEach((btn)=>btn.addEventListener('click',()=>openEntry(btn.dataset.open)));
+    const search = root.querySelector('#search-input');
+    if (search) search.addEventListener('input',(e)=>{query=e.target.value;render({focusSearch:true});});
+    root.querySelector('.scrim')?.addEventListener('click',()=>{selectedId=null;render();});
+    root.querySelector('#detail-close')?.addEventListener('click',()=>{selectedId=null;render();});
+    root.querySelector('#mark-studied')?.addEventListener('click',markStudied);
+    root.querySelector('#save-entry')?.addEventListener('click',saveToJournal);
+    root.querySelector('#edit-entry')?.addEventListener('click',()=>openNewModal(selectedId));
+    root.querySelector('#delete-entry')?.addEventListener('click',deleteSelected);
+    root.querySelector('#add-btn')?.addEventListener('click',()=>openNewModal(null));
+    root.querySelector('#backup-btn')?.addEventListener('click',()=>{backupOpen=true;modalKind=null;render();});
+    root.querySelector('#modal-cancel')?.addEventListener('click',closeModal);
+    root.querySelector('#modal-scrim')?.addEventListener('mousedown',(e)=>{if(e.target.id==='modal-scrim')closeModal();});
+    root.querySelector('#modal-form')?.addEventListener('submit',(e)=>{e.preventDefault();createOrEditFromForm();});
+    const template = root.querySelector('#m-template');
+    if (template) template.addEventListener('change',()=>{const t=TEMPLATES.find((x)=>x.id===template.value);const body=root.querySelector('#m-body');if(t&&body)body.value=t.body;});
+    root.querySelector('#export-backup')?.addEventListener('click',exportBackup);
+    root.querySelector('#import-backup')?.addEventListener('click',()=>root.querySelector('#backup-file')?.click());
+    root.querySelector('#backup-file')?.addEventListener('change',(e)=>e.target.files?.[0]&&importBackup(e.target.files[0]));
+    root.querySelector('#reset-defaults')?.addEventListener('click',resetDefaults);
+  }
+
+  async function runSelfTest() {
+    const result = { scroll:false, orphanStrings:false, journal:false, sketchColor:false };
+    const scroller = root.querySelector('.board-scroll'); scroller.scrollLeft=420; scroller.scrollTop=260;
+    openEntry('gfc-bear');
+    const afterOpen = root.querySelector('.board-scroll');
+    result.scroll = afterOpen.scrollLeft === 420 && afterOpen.scrollTop === 260;
+    selectedId=null; category='bear'; render();
+    result.orphanStrings = root.querySelectorAll('.connections path').length === 0;
+    category='leadership'; render();
+    const leadershipPath = root.querySelector('[data-id="base-breakout-signature"] path');
+    result.sketchColor = leadershipPath ? getComputedStyle(leadershipPath).stroke !== 'rgb(163, 55, 38)' : false;
+    category='all'; const before=ENTRIES.length; openNewModal(null);
+    root.querySelector('#m-title').value='Self-test journal'; root.querySelector('#m-body').value='Temporary'; createOrEditFromForm();
+    result.journal = ENTRIES.length===before+1 && category==='journal';
+    document.body.dataset.selftest = Object.values(result).every(Boolean) ? 'PASS' : 'FAIL';
+    document.body.dataset.selftestDetails = JSON.stringify(result);
+  }
+
+  loadState(); render();
+  if (SELFTEST) setTimeout(runSelfTest, 50);
+})();
+
+</script>
+</body>
+</html>
